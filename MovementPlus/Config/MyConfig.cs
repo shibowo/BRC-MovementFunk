@@ -1,25 +1,58 @@
 ﻿using BepInEx.Configuration;
 
 namespace MovementPlus;
+
 public class MyConfig(ConfigFile config)
 {
-    public ConfigRailGoon          RailGoon                       = new(config, "Rail Goon");
-    public ConfigRailFrameboost    RailFrameboost                 = new(config, "Rail Frameboost");
-    public ConfigWallFrameboost    WallFrameboost                 = new(config, "Wall Frameboost");
-    public ConfigWallGeneral       WallGeneral                    = new(config, "Wall General");
-    public ConfigSuperTrickJump    SuperTrickJump                 = new(config, "Super Trick Jump");
-    public ConfigPerfectManual     PerfectManual                  = new(config, "Perfect Manual");
-    public ConfigSuperSlide        SuperSlide                     = new(config, "Super Slide");
-    public ConfigFastFall          FastFall                       = new(config, "Fast Fall");
-    public ConfigVertGeneral       VertGeneral                    = new(config, "Vert General");
-    public ConfigBoostGeneral      BoostGeneral                   = new(config, "Boost General");
-    public ConfigRailGeneral       RailGeneral                    = new(config, "Rail General");
-    public ConfigRailSlope         RailSlope                      = new(config, "Rail Slope");
-    public ConfigComboGeneral      ComboGeneral                   = new(config, "Combo General");
-    public ConfigLedgeClimbGeneral LedgeClimbGeneral              = new(config, "Ledge Climb General");
-    public ConfigButtslap          Buttslap                       = new(config, "Buttslap");
-    public ConfigMisc              Misc                           = new(config, "Misc");
+    public ConfigRailGoon RailGoon = new(config, "Rail Goon");
+    public ConfigRailFrameboost RailFrameboost = new(config, "Rail Frameboost");
+    public ConfigWallFrameboost WallFrameboost = new(config, "Wall Frameboost");
+    public ConfigWallBoostplant WallBoostplant = new(config, "Wall Boostplant");
+    public ConfigWallGeneral WallGeneral = new(config, "Wall General");
+    public ConfigSuperTrickJump SuperTrickJump = new(config, "Super Trick Jump");
+    public ConfigPerfectManual PerfectManual = new(config, "Perfect Manual");
+    public ConfigSuperSlide SuperSlide = new(config, "Super Slide");
+    public ConfigFastFall FastFall = new(config, "Fast Fall");
+    public ConfigVertGeneral VertGeneral = new(config, "Vert General");
+    public ConfigBoostGeneral BoostGeneral = new(config, "Boost General");
+    public ConfigRailGeneral RailGeneral = new(config, "Rail General");
+    public ConfigRailSlope RailSlope = new(config, "Rail Slope");
+    public ConfigComboGeneral ComboGeneral = new(config, "Combo General");
+    public ConfigLedgeClimbGeneral LedgeClimbGeneral = new(config, "Ledge Climb General");
+    public ConfigButtslap Buttslap = new(config, "Buttslap");
+    public ConfigWaveDash WaveDash = new(config, "Wave Dash");
+    public ConfigHandplant Handplant = new(config, "Handplant");
+    public ConfigMisc Misc = new(config, "Misc");
+    public ConfigNonStable NonStable = new(config, "NonStable");
 
+    public enum DoubleJumpType
+    {
+        Additive,
+        Replace,
+        Capped
+    };
+
+    public enum BoostReturnType
+    {
+        Once,
+        Always,
+        Disabled
+    };
+
+    public enum HardLandingType
+    {
+        Off,
+        OnlyFeet,
+        OnlyMovestyle,
+        FeetAndMovestyle
+    };
+
+    public enum AverageSpeedMode
+    {
+        Average,
+        Max,
+        BlendMaxAverage
+    };
 
     public class ConfigRailGoon(ConfigFile config, string category)
     {
@@ -42,6 +75,27 @@ public class MyConfig(ConfigFile config)
            "Rail Goon Cap",
            -1f,
            "Maximum amount of speed that can be added when triggering a rail goon."
+       );
+
+        public ConfigEntry<string> Name = config.Bind(
+           category,
+           "Rail Goon Trick Name",
+           "Rail Goon",
+           "Name of the trick when performing a rail goon."
+       );
+
+        public ConfigEntry<int> points = config.Bind(
+           category,
+           "Rail Goon Points",
+           0,
+           "Points given when performing a rail goon."
+       );
+
+        public ConfigEntry<int> pointsMin = config.Bind(
+           category,
+           "Rail Goon Points",
+           0,
+           "Minimum amount of points given when performing a rail goon."
        );
     }
 
@@ -84,29 +138,78 @@ public class MyConfig(ConfigFile config)
            true,
            "Trigered by jumping after landing on a wallride."
        );
+
         public ConfigEntry<bool> RunoffEnabled = config.Bind(
            category,
            "Wall Frameboost Runoff Enabled",
            false,
            "Trigered by running off a wallride"
        );
+
         public ConfigEntry<float> Amount = config.Bind(
            category,
            "Wall Frameboost Amount",
            5.0f,
            "Amount of speed added when triggering a wallride frameboost."
        );
+
         public ConfigEntry<float> Grace = config.Bind(
            category,
            "Wall Frameboost Grace",
            0.1f,
            "Amount of time for a wallride frameboost."
        );
+
         public ConfigEntry<float> Cap = config.Bind(
           category,
           "Wall Frameboost Cap",
           -1f,
           "Maximum speed that can be obtained from wallride frameboosts."
+       );
+    }
+
+    public class ConfigWallBoostplant(ConfigFile config, string category)
+    {
+        public ConfigEntry<bool> Enabled = config.Bind(
+           category,
+           "Wall Boostplant Enabled",
+           true,
+           "Trigered by jumping after landing on a wallride and while holding trick 2 and trick 3."
+       );
+
+        public ConfigEntry<string> Buttons = config.Bind(
+           category,
+           "Wall Boostplant Buttons",
+           "anyTwoTricks",
+           "Buttons that need to be held or pressed within the buffer window to trigger a boostplant. Valid buttons are boost, dance, jump, slide, switchstyle, trick1, trick2, trick3, walk, anyTrick, anyTwoTricks"
+       );
+
+        public ConfigEntry<float> Grace = config.Bind(
+           category,
+           "Wall Boostplant Grace",
+           0.1f,
+           "Amount of time for a boostplant."
+       );
+
+        public ConfigEntry<float> Strength = config.Bind(
+           category,
+           "Wall Boostplant Jump Strength",
+           0.5f,
+           "Amount of total speed that gets converted to height."
+       );
+
+        public ConfigEntry<float> SpeedStrength = config.Bind(
+           category,
+           "Wall Boostplant Speed Reduction Strength",
+           0.85f,
+           "Amount of forward speed to remove when performing a boostplant."
+       );
+
+        public ConfigEntry<float> Buffer = config.Bind(
+           category,
+           "Tricks Buffer Window",
+           0.25f,
+           "The buffer window for tricks 2 and 3."
        );
     }
 
@@ -117,6 +220,41 @@ public class MyConfig(ConfigFile config)
           "Wall Total Speed Cap",
           -1f,
           "Maximum amount of speed that can be added when landing on a wallride."
+       );
+
+        public ConfigEntry<float> goonStorageMin = config.Bind(
+          category,
+          "Goon Storage Minimum",
+          40f,
+          "Minimum speed your stored goonride can be."
+       );
+
+        public ConfigEntry<float> goonStorageMax = config.Bind(
+          category,
+          "Goon Storage Maximum",
+          -1f,
+          "Maximum speed your stored goonride can be."
+       );
+
+        public ConfigEntry<float> wallCD = config.Bind(
+          category,
+          "Wallrun Cooldown",
+          0.2f,
+          "Time that needs to pass before you can perform another wallrun."
+       );
+
+        public ConfigEntry<float> decc = config.Bind(
+          category,
+          "Wallrun Deceleration",
+          0f,
+          ""
+       );
+
+        public ConfigEntry<float> minDurJump = config.Bind(
+          category,
+          "Minimum Duration Before Jump",
+          0f,
+          ""
        );
     }
 
@@ -149,6 +287,20 @@ public class MyConfig(ConfigFile config)
            21f,
            "Minimum Speed required to add any jump height."
        );
+
+        public ConfigEntry<bool> EarlySuperTrick = config.Bind(
+           category,
+           "Allow Early Super Trick Jump",
+           false,
+           "Allows the super trick jump to be performed early if you're allowed to jump."
+       );
+
+        public ConfigEntry<bool> MSSuperTrick = config.Bind(
+           category,
+           "Allow Movestyle Super Trick Jump",
+           false,
+           "Allows the super trick jump to be performed with movestyles."
+       );
     }
 
     public class ConfigPerfectManual(ConfigFile config, string category)
@@ -179,6 +331,13 @@ public class MyConfig(ConfigFile config)
           "Perfect Manual Cap",
           45f,
           "Maximum speed that can be obtained from perfect manuals."
+      );
+
+        public ConfigEntry<string> Prefix = config.Bind(
+          category,
+          "Trick Name Prefix",
+          "Perfect",
+          "Text added before the trick name when performing a perfect manual."
       );
     }
 
@@ -228,6 +387,27 @@ public class MyConfig(ConfigFile config)
           -13f,
           "Amount of speed added when triggering a fast fall."
       );
+
+        public ConfigEntry<bool> FallEnabled = config.Bind(
+          category,
+          "Fast Fall Requires Falling",
+          true,
+          "Falling is required for triggering a fast fall."
+      );
+
+        public ConfigEntry<bool> ResetOnDash = config.Bind(
+          category,
+          "Reset Fast Fall On Air Dash",
+          true,
+          "Resets fast fall when using air dash or double jump."
+      );
+
+        public ConfigEntry<bool> CancelBoost = config.Bind(
+         category,
+         "Fast Fall Cancel Boost Ability",
+         true,
+         "If you can fast while in a boost and you do so the boost ability will cancel"
+     );
     }
 
     public class ConfigVertGeneral(ConfigFile config, string category)
@@ -284,10 +464,17 @@ public class MyConfig(ConfigFile config)
          "Bonus speed when using a boost outside of a grind or wallride."
      );
 
+        public ConfigEntry<bool> SpeedScale = config.Bind(
+         category,
+         "Boost Speed Set To Forward Speed",
+         true,
+         "Boost speed is set to the players forward speed instead of a flat speed."
+     );
+
         public ConfigEntry<float> StartAmount = config.Bind(
          category,
          "Boost Start Amount",
-         2f,
+         2.75f,
          "Amount of speed added when starting a boost."
      );
 
@@ -340,6 +527,54 @@ public class MyConfig(ConfigFile config)
          "Maximum amount of speed obtainable from the total speed boost change."
      );
 
+        public ConfigEntry<bool> NoBoostLossTrick = config.Bind(
+         category,
+         "Preserve Air Boost After Boost Trick",
+         true,
+         "Retains the ability to use air boost if you don't consume it while using an air boost trick."
+     );
+
+        public ConfigEntry<BoostReturnType> BoostReturnType = config.Bind(
+           category,
+           "Boost Trick Returns Air Boost",
+           MyConfig.BoostReturnType.Once,
+           "Restores air boost after using an air boost trick. Options: Once per jump, every boost trick, or disabled."
+       );
+
+        public ConfigEntry<BoostReturnType> BoostDashReturnType = config.Bind(
+           category,
+           "Boost Trick Returns Air Dash",
+           MyConfig.BoostReturnType.Once,
+           "Restores air dash after using an air boost trick. Options: Once per jump, every boost trick, or disabled."
+       );
+
+        public ConfigEntry<bool> InfiniteBoost = config.Bind(
+         category,
+         "Infinite Boost",
+         false,
+         "Boost meter is always full."
+     );
+
+        public ConfigEntry<bool> RetainY = config.Bind(
+         category,
+         "Retain Y velocity on air boost",
+         false,
+         "Retains vertical velocity when performing a boost in the air instead of setting it to 0."
+     );
+
+        public ConfigEntry<bool> Force0 = config.Bind(
+         category,
+         "Force 0 Y Velocity On Start Boost",
+         false,
+         "Forces vertical velocity to 0 when starting an air boost, this is seperate and happens sooner than the vanilla one."
+     );
+
+        public ConfigEntry<float> decc = config.Bind(
+         category,
+         "Boost Deceleration",
+         0f,
+         ""
+     );
     }
 
     public class ConfigRailGeneral(ConfigFile config, string category)
@@ -347,7 +582,7 @@ public class MyConfig(ConfigFile config)
         public ConfigEntry<float> HardAmount = config.Bind(
          category,
          "Rail Hard Corner Amount",
-         3f,
+         1.5f,
          "Amount of speed per hard corner."
      );
 
@@ -365,6 +600,124 @@ public class MyConfig(ConfigFile config)
          "Deceleration while grinding."
      );
 
+        public ConfigEntry<bool> ChangeEnabled = config.Bind(
+         category,
+         "Hard Corner Change Enabled",
+         true,
+         "Changes how hard corners are calculated, this should stop them from being tied to the framerate."
+     );
+
+        public ConfigEntry<float> HCThresh = config.Bind(
+         category,
+         "Hard Corner Threshold",
+         5f,
+         "How strict the hard corner detection is. A lower value means more corners will be considered hard corners."
+     );
+
+        public ConfigEntry<bool> BoostCornerEnabled = config.Bind(
+         category,
+         "Boost Hard Corner",
+         true,
+         "Hold boost to hit hard corners, no tilting required."
+     );
+
+        public ConfigEntry<bool> Detection = config.Bind(
+         category,
+         "Extra Rail Detection",
+         true,
+         "Extra detection for rails, can make grinding at higher speeds more consistent."
+     );
+
+        public ConfigEntry<bool> ChangeDirectionEnabled = config.Bind(
+         category,
+         "Change Grind Direction On Start Grind Enabled",
+         true,
+         "Allows the player to choose where they want to grind when first starting a grind."
+     );
+
+        public ConfigEntry<float> ChangeDirectionAngle = config.Bind(
+         category,
+         "Grind Direction Change Max Angle",
+         95f,
+         "The maximum angle the player can change from their forward direction when starting a grind."
+     );
+
+        public ConfigEntry<bool> RailReversalEnabled = config.Bind(
+         category,
+         "Rail Reversal Enabled",
+         true,
+         "Holding the boost button, slide button and down (by default) will allow the player to reverse their grind direction."
+     );
+
+        public ConfigEntry<string> RailReversalButtons = config.Bind(
+         category,
+         "Rail Reversal Buttons",
+         "slide, boost, down",
+         "The buttons used to trigger a rail reversal."
+     );
+
+        public ConfigEntry<float> RailReversalCD = config.Bind(
+         category,
+         "Rail Reversal Cooldown",
+         0.55f,
+         "Time needed to pass before you can perform another rail reversal."
+     );
+
+        public ConfigEntry<float> railCD = config.Bind(
+         category,
+         "Rail Cooldown",
+         0.2f,
+         "Time needed to pass before you can grind on any rail."
+     );
+
+        public ConfigEntry<bool> GrindStartSpeed = config.Bind(
+         category,
+         "Rail Start Average Speed",
+         true,
+         "Speed is set to your average when starting a grind."
+     );
+
+        public ConfigEntry<bool> ModifyJump = config.Bind(
+         category,
+         "Modify Grind Jump",
+         true,
+         ""
+     );
+
+        public ConfigEntry<bool> ModifyFlipout = config.Bind(
+         category,
+         "Modify Grind Jump flipout",
+         true,
+         ""
+     );
+
+        public ConfigEntry<bool> ModifyUpdateSpeed = config.Bind(
+         category,
+         "Modify Update Speed Adjustment",
+         true,
+         ""
+     );
+
+        public ConfigEntry<bool> ModifyUpdateSpeedBoost = config.Bind(
+         category,
+         "Modify Update Speed Boost Adjustment",
+         true,
+         ""
+     );
+
+        public ConfigEntry<bool> ModifyUpdateSpeedBrake = config.Bind(
+         category,
+         "Modify Update Speed Brake Adjustment",
+         true,
+         ""
+     );
+
+        public ConfigEntry<bool> KeepVelOnExit = config.Bind(
+         category,
+         "Keep Grind Velocity On End",
+         true,
+         "When grinding off of a rail you will keep the velocity you had while grinding."
+     );
     }
 
     public class ConfigRailSlope(ConfigFile config, string category)
@@ -424,7 +777,6 @@ public class MyConfig(ConfigFile config)
          7f,
          "Maximum speed gained from a single sloped rail jump."
      );
-
     }
 
     public class ConfigComboGeneral(ConfigFile config, string category)
@@ -536,10 +888,274 @@ public class MyConfig(ConfigFile config)
         public ConfigEntry<float> Timer = config.Bind(
           category,
           "Buttslap Multi Time",
-          0.3f,
+          0.45f,
           "Amount of time after the initial buttslap to perform multiple."
       );
 
+        public ConfigEntry<string> Name = config.Bind(
+          category,
+          "Buttslap Trick Name",
+          "Buttslap",
+          "The trick name when performing a buttslap."
+      );
+
+        public ConfigEntry<int> Points = config.Bind(
+          category,
+          "Buttslap Trick Points",
+          100,
+          "Amount of points given when performing a buttslap."
+      );
+
+        public ConfigEntry<int> PointsMin = config.Bind(
+          category,
+          "Buttslap Trick Points Minimum",
+          10,
+          "Minimum amount of points given when performing a buttslap."
+      );
+
+        public ConfigEntry<string> BoostName = config.Bind(
+          category,
+          "Boosted Buttslap Trick Name",
+          "Boosted Buttslap",
+          "The trick name when performing a buttslap from a boost trick."
+      );
+
+        public ConfigEntry<int> BoostPoints = config.Bind(
+          category,
+          "Boosted Buttslap Trick Points",
+          500,
+          "Amount of points given when performing a buttslap from a boost trick."
+      );
+
+        public ConfigEntry<int> BoostPointsMin = config.Bind(
+          category,
+          "Boosted Buttslap Trick Points Minimum",
+          50,
+          "Minimum amount of points given when performing a buttslap from a boost trick."
+      );
+
+        public ConfigEntry<float> PoleAmount = config.Bind(
+           category,
+           "Pole Buttslap Amount",
+           2f,
+           "Forward speed added when performing a polevault."
+       );
+
+        public ConfigEntry<float> PoleComboAmount = config.Bind(
+          category,
+          "Pole Buttslap Combo Amount",
+          -0.1f,
+          "Amount of combo meter added when performing a polevault."
+      );
+
+        public ConfigEntry<float> PoleCap = config.Bind(
+           category,
+           "Pole Buttslap Cap",
+           -1f,
+           "Maximum amount of speed that can be added when performing a polevault."
+       );
+
+        public ConfigEntry<float> PoleJumpAmount = config.Bind(
+          category,
+          "Pole Buttslap Jump Amount",
+          5f,
+          "Jump height per buttslap."
+      );
+
+        public ConfigEntry<string> PoleName = config.Bind(
+          category,
+          "Pole Buttslap Trick Name",
+          "Polevault",
+          "The trick name when performing a buttslap from a pole."
+      );
+
+        public ConfigEntry<int> PolePoints = config.Bind(
+          category,
+          "Pole Buttslap Trick Points",
+          100,
+          "Amount of points given when performing a polevault."
+      );
+
+        public ConfigEntry<int> PolePointsMin = config.Bind(
+          category,
+          "Pole Buttslap Trick Points Minimum",
+          10,
+          "Minimum amount of points given when performing a polevault."
+      );
+
+        public ConfigEntry<string> PoleBoostName = config.Bind(
+          category,
+          "Pole Boosted Buttslap Trick Name",
+          "Boosted Polevault",
+          "The trick name when performing a polevault from a boost trick."
+      );
+
+        public ConfigEntry<int> PoleBoostPoints = config.Bind(
+          category,
+          "Pole Boosted Buttslap Trick Points",
+          500,
+          "Amount of points given when performing a polevault from a boost trick."
+      );
+
+        public ConfigEntry<int> PoleBoostPointsMin = config.Bind(
+          category,
+          "Pole Boosted Buttslap Trick Points Minimum",
+          50,
+          "Minimum amount of points given when performing a polevault from a boost trick."
+      );
+
+        public ConfigEntry<float> SurfAmount = config.Bind(
+           category,
+           "Surf Buttslap Amount",
+           2f,
+           "Forward speed added when performing a wavejump."
+       );
+
+        public ConfigEntry<float> SurfComboAmount = config.Bind(
+          category,
+          "Buttslap Combo Amount",
+          -0.1f,
+          "Amount of combo meter added when performing a wavejump."
+      );
+
+        public ConfigEntry<float> SurfCap = config.Bind(
+           category,
+           "Buttslap Cap",
+           -1f,
+           "Maximum amount of speed that can be added when performing a wavejump."
+       );
+
+        public ConfigEntry<float> SurfJumpAmount = config.Bind(
+          category,
+          "Surf Buttslap Jump Amount",
+          5f,
+          "Jump height per wavejump."
+      );
+
+        public ConfigEntry<string> SurfName = config.Bind(
+          category,
+          "Surf Buttslap Trick Name",
+          "Wavejump",
+          "The trick name when performing a buttslap from a surf."
+      );
+
+        public ConfigEntry<int> SurfPoints = config.Bind(
+          category,
+          "Surf Buttslap Trick Points",
+          100,
+          "Amount of points given when performing a wavejump."
+      );
+
+        public ConfigEntry<int> SurfPointsMin = config.Bind(
+          category,
+          "Surf Buttslap Trick Points Minimum",
+          10,
+          "Minimum amount of points given when performing a wavejump."
+      );
+
+        public ConfigEntry<string> SurfBoostName = config.Bind(
+          category,
+          "Surf Boosted Buttslap Trick Name",
+          "Boosted Wavejump",
+          "The trick name when performing a wavejump from a boost trick."
+      );
+
+        public ConfigEntry<int> SurfBoostPoints = config.Bind(
+          category,
+          "Surf Boosted Buttslap Trick Points",
+          500,
+          "Amount of points given when performing a wavejump from a boost trick."
+      );
+
+        public ConfigEntry<int> SurfBoostPointsMin = config.Bind(
+          category,
+          "Surf Boosted Buttslap Trick Points Minimum",
+          50,
+          "Minimum amount of points given when performing a wavejump from a boost trick."
+      );
+    }
+
+    public class ConfigWaveDash(ConfigFile config, string category)
+    {
+        public ConfigEntry<float> grace = config.Bind(
+          category,
+          "Wave Dash Grace",
+          0.3f,
+          "Amount of time after a Fast Fall to start a Wave Dash."
+      );
+
+        public ConfigEntry<float> NormalSpeed = config.Bind(
+          category,
+          "Normal Wave Dash Amount",
+          7f,
+          "Amount of forward speed given when performing a Wave Dash."
+      );
+
+        public ConfigEntry<float> BoostSpeed = config.Bind(
+          category,
+          "Boost Wave Dash Amount",
+          10f,
+          "Amount of forward speed given when performing a Boost Wave Dash."
+      );
+
+        public ConfigEntry<int> NormalPoints = config.Bind(
+          category,
+          "Normal Wave Dash Point Amount",
+          100,
+          "Amount of points given when performing a Wave Dash."
+      );
+
+        public ConfigEntry<int> NormalPointsMin = config.Bind(
+          category,
+          "Normal Wave Dash Point Amount Minimum",
+          10,
+          "Minimum amount of points given when performing a Wave Dash."
+      );
+
+        public ConfigEntry<int> BoostPoints = config.Bind(
+          category,
+          "Boost Wave Dash Point Amount",
+          250,
+          "Amount of points given when performing a Boost Wave Dash."
+      );
+
+        public ConfigEntry<int> BoostPointsMin = config.Bind(
+          category,
+          "Boost Wave Dash Point Amount Minimum",
+          50,
+          "Minimum amount of points given when performing a Boost Wave Dash."
+      );
+
+        public ConfigEntry<string> NormalName = config.Bind(
+          category,
+          "Normal Wave Dash Trick Name",
+          "Wave Dash",
+          "Trick name when performing a Wave Dash."
+      );
+
+        public ConfigEntry<string> BoostName = config.Bind(
+          category,
+          "Boosted Wave Dash Trick Name",
+          "Boost Wave Dash",
+          "Trick name when performing a Boost Wave Dash."
+      );
+    }
+
+    public class ConfigHandplant(ConfigFile config, string category)
+    {
+        public ConfigEntry<bool> Enabled = config.Bind(
+           category,
+           "Handplant Trick Jump Enabled",
+           true,
+           "Trigered by tricking during a handplant."
+       );
+
+        public ConfigEntry<float> Strength = config.Bind(
+          category,
+          "Handplant Trick Jump Strength",
+          0.5f,
+          "Amount of forward speed converted to height when performing a handplant trick jump."
+      );
     }
 
     public class ConfigMisc(ConfigFile config, string category)
@@ -579,11 +1195,46 @@ public class MyConfig(ConfigFile config)
             "Maximum speed you're allowed to fall."
         );
 
+        public ConfigEntry<bool> airDashChangeEnabled = config.Bind(
+            category,
+            "Air Dash Change Enabled",
+            true,
+            "Allows adjustment to the speed loss when changing direction with an air dash."
+        );
+
         public ConfigEntry<float> airDashStrength = config.Bind(
             category,
             "Air Dash Strength",
             0.3f,
             "How much speed you lose when changing direction with the air dash."
+        );
+
+        public ConfigEntry<bool> airDashDoubleJumpEnabled = config.Bind(
+            category,
+            "Air Dash Double Jump Enabled",
+            true,
+            "Not holding a direction when performing an air dash will work like a double jump instead."
+        );
+
+        public ConfigEntry<float> airDashDoubleJumpAmount = config.Bind(
+            category,
+            "Air Dash Double Jump Amount",
+            7f,
+            "Amount of vertical veloctiy to add when performing an air dash double jump."
+        );
+
+        public ConfigEntry<DoubleJumpType> airDashDoubleJumpType = config.Bind(
+            category,
+            "Air Dash Double Jump Type",
+            DoubleJumpType.Additive,
+            "How the double jump behaves. Additive will add the amount to your vertical velocity. Replace will replace your vertical velocity so if you're going faster it will slow you down. Soft cap will only set your vertical veloctiy if it's lower than the amount."
+        );
+
+        public ConfigEntry<string> airDashDoubleJumpAnim = config.Bind(
+            category,
+            "Air Dash Double Jump Animation",
+            "airTrick1",
+            ""
         );
 
         public ConfigEntry<float> averageSpeedTimer = config.Bind(
@@ -592,6 +1243,141 @@ public class MyConfig(ConfigFile config)
             0.4f,
             "Many mechanics use your average speed over a period of time this is that period of time, a lower time will be more responsive but less forgiving and might feel less smooth."
         );
+
+        public ConfigEntry<AverageSpeedMode> averageSpeedMode = config.Bind(
+            category,
+            "Average Speed Mode",
+            AverageSpeedMode.BlendMaxAverage,
+            "The mode used for any mechanic that uses the players average speed. Average is the players average speed over a period of time, max chooses the players max speed in that period of time, and BlendMaxAverage blends the max speed and the average."
+        );
+
+        public ConfigEntry<float> averageSpeedBias = config.Bind(
+            category,
+            "Blend Speed Bias",
+            0.5f,
+            "The bias towards using the average or max speed when using the BlendMaxAverage mode. 0 lean more towards the average, 1 will lean more towards the max"
+        );
+
+        public ConfigEntry<string> preset = config.Bind(
+            category,
+            "Preset",
+            "None",
+            "Preset to use when launching the game."
+        );
+
+        public ConfigEntry<bool> presetEnabled = config.Bind(
+           category,
+           "Preset Enabled",
+           true,
+           "Whether the preset is enabled on launch or not."
+       );
+
+        public ConfigEntry<int> listLength = config.Bind(
+           category,
+           "Trick List Total Length",
+           15,
+           "Total size of trick point degradation list."
+       );
+
+        public ConfigEntry<int> repsToMin = config.Bind(
+           category,
+           "Repetitions To Minimum Points",
+           3,
+           "Amount of repetitions of the same trick in the trick list to reach the minimum point value."
+       );
+
+        public ConfigEntry<bool> ReturnSpeed = config.Bind(
+           category,
+           "Return Speed On No Collision",
+           true,
+           "Attempts to return speed if no collision was detected, this attempts to help with small lips stealing player speed."
+       );
+
+        public ConfigEntry<bool> ReturnSpeedLoading = config.Bind(
+           category,
+           "Return Speed On Exiting Loading",
+           true,
+           "Retains player speed when changing stages."
+       );
+
+        public ConfigEntry<bool> HardLandingEnabled = config.Bind(
+           category,
+           "Hard landing change enabled",
+           true,
+           "being in the air for a period of time and not sliding when landing will remove all of your speed."
+       );
+
+        public ConfigEntry<HardLandingType> HardLandingMode = config.Bind(
+            category,
+            "Hard Landing Mode",
+            HardLandingType.OnlyFeet,
+            "What instances the hard landing can trigger."
+        );
+
+        public ConfigEntry<float> HardFallTime = config.Bind(
+           category,
+           "Hard landing Air Time",
+           1.5f,
+           "How long you need to be in the air to trigger a hard landing."
+       );
+
+        public ConfigEntry<bool> JumpGroundTrickFoot = config.Bind(
+           category,
+           "Allow Jump During On Foot Ground Tricks",
+           false,
+           "Allows jump during on foot ground tricks, this will not trigger a super ground trick if you jump early."
+       );
+
+        public ConfigEntry<bool> JumpGroundTrickMove = config.Bind(
+           category,
+           "Allow Jump During Movestyle Ground Tricks",
+           true,
+           "Allows jump during movestyle ground tricks."
+       );
+
+        public ConfigEntry<bool> SlopeSlideSpeedChange = config.Bind(
+           category,
+           "Slope Slide Speed Enabled",
+           true,
+           "New calculation for sliding while going up or down a slope."
+       );
+
+        public ConfigEntry<float> SlopeSlideSpeedDown = config.Bind(
+           category,
+           "Slope Slide Speed Strength Down",
+           0.1f,
+           "Multiplier used when adding speed while going down a slope while sliding."
+       );
+
+        public ConfigEntry<float> SlopeSlideSpeedUp = config.Bind(
+           category,
+           "Slope Slide Speed Strength Up",
+           0.3f,
+           "Multiplier used when subtracting speed while going up a slope while sliding."
+       );
+
+        public ConfigEntry<bool> DisablePatch = config.Bind(
+           category,
+           "Disable All Harmony Patches",
+           false,
+           "Disables all harmony patches, this is used for the vanilla preset."
+       );
     }
 
+    public class ConfigNonStable(ConfigFile config, string category)
+    {
+        public ConfigEntry<bool> Enabled = config.Bind(
+            category,
+            "Non Stable Changes Enabled",
+            true,
+            "General changes to non stable surfaces, this allows for more control on surfaces you can't stand on."
+        );
+
+        public ConfigEntry<bool> SurfEnabled = config.Bind(
+            category,
+            "Surf Enabled",
+            true,
+            "Aloows the player to surf on non stable surfaces by holding the slide button."
+        );
+    }
 }

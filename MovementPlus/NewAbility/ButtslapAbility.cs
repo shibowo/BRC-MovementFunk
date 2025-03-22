@@ -1,21 +1,20 @@
 ﻿using Reptile;
 using UnityEngine;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ECM.Common;
 
 namespace MovementPlus.NewAbility
 {
     public class ButtslapAbility : Ability
     {
-        public ButtslapAbility(Player player) : base(player) { }
-        private static readonly MyConfig ConfigSettings = MovementPlusPlugin.ConfigSettings;
+        public ButtslapAbility(Player player) : base(player)
+        {
+        }
+
+        private static MyConfig ConfigSettings = MovementPlusPlugin.ConfigSettings;
 
         private float buttslapTimer;
-
+        private bool boosted;
+        private int buttslapAmount;
+        private string type;
 
         public override void Init()
         {
@@ -26,14 +25,17 @@ namespace MovementPlus.NewAbility
 
         public void Activation()
         {
+            ConfigSettings = MovementPlusPlugin.ConfigSettings;
             if (!this.p.motor.isGrounded && this.p.jumpButtonNew && ConfigSettings.Buttslap.Enabled.Value && this.p.ability == this.p.groundTrickAbility && !this.p.isJumping)
             {
+                boosted = this.p.groundTrickAbility.boostTrick;
                 this.p.ActivateAbility(this);
             }
         }
 
         public override void OnStartAbility()
         {
+            ConfigSettings = MovementPlusPlugin.ConfigSettings;
             if (!ConfigSettings.Buttslap.MultiEnabled.Value)
             {
                 this.p.StopCurrentAbility();
@@ -41,9 +43,10 @@ namespace MovementPlus.NewAbility
             else
             {
                 this.buttslapTimer = ConfigSettings.Buttslap.Timer.Value;
+                this.buttslapAmount = 0;
             }
+            type = MPVariables.buttslapType;
             this.PerformButtslap();
-            
         }
 
         public override void FixedUpdateAbility()
@@ -75,30 +78,113 @@ namespace MovementPlus.NewAbility
 
         private void PerformButtslap()
         {
-            // Play voice and animation
             this.p.audioManager.PlayVoice(ref this.p.currentVoicePriority, this.p.character, AudioClipID.VoiceJump, this.p.playerGameplayVoicesAudioSource, VoicePriority.MOVEMENT);
             this.p.PlayAnim(this.p.jumpHash, true, true, -1f);
 
-            // Calculate jump amount
-            float jumpAmount = ConfigSettings.Buttslap.JumpAmount.Value + Mathf.Max(this.p.GetVelocity().y, 0f);
-
-            // Perform jump effects and set velocity
-            this.p.DoJumpEffects(this.p.motor.groundNormalVisual * -1f);
-            this.p.motor.SetVelocityYOneTime(jumpAmount);
-
-            // Set jumping flags
             this.p.isJumping = true;
             this.p.jumpRequested = false;
             this.p.jumpConsumed = true;
             this.p.jumpedThisFrame = true;
             this.p.timeSinceLastJump = 0f;
 
-            // Set forward speed and perform combo timeout
-            this.p.SetForwardSpeed(MovementPlusPlugin.LosslessClamp(this.p.GetForwardSpeed(), ConfigSettings.Buttslap.Amount.Value, ConfigSettings.Buttslap.Cap.Value));
-            this.p.DoComboTimeOut(ConfigSettings.Buttslap.ComboAmount.Value);
+            PerformTrick(type, boosted);
+        }
 
-            // Perform trick
-            this.p.DoTrick(0, "Buttslap");
+        private void PerformTrick(string type, bool boosted)
+        {
+            ConfigSettings = MovementPlusPlugin.ConfigSettings;
+            this.buttslapAmount++;
+            string baseName;
+            int points;
+            int minPoints;
+            float jumpAmount;
+            float forwardAmount;
+            float cap;
+            float comboAmount;
+
+            if (boosted)
+            {
+                switch (type)
+                {
+                    case "Pole":
+                        baseName = ConfigSettings.Buttslap.PoleBoostName.Value;
+                        points = ConfigSettings.Buttslap.PoleBoostPoints.Value;
+                        minPoints = ConfigSettings.Buttslap.PoleBoostPointsMin.Value;
+                        jumpAmount = ConfigSettings.Buttslap.PoleJumpAmount.Value;
+                        forwardAmount = ConfigSettings.Buttslap.PoleAmount.Value;
+                        cap = ConfigSettings.Buttslap.PoleCap.Value;
+                        comboAmount = ConfigSettings.Buttslap.PoleComboAmount.Value;
+                        break;
+
+                    case "Surf":
+                        baseName = ConfigSettings.Buttslap.SurfBoostName.Value;
+                        points = ConfigSettings.Buttslap.SurfBoostPoints.Value;
+                        minPoints = ConfigSettings.Buttslap.SurfBoostPointsMin.Value;
+                        jumpAmount = ConfigSettings.Buttslap.SurfJumpAmount.Value;
+                        forwardAmount = ConfigSettings.Buttslap.SurfAmount.Value;
+                        cap = ConfigSettings.Buttslap.SurfCap.Value;
+                        comboAmount = ConfigSettings.Buttslap.SurfComboAmount.Value;
+                        break;
+
+                    default:
+                        baseName = ConfigSettings.Buttslap.BoostName.Value;
+                        points = ConfigSettings.Buttslap.BoostPoints.Value;
+                        minPoints = ConfigSettings.Buttslap.PointsMin.Value;
+                        jumpAmount = ConfigSettings.Buttslap.JumpAmount.Value;
+                        forwardAmount = ConfigSettings.Buttslap.Amount.Value;
+                        cap = ConfigSettings.Buttslap.Cap.Value;
+                        comboAmount = ConfigSettings.Buttslap.ComboAmount.Value;
+                        break;
+                }
+            }
+            else
+            {
+                switch (type)
+                {
+                    case "Pole":
+                        baseName = ConfigSettings.Buttslap.PoleName.Value;
+                        points = ConfigSettings.Buttslap.PolePoints.Value;
+                        minPoints = ConfigSettings.Buttslap.PoleBoostPointsMin.Value;
+                        jumpAmount = ConfigSettings.Buttslap.PoleJumpAmount.Value;
+                        forwardAmount = ConfigSettings.Buttslap.PoleAmount.Value;
+                        cap = ConfigSettings.Buttslap.PoleCap.Value;
+                        comboAmount = ConfigSettings.Buttslap.PoleComboAmount.Value;
+                        break;
+
+                    case "Surf":
+                        baseName = ConfigSettings.Buttslap.SurfName.Value;
+                        points = ConfigSettings.Buttslap.SurfPoints.Value;
+                        minPoints = ConfigSettings.Buttslap.SurfBoostPointsMin.Value;
+                        jumpAmount = ConfigSettings.Buttslap.SurfJumpAmount.Value;
+                        forwardAmount = ConfigSettings.Buttslap.SurfAmount.Value;
+                        cap = ConfigSettings.Buttslap.SurfCap.Value;
+                        comboAmount = ConfigSettings.Buttslap.SurfComboAmount.Value;
+                        break;
+
+                    default:
+                        baseName = ConfigSettings.Buttslap.Name.Value;
+                        points = ConfigSettings.Buttslap.Points.Value;
+                        minPoints = ConfigSettings.Buttslap.BoostPointsMin.Value;
+                        jumpAmount = ConfigSettings.Buttslap.JumpAmount.Value;
+                        forwardAmount = ConfigSettings.Buttslap.Amount.Value;
+                        cap = ConfigSettings.Buttslap.Cap.Value;
+                        comboAmount = ConfigSettings.Buttslap.ComboAmount.Value;
+                        break;
+                }
+            }
+
+            MPTrickManager.AddTrick(baseName);
+            points = MPTrickManager.CalculateTrickValue(baseName, points, minPoints, ConfigSettings.Misc.listLength.Value, ConfigSettings.Misc.repsToMin.Value);
+
+            string name = $"{baseName} x {this.buttslapAmount}";
+            this.p.currentTrickName = name;
+            MPTrickManager.DoTrick(name, points);
+
+            jumpAmount += Mathf.Max(this.p.GetVelocity().y, 0f);
+            this.p.DoJumpEffects(this.p.motor.groundNormalVisual * -1f);
+            this.p.motor.SetVelocityYOneTime(jumpAmount);
+            this.p.SetForwardSpeed(MPMath.LosslessClamp(this.p.GetForwardSpeed(), forwardAmount, cap));
+            this.p.DoComboTimeOut(comboAmount);
         }
     }
 }

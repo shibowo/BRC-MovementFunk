@@ -1,35 +1,38 @@
 ﻿using HarmonyLib;
+using MovementPlus.Mechanics;
 using MovementPlus.NewAbility;
 using Reptile;
+using System.Collections.Generic;
+using System.Reflection.Emit;
 using UnityEngine;
+using static MovementPlus.MyConfig;
 
 namespace MovementPlus.Patches
 {
     internal static class PlayerPatch
     {
-        private static readonly MyConfig ConfigSettings = MovementPlusPlugin.ConfigSettings;
+        private static MyConfig ConfigSettings = MovementPlusPlugin.ConfigSettings;
 
         public static ButtslapAbility buttslapAbility;
-
-        private static bool tooFast;
+        public static SurfAbility surfAbility;
 
         [HarmonyPatch(typeof(Player), nameof(Player.Init))]
         [HarmonyPostfix]
         private static void Player_Init_Postfix(Player __instance)
         {
-            if (MovementPlusPlugin.player == null && !__instance.isAI)
+            if (__instance.isAI || MovementPlusPlugin.ConfigSettings.Misc.DisablePatch.Value) { return; }
+            if (MovementPlusPlugin.player == null)
             {
                 MovementPlusPlugin.player = __instance;
-                MovementPlusPlugin.defaultBoostSpeed = __instance.normalBoostSpeed;
-                MovementPlusPlugin.defaultVertMaxSpeed = __instance.vertMaxSpeed;
-                MovementPlusPlugin.defaultVertTopJumpSpeed = __instance.vertTopJumpSpeed;
-                MovementPlusPlugin.defaultJumpSpeed = __instance.specialAirAbility.jumpSpeed;
+                BoostChanges.defaultBoostSpeed = __instance.normalBoostSpeed;
+                VertChanges.defaultVertMaxSpeed = __instance.vertMaxSpeed;
+                VertChanges.defaultVertTopJumpSpeed = __instance.vertTopJumpSpeed;
+                MPVariables.defaultJumpSpeed = __instance.specialAirAbility.jumpSpeed;
                 __instance.motor.maxFallSpeed = ConfigSettings.Misc.maxFallSpeed.Value;
 
-                __instance.wallrunAbility.lastSpeed = MovementPlusPlugin.savedLastSpeed;
-                __instance.vertBottomExitSpeedThreshold = 0f;
-
+                __instance.wallrunAbility.lastSpeed = MPVariables.savedLastSpeed;
                 buttslapAbility = new ButtslapAbility(__instance);
+                surfAbility = new SurfAbility(__instance);
 
                 if (ConfigSettings.Misc.collisionChangeEnabled.Value)
                 {
@@ -42,219 +45,272 @@ namespace MovementPlus.Patches
             }
         }
 
-        
         [HarmonyPatch(typeof(Player), nameof(Player.FixedUpdatePlayer))]
         [HarmonyPostfix]
         private static void Player_FixedUpdatePlayer_Postfix(Player __instance)
         {
-            if (MovementPlusPlugin.timeInAir >= 1.5f)
-            {
-                tooFast = true;
-            }
-            else
-            {
-                tooFast = false;
-            }
+            if (__instance.isAI || MovementPlusPlugin.ConfigSettings.Misc.DisablePatch.Value) { return; }
 
             buttslapAbility.Activation();
+            surfAbility.Activation();
+            if (!__instance.IsComboing())
+            {
+                __instance.ClearMultipliersDone();
+            }
         }
-
 
         [HarmonyPatch(typeof(Player), nameof(Player.Jump))]
-        [HarmonyPrefix]
-        private static bool Player_Jump_Prefix(Player __instance)
+        public static class Player_Jump_Transpiler
         {
-            __instance.audioManager.PlayVoice(ref __instance.currentVoicePriority, __instance.character, AudioClipID.VoiceJump, __instance.playerGameplayVoicesAudioSource, VoicePriority.MOVEMENT);
-            __instance.PlayAnim(__instance.jumpHash, false, false, -1f);
-            float num = 1f;
-            if (__instance.targetMovement == Player.MovementType.RUNNING && __instance.IsGrounded() && __instance.motor.groundCollider.gameObject.layer != 23 && Vector3.Dot(Vector3.ProjectOnPlane(__instance.motor.groundNormal, Vector3.up).normalized, __instance.dir) < -0.5f)
+            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
             {
-                num = 1f + Mathf.Min(__instance.motor.groundAngle / 90f, 0.3f);
-            }
-            __instance.ForceUnground(true);
-            float num2 = 0f;
-            if (__instance.timeSinceGrinding <= __instance.JumpPostGroundingGraceTime)
-            {
-                num2 = __instance.bonusJumpSpeedGrind;
-            }
-            else if (__instance.timeSinceWallrunning <= __instance.JumpPostGroundingGraceTime)
-            {
-                num2 = __instance.bonusJumpSpeedWallrun;
-            }
-            float num3 = __instance.jumpSpeed * num + num2;
-            if (num2 != 0f && __instance.slideButtonHeld)
-            {
-                num3 *= __instance.abilityShorthopFactor;
-                __instance.maintainSpeedJump = true;
-            }
-            else
-            {
-                __instance.maintainSpeedJump = false;
-            }
-            if (__instance.onLauncher)
-            {
-                if (!__instance.onLauncher.parent.gameObject.name.Contains("Super"))
+                var codes = new List<CodeInstruction>(instructions);
+                for (int i = 0; i < codes.Count; i++)
                 {
-                    __instance.motor.SetVelocityYOneTime(__instance.jumpSpeedLauncher);
+                    if (codes[i].opcode == OpCodes.Ldarg_0 &&
+                        codes[i + 1].opcode == OpCodes.Ldarg_0 &&
+                        codes[i + 2].Calls(AccessTools.Method(typeof(Player), "get_maxMoveSpeed")) &&
+                        codes[i + 3].opcode == OpCodes.Ldc_R4 && (float)codes[i + 3].operand == 2f &&
+                        codes[i + 4].opcode == OpCodes.Add &&
+                        codes[i + 5].Calls(AccessTools.Method(typeof(Player), "SetForwardSpeed")))
+                    {
+                        codes.RemoveRange(i, 6);
+
+                        codes.Insert(i, new CodeInstruction(OpCodes.Ldarg_0));
+                        codes.Insert(i + 1, new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(Player_Jump_Transpiler), nameof(JumpPadSetForwardSpeed))));
+
+                        break;
+                    }
+                }
+
+                return codes;
+            }
+
+            private static void JumpPadSetForwardSpeed(Player player)
+            {
+                if (player.isAI || MovementPlusPlugin.ConfigSettings.Misc.DisablePatch.Value)
+                {
+                    player.SetForwardSpeed(player.maxMoveSpeed + 2f);
+                }
+                float speed = Mathf.Max(MPMovementMetrics.AverageForwardSpeed(), player.maxMoveSpeed, player.GetForwardSpeed() + 2f);
+                player.SetForwardSpeed(speed);
+            }
+        }
+
+        [HarmonyPatch(typeof(Player), nameof(Player.Jump))]
+        [HarmonyPostfix]
+        private static void Player_Jump_Postfix(Player __instance)
+        {
+            if (__instance.isAI || MovementPlusPlugin.ConfigSettings.Misc.DisablePatch.Value) { return; }
+            ConfigSettings = MovementPlusPlugin.ConfigSettings;
+            if (Fastfall.timeSinceLastFastFall < MovementPlusPlugin.ConfigSettings.WaveDash.grace.Value && !__instance.slideButtonHeld)
+            {
+                float speed;
+                string name;
+                int points;
+
+                if (__instance.boostButtonHeld)
+                {
+                    speed = MPMovementMetrics.AverageForwardSpeed() + MovementPlusPlugin.ConfigSettings.WaveDash.BoostSpeed.Value;
+                    name = MovementPlusPlugin.ConfigSettings.WaveDash.BoostName.Value;
+                    MPTrickManager.AddTrick(name);
+                    points = MPTrickManager.CalculateTrickValue(name, ConfigSettings.WaveDash.BoostPoints.Value, ConfigSettings.WaveDash.BoostPointsMin.Value, ConfigSettings.Misc.listLength.Value, ConfigSettings.Misc.repsToMin.Value);
+                    MPTrickManager.DoTrick(name, points);
+                    __instance.StopCurrentAbility();
                 }
                 else
                 {
-                    __instance.motor.SetVelocityYOneTime(__instance.jumpSpeedLauncher * 1.4f);
+                    speed = MPMovementMetrics.AverageForwardSpeed() + MovementPlusPlugin.ConfigSettings.WaveDash.NormalSpeed.Value;
+                    name = MovementPlusPlugin.ConfigSettings.WaveDash.NormalName.Value;
+                    MPTrickManager.AddTrick(name);
+                    points = MPTrickManager.CalculateTrickValue(name, ConfigSettings.WaveDash.NormalPoints.Value, ConfigSettings.WaveDash.NormalPointsMin.Value, ConfigSettings.Misc.listLength.Value, ConfigSettings.Misc.repsToMin.Value);
+                    MPTrickManager.DoTrick(name, points);
                 }
-                if (__instance.targetMovement == Player.MovementType.RUNNING && Vector3.Dot(__instance.dir, __instance.onLauncher.back()) > 0.7f && !__instance.onLauncher.parent.gameObject.name.Contains("flat"))
+
+                __instance.SetForwardSpeed(speed);
+            }
+        }
+
+        [HarmonyPatch(typeof(Player), nameof(Player.OnLanded))]
+        public static class Player_OnLanded_Transpiler
+        {
+            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
+            {
+                var codes = new List<CodeInstruction>(instructions);
+
+                for (int i = 0; i < codes.Count; i++)
                 {
-                    __instance.SetForwardSpeed(__instance.GetForwardSpeed() + 5f);
+                    if (codes[i].opcode == OpCodes.Ldarg_0 &&
+                        codes[i + 1].opcode == OpCodes.Ldarg_0 &&
+                        codes[i + 2].Calls(AccessTools.Method(typeof(Player), "get_maxMoveSpeed")) &&
+                        codes[i + 3].Calls(AccessTools.Method(typeof(Player), "SetSpeedFlat")))
+                    {
+                        codes.RemoveRange(i, 4);
+                        codes.Insert(i, new CodeInstruction(OpCodes.Ldarg_0));
+                        codes.Insert(i + 1, new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(Player_OnLanded_Transpiler), nameof(HardLanding))));
+                        break;
+                    }
                 }
-                __instance.audioManager.PlaySfxGameplay(SfxCollectionID.GenericMovementSfx, AudioClipID.launcher_woosh, __instance.playerOneShotAudioSource, 0f);
-                __instance.DoHighJumpEffects(__instance.motor.groundNormalVisual * -1f);
+                return codes;
             }
-            else
+
+            private static void HardLanding(Player player)
             {
-                __instance.DoJumpEffects(__instance.motor.groundNormalVisual * -1f);
-                __instance.motor.SetVelocityYOneTime(num3);
-                __instance.isJumping = true;
-            }
-            __instance.jumpRequested = false;
-            __instance.jumpConsumed = true;
-            __instance.jumpedThisFrame = true;
-            __instance.timeSinceLastJump = 0f;
-            if (__instance.ability != null)
-            {
-                __instance.ability.OnJump();
-                if (__instance.ability != null && __instance.onLauncher && __instance.ability.autoAirTrickFromLauncher)
+                var config = MovementPlusPlugin.ConfigSettings.Misc;
+
+                if (player.isAI || !config.HardLandingEnabled.Value || MovementPlusPlugin.ConfigSettings.Misc.DisablePatch.Value)
                 {
-                    __instance.ActivateAbility(__instance.airTrickAbility);
-                    return false;
+                    player.SetSpeedFlat(player.maxMoveSpeed);
+                    return;
+                }
+
+                bool isHardFall = MPMovementMetrics.lastAirTime >= config.HardFallTime.Value;
+
+                if (!isHardFall)
+                {
+                    return;
+                }
+
+                switch (config.HardLandingMode.Value)
+                {
+                    case HardLandingType.Off:
+                        break;
+
+                    case HardLandingType.OnlyFeet:
+                        if (player.moveStyle == MoveStyle.ON_FOOT)
+                        {
+                            player.SetSpeedFlat(player.maxMoveSpeed);
+                        }
+                        break;
+
+                    case HardLandingType.OnlyMovestyle:
+                        if (player.moveStyle != MoveStyle.ON_FOOT)
+                        {
+                            player.SetSpeedFlat(player.maxMoveSpeed);
+                        }
+                        break;
+
+                    case HardLandingType.FeetAndMovestyle:
+                        player.SetSpeedFlat(player.maxMoveSpeed);
+                        break;
                 }
             }
-            else if (__instance.onLauncher)
+        }
+
+        [HarmonyPatch(typeof(Player), nameof(Player.LandCombo))]
+        [HarmonyPrefix]
+        private static bool Player_LandCombo_Prefix(Player __instance)
+        {
+            if (__instance.isAI || MovementPlusPlugin.ConfigSettings.Misc.DisablePatch.Value) { return true; }
+            ConfigSettings = MovementPlusPlugin.ConfigSettings;
+            if (__instance.comboTimeOutTimer <= 0)
             {
-                __instance.ActivateAbility(__instance.airTrickAbility);
+                if (WorldHandler.instance.currentEncounter != null)
+                {
+                    __instance.ClearMultipliersDone();
+                }
+                return true;
+            }
+            if (__instance.boosting && ConfigSettings.ComboGeneral.BoostEnabled.Value)
+            {
+                return false;
+            }
+            if (ConfigSettings.ComboGeneral.NoAbilityEnabled.Value)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        [HarmonyPatch(typeof(Player), nameof(Player.ClearMultipliersDone))]
+        [HarmonyPrefix]
+        private static bool Player_ClearMultipliersDone_Prefix(Player __instance)
+        {
+            if (__instance.isAI || MovementPlusPlugin.ConfigSettings.Misc.DisablePatch.Value) { return true; }
+            if (__instance.comboTimeOutTimer <= 0 || !__instance.IsComboing())
+            {
+                return true;
             }
             return false;
         }
 
-
-        [HarmonyPatch(typeof(Player), nameof(Player.OnLanded))]
-        [HarmonyPrefix]
-        private static bool Player_OnLanded_Prefix(Player __instance)
+        [HarmonyPatch(typeof(Player), nameof(Player.RegainAirMobility))]
+        [HarmonyPostfix]
+        private static void Player_RegainAirMobility_Postfix(Player __instance)
         {
-            __instance.OrientVisualInstant();
-            if (__instance.motor.groundRigidbody != null)
-            {
-                Car component = __instance.motor.groundRigidbody.GetComponent<Car>();
-                if (component != null)
-                {
-                    component.PlayerLandsOn();
-                }
-            }
-            if (__instance.ability == null)
-            {
-                if (__instance.GetForwardSpeed() <= __instance.minMoveSpeed + 1f)
-                {
-                    __instance.PlayAnim(__instance.landHash, false, false, -1f);
-                }
-                else
-                {
-                    __instance.PlayAnim(__instance.landRunHash, false, false, -1f);
-                }
-                if (tooFast && __instance.moveStyle == MoveStyle.ON_FOOT)
-                {
-                    __instance.SetSpeedFlat(__instance.maxMoveSpeed);
-                }
-                if (__instance.slideButtonHeld && !__instance.slideAbility.locked)
-                {
-                    __instance.ActivateAbility(__instance.slideAbility);
-                }
-                else if (!ConfigSettings.ComboGeneral.NoAbilityEnabled.Value)
-                {
-                    __instance.LandCombo();
-                }
-            }
-            else if (__instance.ability == __instance.boostAbility && !ConfigSettings.ComboGeneral.BoostEnabled.Value)
-            {
-                __instance.LandCombo();
-            }
-            __instance.audioManager.PlaySfxGameplay(__instance.moveStyle, AudioClipID.land, __instance.playerOneShotAudioSource, 0f);
-            __instance.CreateCircleDustEffect(__instance.motor.groundNormalVisual * -1f);
-            return false;
+            if (__instance.isAI || MovementPlusPlugin.ConfigSettings.Misc.DisablePatch.Value) { return; }
+            Fastfall.canFastFall = true;
+            MPVariables.canResetAirBoost = true;
+            MPVariables.canResetAirDash = true;
         }
 
         [HarmonyPatch(typeof(Player), nameof(Player.FixedUpdateAbilities))]
-        [HarmonyPrefix]
-        private static bool Player_FixedUpdateAbilities_Prefix(Player __instance)
+        public static class Player_FixedUpdateAbilities_Transpiler
         {
-            if (__instance.hitpause > 0f)
+            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
             {
-                __instance.hitpause -= Core.dt;
-                if (__instance.hitpause <= 0f)
+                var codes = new List<CodeInstruction>(instructions);
+                for (int i = 0; i < codes.Count; i++)
                 {
-                    __instance.StopHitpause();
-                    return false;
+                    if (codes[i].opcode == OpCodes.Ldarg_0 &&
+                        codes[i + 1].Calls(AccessTools.Method(typeof(Player), "LandCombo")))
+                    {
+                        codes[i + 1] = new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(Player_FixedUpdateAbilities_Transpiler), nameof(NoAbilityComboTimeout)));
+                        break;
+                    }
                 }
+
+                return codes;
             }
-            else
+
+            private static void NoAbilityComboTimeout(Player player)
             {
-                bool flag = __instance.IsGrounded();
-                __instance.abilityTimer += Core.dt;
-                if (flag)
+                if (player.isAI || MovementPlusPlugin.ConfigSettings.Misc.DisablePatch.Value)
                 {
-                    __instance.RegainAirMobility();
+                    player.LandCombo();
+                    return;
                 }
-                __instance.grindAbility.PassiveUpdate();
-                if (__instance.isAI)
+                ConfigSettings = MovementPlusPlugin.ConfigSettings;
+                if (player.IsComboing() && Fastfall.timeSinceLastFastFall <= ConfigSettings.WaveDash.grace.Value)
                 {
-                    __instance.pseudoGraffitiAbility.PassiveUpdate();
+                    return;
                 }
-                __instance.wallrunAbility.PassiveUpdate();
-                __instance.handplantAbility.PassiveUpdate();
-                if (__instance.ability == null)
+                if (player.IsComboing() && ConfigSettings.ComboGeneral.NoAbilityEnabled.Value && !player.boosting)
                 {
-                    if (!__instance.IsBusyWithSequence())
-                    {
-                        for (int i = 0; i < __instance.abilities.Count; i++)
-                        {
-                            if (__instance.abilities[i].CheckActivation())
-                            {
-                                return false;
-                            }
-                        }
-                    }
-                    if (flag && __instance.inWalkZone)
-                    {
-                        if (__instance.usingEquippedMovestyle)
-                        {
-                            __instance.ActivateAbility(__instance.switchMoveStyleAbility);
-                        }
-                    }
-                    else if (__instance.switchStyleButtonNew && !__instance.switchToEquippedMovestyleLocked && !flag)
-                    {
-                        __instance.SwitchToEquippedMovestyle(!__instance.usingEquippedMovestyle, true, true, true);
-                    }
+                    float num = Mathf.Min(player.GetForwardSpeed() / player.boostSpeed, 0.95f);
+                    player.DoComboTimeOut(Mathf.Max(Core.dt * (1f - num), Core.dt / 2f) * ConfigSettings.ComboGeneral.NoAbilityTimeout.Value);
+                    return;
                 }
-                else
-                {
-                    __instance.ability.FixedUpdateAbility();
-                }
-                if (__instance.ability == null && flag)
-                {
-                    if (!__instance.IsBusyWithSequence() && !__instance.motor.wasGrounded && __instance.slideButtonHeld && !__instance.slideAbility.locked)
-                    {
-                        __instance.ActivateAbility(__instance.slideAbility);
-                        return false;
-                    }
-                    if (__instance.IsComboing() && ConfigSettings.ComboGeneral.NoAbilityEnabled.Value && !__instance.boosting)
-                    {
-                        float num = Mathf.Min(__instance.GetForwardSpeed() / __instance.boostSpeed, 0.95f);
-                        __instance.DoComboTimeOut(Mathf.Max(Core.dt * (1f - num), Core.dt / 2f) * ConfigSettings.ComboGeneral.NoAbilityTimeout.Value);
-                        //__instance.DoComboTimeOut(Core.dt * MovementPlusPlugin.noAbilityComboTimeout.Value);
-                    }
-                    else
-                    {
-                        __instance.LandCombo();
-                    }
-                }
+                player.LandCombo();
             }
+        }
+
+        [HarmonyPatch(typeof(Player), nameof(Player.DoTrick))]
+        [HarmonyPostfix]
+        private static void Player_DoTrick_Postfix(Player __instance, Player.TrickType type, string trickName = "", int trickNum = 0)
+        {
+            if (__instance.isAI || MovementPlusPlugin.ConfigSettings.Misc.DisablePatch.Value) { return; }
+            if (__instance.ability != __instance.slideAbility)
+            {
+                MPTrickManager.AddTrick(type.ToString());
+            }
+        }
+
+        [HarmonyPatch(typeof(Player), nameof(Player.JumpIsAllowed))]
+        [HarmonyPrefix]
+        private static bool Player_JumpIsAllowed_Prefix(Player __instance, ref bool __result)
+        {
+            if (__instance.isAI || MovementPlusPlugin.ConfigSettings.Misc.DisablePatch.Value) { return true; }
+            ConfigSettings = MovementPlusPlugin.ConfigSettings;
+            bool abilityAllowsJump = __instance.ability == null || __instance.ability.allowNormalJump;
+            bool jumpNotConsumed = !__instance.jumpConsumed;
+            bool noVertShape = __instance.vertShape == null;
+            bool isGroundedOrRecentlyGrounded = __instance.IsGrounded() ||
+                                                __instance.timeSinceLastAbleToJump <= __instance.JumpPostGroundingGraceTime;
+            bool buttslapCheck = __instance.ability == __instance.groundTrickAbility && !__instance.IsGrounded() && ConfigSettings.Buttslap.Enabled.Value;
+
+            __result = jumpNotConsumed && abilityAllowsJump && noVertShape && isGroundedOrRecentlyGrounded && !buttslapCheck;
+
             return false;
         }
     }

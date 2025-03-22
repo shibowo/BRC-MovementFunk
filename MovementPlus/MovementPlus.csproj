@@ -35,14 +35,18 @@
     <Reference Include="0Harmony">
       <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\BombRushCyberfunk\BepInEx\core\0Harmony.dll</HintPath>
     </Reference>
-    <Reference Include="Assembly-CSharp-firstpass_publicized">
-      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\BombRushCyberfunk\Bomb Rush Cyberfunk_Data\Managed\publicized_assemblies\Assembly-CSharp-firstpass_publicized.dll</HintPath>
+    <Reference Include="Assembly-CSharp-firstpass">
+      <HintPath>..\..\..\..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\BombRushCyberfunk\Bomb Rush Cyberfunk_Data\Managed\Assembly-CSharp-firstpass.dll</HintPath>
     </Reference>
     <Reference Include="Assembly-CSharp_publicized">
       <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\BombRushCyberfunk\Bomb Rush Cyberfunk_Data\Managed\publicized_assemblies\Assembly-CSharp_publicized.dll</HintPath>
     </Reference>
     <Reference Include="BepInEx">
       <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\BombRushCyberfunk\BepInEx\core\BepInEx.dll</HintPath>
+    </Reference>
+    <Reference Include="CommonAPI, Version=1.3.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\BombRushCyberfunk\BepInEx\plugins\CommonAPI.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -83,9 +87,34 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="MPAnimation.cs" />
+    <Compile Include="Mechanics\BoostHardCorner.cs" />
+    <Compile Include="Mechanics\GoonStorageMinMax.cs" />
+    <Compile Include="MPPresetManager.cs" />
+    <Compile Include="Patches\HitBounceAbility.cs" />
+    <Compile Include="Patches\VertAbility.cs" />
+    <Compile Include="Patches\StageManager.cs" />
+    <Compile Include="PresetApp.cs" />
+    <Compile Include="MPMisc.cs" />
+    <Compile Include="Mechanics\SpeedLimit.cs" />
+    <Compile Include="Mechanics\RailCollision.cs" />
+    <Compile Include="Mechanics\SpeedReturn.cs" />
+    <Compile Include="MPVariables.cs" />
+    <Compile Include="MPTrickManager.cs" />
+    <Compile Include="Mechanics\BoostChanges.cs" />
+    <Compile Include="Mechanics\Fastfall.cs" />
+    <Compile Include="Mechanics\NonStableChanges.cs" />
+    <Compile Include="Mechanics\PerfectManual.cs" />
+    <Compile Include="Mechanics\RailGoon.cs" />
+    <Compile Include="Mechanics\VertChanges.cs" />
+    <Compile Include="MPMovementMetrics.cs" />
+    <Compile Include="MPMath.cs" />
+    <Compile Include="MPInputBuffer.cs" />
+    <Compile Include="NewAbility\SurfAbility.cs" />
     <Compile Include="NewAbility\ButtslapAbility.cs" />
     <Compile Include="Config\MyConfig.cs" />
     <Compile Include="MovementPlusPlugin.cs" />
+    <Compile Include="Patches\AirTrickAbility.cs" />
     <Compile Include="Patches\BoostAbility.cs" />
     <Compile Include="Patches\GrindAbility.cs" />
     <Compile Include="Patches\GroundTrickAbility.cs" />
@@ -101,7 +130,7 @@
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>COPY /y "C:\Users\yuril\Documents\BRC-Mods\Workspace\MovementPlus\MovementPlus\obj\Debug\MovementPlus.dll" "C:\Program Files (x86)\Steam\steamapps\common\BombRushCyberfunk\BepInEx\plugins\MovementPlus.dll"</PostBuildEvent>
+    <PostBuildEvent>COPY /y "C:\Users\Yuri\Documents\Modding\Unity\BRC\BRC-Mods\Workspace\MovementPlus\MovementPlus\obj\Debug\MovementPlus.dll" "C:\Program Files (x86)\Steam\steamapps\common\BombRushCyberfunk\BepInEx\plugins\MovementPlus.dll"</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
     <LangVersion>preview</LangVersion>

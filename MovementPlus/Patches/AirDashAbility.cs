@@ -1,61 +1,160 @@
 ﻿using HarmonyLib;
+using MovementPlus.Mechanics;
 using Reptile;
+using System.Collections.Generic;
+using System.Reflection;
+using System.Reflection.Emit;
 using UnityEngine;
 
 namespace MovementPlus.Patches
 {
     internal static class AirDashAbilityPatch
     {
-        private static readonly MyConfig ConfigSettings = MovementPlusPlugin.ConfigSettings;
+        private static MyConfig ConfigSettings = MovementPlusPlugin.ConfigSettings;
+
+        private static bool showBoost = false;
 
         [HarmonyPatch(typeof(AirDashAbility), nameof(AirDashAbility.OnStartAbility))]
-        [HarmonyPrefix]
-        private static bool AirDashAbility_onStartAbility_Prefix(AirDashAbility __instance)
+        public static class AirDashAbility_OnStartAbility_Transpiler
         {
-            if (__instance.p.moveStyle == MoveStyle.SPECIAL_SKATEBOARD)
+            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
             {
-                __instance.p.ActivateAbility(__instance.p.airTrickAbility);
-                Vector3 velocity = __instance.p.GetVelocity();
-                velocity.y = 5f;
-                __instance.p.SetVelocity(velocity);
-                return false;
-            }
-            __instance.p.ringParticles.Emit(1);
-            __instance.airDashSpeed = __instance.airDashStartSpeed;
-            Vector3 vector = __instance.p.moveInput;
-            if (vector.sqrMagnitude == 0f)
-            {
-                vector = ((__instance.dirIfNoSteer != null) ? __instance.dirIfNoSteer.Value : __instance.p.dir);
-            }
-            vector = Vector3.ProjectOnPlane(vector, Vector3.up).normalized;
-            if (__instance.p.smoothRotation)
-            {
-                __instance.p.SetRotHard(vector);
-            }
-            else
-            {
-                __instance.p.SetRotation(vector);
-            }
-            __instance.p.OrientVisualInstantReset();
-            if (__instance.p.GetFlatVelocity().magnitude > __instance.airDashStartSpeed)
-            {
-                float num = Vector3.Dot(vector, __instance.p.GetFlatVelocity().normalized);
-                num = MovementPlusPlugin.Remap(num, -1f, 1f, ConfigSettings.Misc.airDashStrength.Value, 1f);
-                if (num < 0f)
+                var codes = new List<CodeInstruction>(instructions);
+                bool modifiedNum = false;
+                bool modifiedSetVelocity = false;
+
+                for (int i = 0; i < codes.Count - 3; i++)
                 {
-                    num = 0f;
+                    if (!modifiedNum && codes[i].Calls(AccessTools.Method(typeof(Vector3), nameof(Vector3.Dot))) &&
+                        codes[i + 1].opcode == OpCodes.Stloc_3)
+                    {
+                        codes.InsertRange(i + 2, new[]
+                        {
+                    new CodeInstruction(OpCodes.Ldarg_0),
+                    new CodeInstruction(OpCodes.Ldloc_3),
+                    new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(AirDashAbility_OnStartAbility_Transpiler), nameof(ModifyNumValue))),
+                    new CodeInstruction(OpCodes.Stloc_3)
+                });
+                        modifiedNum = true;
+                        i += 4;
+                    }
+
+                    if (!modifiedSetVelocity && codes[i].opcode == OpCodes.Ldfld &&
+                        codes[i].operand is FieldInfo field && field.Name == "airDashSpeed" &&
+                        codes[i + 1].opcode == OpCodes.Mul &&
+                        codes[i + 2].opcode == OpCodes.Newobj &&
+                        codes[i + 2].operand is ConstructorInfo ctor && ctor.DeclaringType == typeof(Vector3) &&
+                        codes[i + 3].opcode == OpCodes.Callvirt &&
+                        codes[i + 3].operand is MethodInfo method && method.Name == "SetVelocity" &&
+                        method.DeclaringType == typeof(Reptile.Player))
+                    {
+                        codes.Insert(i + 3, new CodeInstruction(OpCodes.Ldarg_0));
+                        codes[i + 4] = new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(AirDashAbility_OnStartAbility_Transpiler), nameof(CustomSetVelocity)));
+                        codes.Insert(i + 5, new CodeInstruction(OpCodes.Ret));
+                        modifiedSetVelocity = true;
+                        break;
+                    }
                 }
-                __instance.airDashSpeed = __instance.airDashStartSpeed + (__instance.p.GetFlatVelocity().magnitude - __instance.airDashStartSpeed) * num;
+
+                return codes;
             }
-            __instance.p.SetVelocity(new Vector3(vector.x * __instance.airDashSpeed, Mathf.Max(__instance.airDashInitialUpSpeed, __instance.p.GetVelocity().y), vector.z * __instance.airDashSpeed));
-            __instance.targetSpeed = __instance.airDashSpeed;
-            __instance.haveAirDash = false;
-            __instance.p.PlayAnim(__instance.airDashHash, true, false, -1f);
-            Core.Instance.AudioManager.PlaySfxGameplay(SfxCollectionID.GenericMovementSfx, AudioClipID.airdash, __instance.p.playerOneShotAudioSource, 0f);
-            __instance.p.wallrunAbility.cooldownTimer = 0f;
-            __instance.p.wallrunAbility.wallrunLine = null;
-            return false;
+
+            private static float ModifyNumValue(AirDashAbility airDashAbility, float originalNum)
+            {
+                ConfigSettings = MovementPlusPlugin.ConfigSettings;
+                if (airDashAbility.p.isAI && !MovementPlusPlugin.ConfigSettings.Misc.airDashChangeEnabled.Value || ConfigSettings.Misc.DisablePatch.Value) { return originalNum; }
+                return MPMath.Remap(originalNum, -1f, 1f, ConfigSettings.Misc.airDashStrength.Value, 1f);
+            }
+
+            private static void CustomSetVelocity(Player player, Vector3 velocity, AirDashAbility airDashAbility)
+            {
+                ConfigSettings = MovementPlusPlugin.ConfigSettings;
+                Vector3 vector = airDashAbility.p.moveInput.sqrMagnitude == 0f
+                    ? (airDashAbility.dirIfNoSteer ?? airDashAbility.p.dir)
+                    : airDashAbility.p.moveInput;
+                vector = Vector3.ProjectOnPlane(vector, Vector3.up).normalized;
+
+                bool isDoubleJump = !airDashAbility.p.isAI && ConfigSettings.Misc.airDashDoubleJumpEnabled.Value && airDashAbility.p.moveInput.sqrMagnitude == 0f && !ConfigSettings.Misc.DisablePatch.Value;
+
+                if (isDoubleJump)
+                {
+                    ApplyDoubleJump(airDashAbility, vector);
+                }
+                else
+                {
+                    ApplyNormalAirDash(airDashAbility, vector);
+                }
+
+                airDashAbility.haveAirDash = false;
+                airDashAbility.p.wallrunAbility.cooldownTimer = 0f;
+                airDashAbility.p.wallrunAbility.wallrunLine = null;
+                if (ConfigSettings.FastFall.ResetOnDash.Value)
+                {
+                    Fastfall.canFastFall = true;
+                }
+            }
+
+            private static void ApplyDoubleJump(AirDashAbility airDashAbility, Vector3 vector)
+            {
+                ConfigSettings = MovementPlusPlugin.ConfigSettings;
+                float newYVelocity = CalculateNewYVelocity(airDashAbility);
+                airDashAbility.p.SetVelocity(new Vector3(airDashAbility.p.GetVelocity().x, newYVelocity, airDashAbility.p.GetVelocity().z));
+
+                airDashAbility.targetSpeed = airDashAbility.p.GetForwardSpeed();
+                string animationToPlay = airDashAbility.p.moveStyle == MoveStyle.INLINE ? "airTrick0" : ConfigSettings.Misc.airDashDoubleJumpAnim.Value;
+                airDashAbility.p.PlayAnim(MPAnimation.GetAnimationByName(animationToPlay), true, true, -1f);
+                airDashAbility.p.audioManager.PlayVoice(ref airDashAbility.p.currentVoicePriority, airDashAbility.p.character, AudioClipID.VoiceJump, airDashAbility.p.playerGameplayVoicesAudioSource, VoicePriority.MOVEMENT);
+                airDashAbility.p.DoHighJumpEffects(airDashAbility.p.tf.up);
+                showBoost = false;
+            }
+
+            private static void ApplyNormalAirDash(AirDashAbility airDashAbility, Vector3 vector)
+            {
+                ConfigSettings = MovementPlusPlugin.ConfigSettings;
+                Vector3 newVelocity = new Vector3(
+                    vector.x * airDashAbility.airDashSpeed,
+                    Mathf.Max(airDashAbility.airDashInitialUpSpeed, airDashAbility.p.GetVelocity().y),
+                    vector.z * airDashAbility.airDashSpeed
+                );
+                airDashAbility.p.SetVelocity(newVelocity);
+                airDashAbility.targetSpeed = airDashAbility.airDashSpeed;
+                airDashAbility.p.PlayAnim(airDashAbility.airDashHash, true, false, -1f);
+                Core.Instance.AudioManager.PlaySfxGameplay(SfxCollectionID.GenericMovementSfx, AudioClipID.airdash, airDashAbility.p.playerOneShotAudioSource, 0f);
+                showBoost = !airDashAbility.p.isAI && ConfigSettings.Misc.airDashDoubleJumpEnabled.Value && !ConfigSettings.Misc.DisablePatch.Value;
+            }
+
+            private static float CalculateNewYVelocity(AirDashAbility airDashAbility)
+            {
+                ConfigSettings = MovementPlusPlugin.ConfigSettings;
+                float currentYVelocity = airDashAbility.p.GetVelocity().y;
+                float jumpAmount = ConfigSettings.Misc.airDashDoubleJumpAmount.Value;
+
+                switch (ConfigSettings.Misc.airDashDoubleJumpType.Value)
+                {
+                    case MyConfig.DoubleJumpType.Additive:
+                        return Mathf.Max(currentYVelocity + jumpAmount, jumpAmount);
+
+                    case MyConfig.DoubleJumpType.Replace:
+                        return jumpAmount;
+
+                    case MyConfig.DoubleJumpType.Capped:
+                        return MPMath.LosslessClamp(Mathf.Max(currentYVelocity, 0f), jumpAmount, jumpAmount);
+
+                    default:
+                        return currentYVelocity;
+                }
+            }
         }
 
+        [HarmonyPatch(typeof(AirDashAbility), nameof(AirDashAbility.FixedUpdateAbility))]
+        [HarmonyPostfix]
+        private static void AirDashAbility_FixedUpdateAbility_Postfix(AirDashAbility __instance)
+        {
+            if (__instance.p.isAI || MovementPlusPlugin.ConfigSettings.Misc.DisablePatch.Value) { return; }
+            if (!showBoost)
+            {
+                __instance.p.SetBoostpackAndFrictionEffects(BoostpackEffectMode.OFF, FrictionEffectMode.OFF);
+            }
+        }
     }
 }
