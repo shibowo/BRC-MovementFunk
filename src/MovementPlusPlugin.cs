@@ -11,9 +11,9 @@ namespace MovementPlus
     [BepInPlugin(MyGUID, PluginName, VersionString)]
     public class MovementPlusPlugin : BaseUnityPlugin
     {
-        public const string MyGUID = "com.yuril.MovementPlus";
-        private const string PluginName = "MovementPlus";
-        private const string VersionString = "2.0.0";
+        public const string MyGUID = "com.shibowo.MovementFunk";
+        private const string PluginName = "MovementFunk";
+        private const string VersionString = "1.0.0";
 
         public static MovementPlusPlugin Instance { get; private set; }
         public string Dir => Path.GetDirectoryName(Info.Location);
@@ -36,7 +36,7 @@ namespace MovementPlus
             MPAnimation.Init();
             MPPresetManager.LaunchPreset();
 
-            Logger.LogInfo($"MovementPlus has been loaded!");
+            Logger.LogInfo($"{PluginName} has been loaded!");
         }
 
         private void FixedUpdate()
