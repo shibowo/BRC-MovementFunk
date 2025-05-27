@@ -29,7 +29,7 @@ namespace MovementPlus
             var Instance = MovementPlusPlugin.Instance;
             var MyGUID = MovementPlusPlugin.MyGUID;
             var ConfigSettings = MovementPlusPlugin.ConfigSettings;
-            string configPath = Instance.Config.ConfigFilePath.Replace(MyGUID + ".cfg", string.Empty) + @"MovementPlus\" + presetName + ".cfg";
+            string configPath = Instance.Config.ConfigFilePath.Replace(MyGUID + ".cfg", string.Empty) + @"MovementFunk\" + presetName + ".cfg";
 
             MyConfig configFile = new MyConfig(new ConfigFile(configPath, false));
             MovementPlusPlugin.ConfigSettings = configFile;
@@ -49,7 +49,7 @@ namespace MovementPlus
         public static List<string> GetAvailablePresets()
         {
             var Instance = MovementPlusPlugin.Instance;
-            string movementPlusPath = Path.Combine(Path.GetDirectoryName(Instance.Config.ConfigFilePath), "MovementPlus");
+            string movementPlusPath = Path.Combine(Path.GetDirectoryName(Instance.Config.ConfigFilePath), "MovementFunk");
             List<string> presetNames = new List<string>();
 
             if (Directory.Exists(movementPlusPath))
@@ -62,7 +62,7 @@ namespace MovementPlus
             }
             else
             {
-                Console.WriteLine("MovementPlus directory not found.");
+                Console.WriteLine("MovementFunk directory not found.");
             }
 
             return presetNames;

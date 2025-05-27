@@ -11,7 +11,7 @@ namespace MovementPlus
     [BepInPlugin(MyGUID, PluginName, VersionString)]
     public class MovementPlusPlugin : BaseUnityPlugin
     {
-        public const string MyGUID = "com.shibowo.MovementFunk";
+        public const string MyGUID = "shibowo.MovementFunk";
         private const string PluginName = "MovementFunk";
         private const string VersionString = "1.0.0";
 

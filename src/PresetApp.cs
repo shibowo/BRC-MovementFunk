@@ -19,12 +19,12 @@ namespace MovementPlus
             try
             {
                 IconSprite = TextureUtility.LoadSprite(iconPath);
-                PhoneAPI.RegisterApp<PresetApp>("M+ Preset", IconSprite);
+                PhoneAPI.RegisterApp<PresetApp>("MF Preset", IconSprite);
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error loading icon sprite: {ex.Message}");
-                PhoneAPI.RegisterApp<PresetApp>("M+ Preset", null);
+                PhoneAPI.RegisterApp<PresetApp>("MF Preset", null);
             }
         }
 
