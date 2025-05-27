@@ -6,3 +6,4 @@
 cp bin/Debug/netstandard2.0/MovementFunk.dll Thunderstore/plugins/MovementFunk
 cd Thunderstore
 zip -r ../MovementFunk.zip *
+cd -

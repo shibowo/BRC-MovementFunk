@@ -2,7 +2,7 @@
 
 GAMEDIR=""
 MODS=""
-DLLS='lib'
+DLL_DEST='lib/'
 if [ $# -eq 0 ] 
   then
     #TODO: Figure out if game is installed in the same place as native steam, not just flatpak steam
@@ -13,18 +13,20 @@ else
     GAMEDIR=$1
 fi
 
-cp -u $MODS/BepInEx/core/0Harmony.dll lib/
-cp -u $GAMEDIR/'Bomb Rush Cyberfunk_Data'/Managed/Assembly-CSharp-firstpass.dll lib/
-cp -u $GAMEDIR/'Bomb Rush Cyberfunk_Data'/Managed/Assembly-CSharp.dll lib/ #publicize this
-cp -u $MODS/BepInEx/core/BepInEx.dll lib/
-cp -u $MODS/BepInEx/plugins/LazyDuchess-CommonAPI/CommonAPI.dll lib/
-cp -u $GAMEDIR/'Bomb Rush Cyberfunk_Data'/Managed/UnityEngine.dll lib/
-cp -u $GAMEDIR/'Bomb Rush Cyberfunk_Data'/Managed/UnityEngine.AnimationModule.dll lib/
-cp -u $GAMEDIR/'Bomb Rush Cyberfunk_Data'/Managed/UnityEngine.AudioModule.dll lib/
-cp -u $GAMEDIR/'Bomb Rush Cyberfunk_Data'/Managed/UnityEngine.CoreModule.dll lib/
-cp -u $GAMEDIR/'Bomb Rush Cyberfunk_Data'/Managed/UnityEngine.IMGUIModule.dll lib/
-cp -u $GAMEDIR/'Bomb Rush Cyberfunk_Data'/Managed/UnityEngine.InputLegacyModule.dll lib/
-cp -u $GAMEDIR/'Bomb Rush Cyberfunk_Data'/Managed/UnityEngine.ParticleSystemModule.dll lib/
-cp -u $GAMEDIR/'Bomb Rush Cyberfunk_Data'/Managed/UnityEngine.PhysicsModule.dll lib/
+mkdir -p $DLL_DEST
+
+cp -u $MODS/BepInEx/core/0Harmony.dll $DLL_DEST
+cp -u $GAMEDIR/'Bomb Rush Cyberfunk_Data'/Managed/Assembly-CSharp-firstpass.dll $DLL_DEST
+cp -u $GAMEDIR/'Bomb Rush Cyberfunk_Data'/Managed/Assembly-CSharp.dll $DLL_DEST #publicize this
+cp -u $MODS/BepInEx/core/BepInEx.dll $DLL_DEST
+cp -u $MODS/BepInEx/plugins/LazyDuchess-CommonAPI/CommonAPI.dll $DLL_DEST
+cp -u $GAMEDIR/'Bomb Rush Cyberfunk_Data'/Managed/UnityEngine.dll $DLL_DEST
+cp -u $GAMEDIR/'Bomb Rush Cyberfunk_Data'/Managed/UnityEngine.AnimationModule.dll $DLL_DEST
+cp -u $GAMEDIR/'Bomb Rush Cyberfunk_Data'/Managed/UnityEngine.AudioModule.dll $DLL_DEST
+cp -u $GAMEDIR/'Bomb Rush Cyberfunk_Data'/Managed/UnityEngine.CoreModule.dll $DLL_DEST
+cp -u $GAMEDIR/'Bomb Rush Cyberfunk_Data'/Managed/UnityEngine.IMGUIModule.dll $DLL_DEST
+cp -u $GAMEDIR/'Bomb Rush Cyberfunk_Data'/Managed/UnityEngine.InputLegacyModule.dll $DLL_DEST
+cp -u $GAMEDIR/'Bomb Rush Cyberfunk_Data'/Managed/UnityEngine.ParticleSystemModule.dll $DLL_DEST
+cp -u $GAMEDIR/'Bomb Rush Cyberfunk_Data'/Managed/UnityEngine.PhysicsModule.dll $DLL_DEST
 
  
