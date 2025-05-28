@@ -14,7 +14,7 @@ namespace MovementPlus
 
         public static void Init()
         {
-            string iconPath = Path.Combine(MovementPlusPlugin.Instance.Dir, "M+_Icon.png");
+            string iconPath = Path.Combine(MovementPlusPlugin.Instance.Dir, "MF_icon.png");
 
             try
             {

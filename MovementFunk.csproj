@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <AssemblyName>MovementFunk</AssemblyName>
-    <Description>Fork of MovementPlus 3.0 beta</Description>
+    <Description>A fork of MovementPlus. Movement + funk. get it?</Description>
     <Version>1.0.0</Version>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <LangVersion>latest</LangVersion>
