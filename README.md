@@ -1,6 +1,6 @@
 <p align="center"><img src="Resources/img/banner_small.png"></p>
 
-<p style="text-align: center;">MovementFunk is a fork of [MovementPlus](https://github.com/yurilewd/BRC-MovementPlus) that has the same goals as the orinal MovementPlus: faster and more rewarding gameplay.</p>
+<p style="text-align: center;">MovementFunk is a fork of <a href="https://github.com/yurilewd/BRC-MovementPlus">MovementPlus</a> that has the same goals as the orinal MovementPlus: faster and more rewarding gameplay.</p>
 <p style="text-align: center;">As with the orininal M+, any of the features included can be tweaked or outright disabled via the config file.</p>
 
 
