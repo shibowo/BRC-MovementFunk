@@ -108,6 +108,7 @@ There are multiple ways to edit the config, make sure you've run the game with t
 Huge thanks to these individuals, this mod would not be the same without them.
 
 People that worked on MovementFunk:
+- shibowo (me) for picking up M+ and forking it into MF
 - Queen2222 for the MovementFunk banner and icon
 - Thunder_Kick (Project Lead)
 - Yoshi (Lead Playtester)
@@ -118,9 +119,3 @@ People that worked on MovementPlus:
 - FracturedStar
 - LIMBSMITH
 - Lazy Duchess
-
-## Media
-
-MoventPlus Teaser Trailer
-
-[![Teaser Trailer](https://img.youtube.com/vi/0d2DVvsc1XE/maxresdefault.jpg)](https://www.youtube.com/watch?v=0d2DVvsc1XE)
