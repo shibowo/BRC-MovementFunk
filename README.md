@@ -1,4 +1,4 @@
-<p align="center"><img src="Resources/img/banner_small.png"></p>
+<p align="center"><img src="Resources/img/movementfunk_banner.png"></p>
 
 <p style="text-align: center;">MovementFunk is a fork of <a href="https://github.com/yurilewd/BRC-MovementPlus">MovementPlus</a> that has the same goals as the orinal MovementPlus: faster and more rewarding gameplay.</p>
 <p style="text-align: center;">As with the orininal M+, any of the features included can be tweaked or outright disabled via the config file.</p>
@@ -107,6 +107,8 @@ There are multiple ways to edit the config, make sure you've run the game with t
 ## Credits
 Huge thanks to these individuals, this mod would not be the same without them.
 - YuriLewd ("And Yuri said, "Let there be MovementPlus" and there was MovementPlus." -Genesis 1:3)
+- Queen2222 for the MovementFunk banner and icon
+
 - RackBox
 - FracturedStar
 - LIMBSMITH
