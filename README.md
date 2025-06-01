@@ -106,10 +106,14 @@ There are multiple ways to edit the config, make sure you've run the game with t
 
 ## Credits
 Huge thanks to these individuals, this mod would not be the same without them.
-- YuriLewd ("And Yuri said, "Let there be MovementPlus" and there was MovementPlus." -Genesis 1:3)
+
+People that worked on MovementFunk:
 - Queen2222 for the MovementFunk banner and icon
 - Thunder_Kick (Project Lead)
 - Yoshi (Lead Playtester)
+
+People that worked on MovementPlus:
+- YuriLewd ("And Yuri said, "Let there be MovementPlus" and there was MovementPlus." -Genesis 1:3)
 - RackBox
 - FracturedStar
 - LIMBSMITH
