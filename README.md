@@ -13,31 +13,6 @@ MovementPlus - MF and M+ are basically the same mod, and using them together wil
 If you want something closer to vanilla you can use this VanillaPlus config Yuri made [here](https://github.com/yurilewd/BRC-MovementPlus/blob/main/Thunderstore/VanillaPlusConfig/com.yuril.MovementPlus.cfg), to use this file you need to click the "Download raw file" button and then save that into your \BepInEx\config folder, if it asks you to overwrite an existing file you should do so.
 
 
-## New Features
-
-- Frameboost
-- Super trick jump
-- Perfect manual
-- Fast fall
-- Rail goon
-
-
-## Adjusted Vanilla Features
-
-- Improved carpet sliding
-- Vert ramps scale with speed
-- Increased max fall speed
-- Reduced ground trick deceleration
-- Removed rail deceleration
-- Air dash retains more speed when changing directions
-- Rail hard corners give less speed per, but peak at a higher speed
-- Boost scales with your total speed
-- Various smaller changes that ensure speed is never set to a flat amount
-<br><br>
-
- For slightly more in-depth explanations of the new and adjusted features visit [here](https://docs.google.com/document/d/1u3AHQ6b7UP7IGx7_8Xx0hAa9TIijMVfsjSuHUOBdc3w/edit?usp=sharing) to learn more.
-
-
 ## Installation
 If you're looking to build the mod on your own, go to [Building](#building)
 
