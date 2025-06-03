@@ -1411,7 +1411,7 @@ public class MyConfig(ConfigFile config)
            category,
            "Dumpster Kick Base Points",
            1.0f,
-           "Points given per one speed unit when performing a Dumpster Kick. The exact points given are points=max(float(Base Points * Speed Units)."
+           "Points given per one speed unit when performing a Dumpster Kick. The exact points given are points=max(float(Base Points * Speed Units), Minimum Dumpster Kick Points)."
        );
         public ConfigEntry<int> pointsMin = config.Bind(
            category,
