@@ -16,7 +16,7 @@ namespace MovementPlus.Mechanics
 
      bool bouncingOut = hitBounceAbility.state == HitBounceAbility.State.BOUNCE_OUT; //is this even counted anymore
      bool is_hitbouncing = player.ability == player.hitBounceAbility;
-     bool timerExpired = player.abilityTimer > 1.0f; //config var when 
+     bool timerExpired = player.abilityTimer > MovementPlusPlugin.ConfigSettings.DumpsterKick.GracePeriod.Value; 
      bool sortaGrounded = player.TreatPlayerAsSortaGrounded();
      bool shouldDumpsterKick = sortaGrounded && bouncingOut && !timerExpired && is_hitbouncing;
      
