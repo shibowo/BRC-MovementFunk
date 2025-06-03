@@ -85,7 +85,7 @@ Huge thanks to these individuals, this mod would not be the same without them.
 People that worked on MovementFunk:
 - shibowo (me) for picking up M+ and forking it into MF
 - Queen2222 for the MovementFunk banner and icon
-- Thunder_Kick (Project Lead)
+- Thunder_Kick (Project Lead, Emotional Support Pony)
 - Yoshi (Lead Playtester)
 
 People that worked on MovementPlus:

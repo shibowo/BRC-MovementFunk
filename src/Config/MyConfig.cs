@@ -24,6 +24,7 @@ public class MyConfig(ConfigFile config)
     public ConfigHandplant Handplant = new(config, "Handplant");
     public ConfigMisc Misc = new(config, "Misc");
     public ConfigNonStable NonStable = new(config, "NonStable");
+    public ConfigDumpsterKick DumpsterKick = new(config, "Dumpster Kick");
 
     public enum DoubleJumpType
     {
@@ -1377,7 +1378,46 @@ public class MyConfig(ConfigFile config)
             category,
             "Surf Enabled",
             true,
-            "Aloows the player to surf on non stable surfaces by holding the slide button."
+            "Allows the player to surf on non stable surfaces by holding the slide button."
         );
+    }
+    public class ConfigDumpsterKick(ConfigFile config, string category)
+    {
+      public ConfigEntry<bool> Enabled = config.Bind(
+          category,
+          "Dumpster Kick Enabled",
+          true,
+          "When enabled, jumping after getting bounced back by a vending machine/dumpster/etc will convert all of your forward momentum into upward momentum"
+          );
+      public ConfigEntry<string> Name = config.Bind(
+          category,
+          "Dumpster Kick Name",
+          "Dumpster Kick",
+          "Trick name that appears when performing a Dumpster Kick"
+          );
+      public ConfigEntry<float> GracePeriod = config.Bind(
+          category,
+          "Dumpster Kick Grace Period",
+          1.0f,
+          "The time window you can perform a Dumpster Kick in starting from when you hit a dumpster/vending machine."
+          );
+      public ConfigEntry<float> SpeedMultiplier = config.Bind(
+          category,
+          "Dumpster Kick Speed Multiplier",
+          1.0f,
+          "The multiplier by which your total speed gets converted to upwards velocity."
+          );
+      public ConfigEntry<float> pointsPerSpeed = config.Bind(
+           category,
+           "Dumpster Kick Base Points",
+           1.0f,
+           "Points given per one speed unit when performing a Dumpster Kick. The exact points given are points=max(float(Base Points * Speed Units)."
+       );
+        public ConfigEntry<int> pointsMin = config.Bind(
+           category,
+           "Minimum Dumpster Kick Points",
+           200,
+           "Minimum amount of points(flat, not per speed unit) given when performing a Dumpster Kick."
+       );
     }
 }

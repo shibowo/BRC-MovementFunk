@@ -13,7 +13,7 @@ namespace MovementPlus
     {
         public const string MyGUID = "shibowo.MovementFunk";
         private const string PluginName = "MovementFunk";
-        private const string VersionString = "1.0.0";
+        private const string VersionString = "0.1.0";
 
         public static MovementPlusPlugin Instance { get; private set; }
         public string Dir => Path.GetDirectoryName(Info.Location);
@@ -57,6 +57,7 @@ namespace MovementPlus
                 RailCollision.Update();
                 GoonStorageMinMax.Update();
                 BoostHardCorner.Update();
+                DumpsterKick.Update();
             }
         }
 
