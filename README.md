@@ -55,6 +55,9 @@ UnityEngine.IMGUIModule.dll
 UnityEngine.InputLegacyModule.dll
 UnityEngine.ParticleSystemModule.dll
 UnityEngine.PhysicsModule.dll
+Unity.TextMeshPro.dll
+UnityEngine.UI.dll
+
 
 From BepInEx\ :
 core\0Harmony.dll

@@ -1,6 +1,7 @@
 ﻿using HarmonyLib;
 using MovementPlus.Mechanics;
 using MovementPlus.NewAbility;
+using MovementPlus.SpeedDisplay;
 using Reptile;
 using System.Collections.Generic;
 using System.Reflection.Emit;
@@ -312,6 +313,17 @@ namespace MovementPlus.Patches
             __result = jumpNotConsumed && abilityAllowsJump && noVertShape && isGroundedOrRecentlyGrounded && !buttslapCheck;
 
             return false;
+        }
+
+        [HarmonyPatch(typeof(Player), nameof(Player.ChargeAndSpeedDisplayUpdate))]
+        [HarmonyPostfix]
+        private static void ChargeAndSpeedDisplayUpdate_Postfix(){
+          Speedometer.Update();
+        }
+        [HarmonyPatch(typeof(GameplayUI), nameof(GameplayUI.Init))]
+        [HarmonyPostfix]
+        private static void Player_GameplayUI_Init_Postfix(GameplayUI __instance){ 
+          Speedometer.Init(__instance.tricksInComboLabel);
         }
     }
 }

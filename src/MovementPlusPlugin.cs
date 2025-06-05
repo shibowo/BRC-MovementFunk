@@ -1,6 +1,7 @@
 ﻿using BepInEx;
 using HarmonyLib;
 using MovementPlus.Mechanics;
+using MovementPlus.SpeedDisplay;
 using Reptile;
 using System.IO;
 using System.Linq;
@@ -58,6 +59,8 @@ namespace MovementPlus
                 GoonStorageMinMax.Update();
                 BoostHardCorner.Update();
                 DumpsterKick.Update();
+                //place this elsewhere
+                Speedometer.Update();
             }
         }
 

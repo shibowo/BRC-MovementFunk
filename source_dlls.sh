@@ -103,6 +103,8 @@ dll_list+=("$gamedir/Bomb Rush Cyberfunk_Data/Managed/UnityEngine.IMGUIModule.dl
 dll_list+=("$gamedir/Bomb Rush Cyberfunk_Data/Managed/UnityEngine.InputLegacyModule.dll") 
 dll_list+=("$gamedir/Bomb Rush Cyberfunk_Data/Managed/UnityEngine.ParticleSystemModule.dll") 
 dll_list+=("$gamedir/Bomb Rush Cyberfunk_Data/Managed/UnityEngine.PhysicsModule.dll")
+dll_list+=("$gamedir/Bomb Rush Cyberfunk_Data/Managed/Unity.TextMeshPro.dll")
+dll_list+=("$gamedir/Bomb Rush Cyberfunk_Data/Managed/UnityEngine.UI.dll")
 
 for dll in "${dll_list[@]}";
 do
