@@ -59,8 +59,6 @@ namespace MovementPlus
                 GoonStorageMinMax.Update();
                 BoostHardCorner.Update();
                 DumpsterKick.Update();
-                //place this elsewhere
-                Speedometer.Update();
             }
         }
 
