@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
+using MovementPlus.SpeedDisplay;
 
 namespace MovementPlus
 {
@@ -58,6 +59,7 @@ namespace MovementPlus
             button.OnConfirm += () =>
             {
                 MPPresetManager.ApplyPreset(preset);
+                Speedometer.UpdateSpeedRep();
             };
             return button;
         }

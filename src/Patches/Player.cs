@@ -317,12 +317,14 @@ namespace MovementPlus.Patches
 
         [HarmonyPatch(typeof(Player), nameof(Player.ChargeAndSpeedDisplayUpdate))]
         [HarmonyPostfix]
-        private static void ChargeAndSpeedDisplayUpdate_Postfix(){
+        private static void ChargeAndSpeedDisplayUpdate_Postfix(Player __instance){
+          if (__instance.isAI || MovementPlusPlugin.ConfigSettings.Misc.DisablePatch.Value) { return; }
           Speedometer.Update();
         }
         [HarmonyPatch(typeof(GameplayUI), nameof(GameplayUI.Init))]
         [HarmonyPostfix]
-        private static void Player_GameplayUI_Init_Postfix(GameplayUI __instance){ 
+        private static void Player_GameplayUI_Init_Postfix(GameplayUI __instance){
+          if (MovementPlusPlugin.ConfigSettings.Misc.DisablePatch.Value) { return; }
           Speedometer.Init(__instance.tricksInComboLabel);
         }
     }

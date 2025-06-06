@@ -25,6 +25,7 @@ public class MyConfig(ConfigFile config)
     public ConfigMisc Misc = new(config, "Misc");
     public ConfigNonStable NonStable = new(config, "NonStable");
     public ConfigDumpsterKick DumpsterKick = new(config, "Dumpster Kick");
+    public ConfigSpeedometer Speedometer = new(config, "Speedometer");
 
     public enum DoubleJumpType
     {
@@ -1419,5 +1420,34 @@ public class MyConfig(ConfigFile config)
            200,
            "Minimum amount of points(flat, not per speed unit) given when performing a Dumpster Kick."
        );
+    }
+
+    public class ConfigSpeedometer(ConfigFile config, string category)
+    {
+      public ConfigEntry<bool> Enabled = config.Bind(
+            category,
+            "Enable Speedometer",
+            true,
+            "Enables the built-in spedometer"
+          );
+
+      public ConfigEntry<MovementPlus.SpeedDisplay.Representation> SpeedRep = config.Bind(
+            category,
+            "Speed Representation Mode",
+            MovementPlus.SpeedDisplay.Representation.SpeedUnits,
+            "Sets the units your speed will be displayed in in-game."
+          );
+      public ConfigEntry<bool> Rainbow = config.Bind(
+          category,
+          "Rainbow Mode",
+          true,
+          "Changes the color of your spedometer as your speed changes."
+          );
+      public ConfigEntry<bool> UseTotalSpeed = config.Bind(
+          category,
+          "Use Total Speed",
+          true,
+          "Set to true to use the player's total speed, otherwise set to false to only use forward speed."
+          );
     }
 }

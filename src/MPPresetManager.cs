@@ -14,8 +14,8 @@ namespace MovementPlus
        var MyGUID = MovementPlusPlugin.MyGUID; 
        string movementFunkConfig = Instance.Config.ConfigFilePath.Replace(MyGUID + ".cfg", string.Empty) + @"MovementFunk\";
        if (!Directory.Exists(movementFunkConfig)){
-         Console.WriteLine("MovementFunk directory not found.");
-         Console.WriteLine($"Creating new MovementFunk directory at \"{movementFunkConfig}\"");
+         MovementPlusPlugin.PubLogger.LogError("MovementFunk directory not found.");
+         MovementPlusPlugin.PubLogger.LogError($"Creating new MovementFunk directory at \"{movementFunkConfig}\"");
          CreateConfigDirectory(movementFunkConfig);
        }
        if (MovementPlusPlugin.ConfigSettings.Misc.presetEnabled.Value)
@@ -48,8 +48,8 @@ namespace MovementPlus
           }
         }
         else{
-          Console.WriteLine("MovementFunk directory not found.");
-          Console.WriteLine($"Creating new MovementFunk directory at \"{movementFunkConfig}\"");
+          MovementPlusPlugin.PubLogger.LogWarning("MovementFunk directory not found.");
+          MovementPlusPlugin.PubLogger.LogWarning($"Creating new MovementFunk directory at \"{movementFunkConfig}\"");
           CreateConfigDirectory(movementFunkConfig);
         }
       }
@@ -77,7 +77,7 @@ namespace MovementPlus
             }
             else
             {
-                Console.WriteLine("MovementFunk directory not found.");
+                MovementPlusPlugin.PubLogger.LogError("MovementFunk directory not found.");
             }
 
             return presetNames;
@@ -106,19 +106,19 @@ namespace MovementPlus
           }
           catch(Exception e){
             if(e is DirectoryNotFoundException){
-              Console.WriteLine($"Directory \"{movementFunkConfig}\" does not exist!");
-              Console.WriteLine("Check that above-level directories exist.");
+              MovementPlusPlugin.PubLogger.LogError($"Directory \"{movementFunkConfig}\" does not exist!");
+              MovementPlusPlugin.PubLogger.LogError("Check that above-level directories exist.");
             }
             if(e is UnauthorizedAccessException){
-              Console.WriteLine($"You do not have permission to create directory \"{movementFunkConfig}\"!");
-              Console.WriteLine("Make sure you have the right permissions to write to BepInEx\\config.");
+              MovementPlusPlugin.PubLogger.LogError($"You do not have permission to create directory \"{movementFunkConfig}\"!");
+              MovementPlusPlugin.PubLogger.LogError("Make sure you have the right permissions to write to BepInEx\\config.");
             }
             if(e is IOException || e is ArgumentException || e is ArgumentNullException || e is NotSupportedException){
-              Console.WriteLine($"Bad directory path \"{movementFunkConfig}\"!");
-              Console.WriteLine("Make sure that the path does not contain invalid characters, is empty, or points to a file.");
+              MovementPlusPlugin.PubLogger.LogError($"Bad directory path \"{movementFunkConfig}\"!");
+              MovementPlusPlugin.PubLogger.LogError("Make sure that the path does not contain invalid characters, is empty, or points to a file.");
             }
             if(e is PathTooLongException){
-              Console.WriteLine($"MovementFunk yapped too hard. "+
+              MovementPlusPlugin.PubLogger.LogError($"MovementFunk yapped too hard. "+
                   "(Directory ${movementFunkConfig} exceeds the maximum path length set by your operating system)!");
             }
           }

@@ -1,4 +1,5 @@
 ﻿using BepInEx;
+using BepInEx.Logging;
 using HarmonyLib;
 using MovementPlus.Mechanics;
 using MovementPlus.SpeedDisplay;
@@ -21,6 +22,7 @@ namespace MovementPlus
 
         private Harmony harmony;
         public static Player player;
+        public static ManualLogSource PubLogger; //plugin's logger instance is protected.
         public static MyConfig ConfigSettings;
 
         private void Awake()
@@ -28,6 +30,7 @@ namespace MovementPlus
             harmony = new Harmony(MyGUID);
             ConfigSettings = new MyConfig(Config);
             Instance = this;
+            PubLogger = BepInEx.Logging.Logger.CreateLogSource(PluginName);
 
             PatchAllInNamespace(harmony, "MovementPlus.Patches");
 
