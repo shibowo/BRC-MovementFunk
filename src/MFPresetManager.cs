@@ -9,6 +9,9 @@ namespace MovementFunk
 {
     internal class MFPresetManager
     {
+      private static ConfigFile movementCfgFile;
+      private static ConfigFile speedometerCfgFile;
+
       public static void LaunchPreset()
       {
        var Instance = MovementFunkPlugin.Instance;
@@ -21,6 +24,7 @@ namespace MovementFunk
          MovementFunkPlugin.PubLogger.LogWarning($"Creating new MovementFunk directory at \"{movementFunkDir}\"");
          CreateConfigDirectory(movementFunkDir);
          NoMovementPreset();
+         NoSpeedometerPreset();
        }
        if(!Directory.Exists(movementDir)){
           MovementFunkPlugin.PubLogger.LogWarning("MovementPresets directory not found.");
@@ -32,16 +36,16 @@ namespace MovementFunk
           MovementFunkPlugin.PubLogger.LogWarning("SpeedometerPresets directory not found.");
           MovementFunkPlugin.PubLogger.LogWarning($"Creating new SpeedometerPresets directory at \"{speedometerDir}\"");
           CreateConfigDirectory(speedometerDir);
+          NoSpeedometerPreset();
        }
         
-       ConfigFile movementCfgFile = new ConfigFile(movementFunkDir + "movement.cfg",
+       movementCfgFile = new ConfigFile(movementFunkDir + "movement.cfg",
                                                    true,
                                                    MetadataHelper.GetMetadata(MovementFunkPlugin.Instance));
-       ConfigFile speedometerCfgFile = new ConfigFile(movementFunkDir + "speedometer.cfg",
+       speedometerCfgFile = new ConfigFile(movementFunkDir + "speedometer.cfg",
                                                       true,
                                                       MetadataHelper.GetMetadata(MovementFunkPlugin.Instance));
-       movementCfgFile.SaveOnConfigSet = true;
-       speedometerCfgFile.SaveOnConfigSet = true;
+
        MovementFunkPlugin.ConfigSettings = new MovementConfig(movementCfgFile);
        MovementFunkPlugin.SpeedometerSettings = new SpeedometerConfig(speedometerCfgFile);
 
@@ -127,14 +131,14 @@ namespace MovementFunk
         public static void NoMovementPreset()
         {
             string movementFunkDir = MovementFunkPlugin.Instance.Config.ConfigFilePath.Replace(MovementFunkPlugin.MyGUID + ".cfg", string.Empty) + @"MovementFunk\";
-            MovementConfig configFile = new MovementConfig(MovementFunkPlugin.Instance.Config);
-            MovementFunkPlugin.ConfigSettings = configFile;
+            MovementConfig MVConfig = new MovementConfig(movementCfgFile);
+            MovementFunkPlugin.ConfigSettings = MVConfig;
             MovementFunkPlugin.ConfigSettings.Misc.MVPreset.Value = "None";
         }
         public static void NoSpeedometerPreset()
         {
             string movementFunkDir = MovementFunkPlugin.Instance.Config.ConfigFilePath.Replace(MovementFunkPlugin.MyGUID + ".cfg", string.Empty) + @"MovementFunk\";
-            SpeedometerConfig configFile = new SpeedometerConfig(MovementFunkPlugin.Instance.Config);
+            SpeedometerConfig configFile = new SpeedometerConfig(speedometerCfgFile);
             MovementFunkPlugin.SpeedometerSettings = configFile;
             MovementFunkPlugin.SpeedometerSettings.Misc.SPPreset.Value = "None";
         }

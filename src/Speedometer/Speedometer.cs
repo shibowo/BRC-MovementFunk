@@ -82,14 +82,14 @@ namespace MovementFunk.SpeedDisplay
           break;
         case Representation.KilometersPerHour:
           speed *= KPH_ratio;
-          spmStrBuilder.AppendFormat("{0:0.0#} {1}", speed, speedRep);
+          spmStrBuilder.AppendFormat("{0:0.0} {1}", speed, speedRep);
           break;
         case Representation.MilesPerHour:
           speed *= MFH_ratio;
-          spmStrBuilder.AppendFormat("{0:0.0#} {1}", speed, speedRep);
+          spmStrBuilder.AppendFormat("{0:0.0} {1}", speed, speedRep);
           break;
         default:
-          spmStrBuilder.AppendFormat("{0:0.0#} {1}", speed, speedRep);
+          spmStrBuilder.AppendFormat("{0:0.0} {1}", speed, speedRep);
           break;
       }
       speedometerText.SetText(spmStrBuilder);
