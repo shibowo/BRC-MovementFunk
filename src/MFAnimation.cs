@@ -5,9 +5,9 @@ using System.Linq;
 using System.Reflection;
 using UnityEngine;
 
-namespace MovementPlus
+namespace MovementFunk
 {
-    public static class MPAnimation
+    public static class MFAnimation
     {
         private static bool isBoEInstalled = false;
         private static object boEPluginInstance = null;

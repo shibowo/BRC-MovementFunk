@@ -3,18 +3,18 @@ using Reptile;
 using System.Collections.Generic;
 using System.Reflection.Emit;
 
-namespace MovementPlus.Patches
+namespace MovementFunk.Patches
 {
     internal static class GroundTrickAbilityPatch
     {
-        private static MyConfig ConfigSettings = MovementPlusPlugin.ConfigSettings;
+        private static MovementConfig ConfigSettings = MovementFunkPlugin.ConfigSettings;
 
         [HarmonyPatch(typeof(GroundTrickAbility), nameof(GroundTrickAbility.OnStartAbility))]
         [HarmonyPostfix]
         private static void GroundTrickAbility_OnStartAbility_Postfix(GroundTrickAbility __instance)
         {
-            if (__instance.p.isAI || MovementPlusPlugin.ConfigSettings.Misc.DisablePatch.Value) { return; }
-            ConfigSettings = MovementPlusPlugin.ConfigSettings;
+            if (__instance.p.isAI || MovementFunkPlugin.ConfigSettings.Misc.DisablePatch.Value) { return; }
+            ConfigSettings = MovementFunkPlugin.ConfigSettings;
             __instance.decc = ConfigSettings.Misc.groundTrickDecc.Value;
 
             bool isOnFoot = __instance.p.moveStyle == MoveStyle.ON_FOOT;
@@ -29,7 +29,7 @@ namespace MovementPlus.Patches
         [HarmonyPostfix]
         private static void GroundTrickAbility_FixedUpdateAbility_Postfix(GroundTrickAbility __instance)
         {
-            if (__instance.p.isAI || MovementPlusPlugin.ConfigSettings.Misc.DisablePatch.Value) return;
+            if (__instance.p.isAI || MovementFunkPlugin.ConfigSettings.Misc.DisablePatch.Value) return;
 
             if (ShouldActivateSpecialAirAbility(__instance))
             {
@@ -47,9 +47,9 @@ namespace MovementPlus.Patches
                    instance.allowNormalJump &&
                    !instance.p.specialAirAbility.locked &&
                    !instance.p.onLauncher &&
-                   (instance.p.moveStyle == MoveStyle.ON_FOOT || (MovementPlusPlugin.ConfigSettings.SuperTrickJump.MSSuperTrick.Value && MSSuperTrickCheck(instance))) &&
+                   (instance.p.moveStyle == MoveStyle.ON_FOOT || (MovementFunkPlugin.ConfigSettings.SuperTrickJump.MSSuperTrick.Value && MSSuperTrickCheck(instance))) &&
                    instance.p.IsGrounded() &&
-                   MovementPlusPlugin.ConfigSettings.SuperTrickJump.EarlySuperTrick.Value;
+                   MovementFunkPlugin.ConfigSettings.SuperTrickJump.EarlySuperTrick.Value;
         }
 
         private static bool MSSuperTrickCheck(GroundTrickAbility instance)
@@ -95,7 +95,7 @@ namespace MovementPlus.Patches
 
             private static void CustomJump(Player player)
             {
-                if (player.isAI || !MovementPlusPlugin.ConfigSettings.SuperTrickJump.MSSuperTrick.Value || MovementPlusPlugin.ConfigSettings.Misc.DisablePatch.Value)
+                if (player.isAI || !MovementFunkPlugin.ConfigSettings.SuperTrickJump.MSSuperTrick.Value || MovementFunkPlugin.ConfigSettings.Misc.DisablePatch.Value)
                 {
                     player.Jump();
                 }
@@ -107,7 +107,7 @@ namespace MovementPlus.Patches
 
             private static void CustomActivateAbility(Player player, Ability ability)
             {
-                if (player.isAI || !MovementPlusPlugin.ConfigSettings.SuperTrickJump.MSSuperTrick.Value || MovementPlusPlugin.ConfigSettings.Misc.DisablePatch.Value)
+                if (player.isAI || !MovementFunkPlugin.ConfigSettings.SuperTrickJump.MSSuperTrick.Value || MovementFunkPlugin.ConfigSettings.Misc.DisablePatch.Value)
                 {
                     player.ActivateAbility(ability);
                 }
@@ -118,16 +118,16 @@ namespace MovementPlus.Patches
         {
             switch (preAbility)
             {
-                case MovementPlus.NewAbility.SurfAbility:
-                    MPVariables.buttslapType = "Surf";
+                case MovementFunk.NewAbility.SurfAbility:
+                    MFVariables.buttslapType = "Surf";
                     break;
 
                 case Reptile.HandplantAbility:
-                    MPVariables.buttslapType = "Pole";
+                    MFVariables.buttslapType = "Pole";
                     break;
 
                 default:
-                    MPVariables.buttslapType = "Ground";
+                    MFVariables.buttslapType = "Ground";
                     break;
             }
         }

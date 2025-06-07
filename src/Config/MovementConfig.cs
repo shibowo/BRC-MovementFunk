@@ -1,8 +1,8 @@
 ﻿using BepInEx.Configuration;
 
-namespace MovementPlus;
+namespace MovementFunk;
 
-public class MyConfig(ConfigFile config)
+public class MovementConfig(ConfigFile config)
 {
     public ConfigRailGoon RailGoon = new(config, "Rail Goon");
     public ConfigRailFrameboost RailFrameboost = new(config, "Rail Frameboost");
@@ -24,8 +24,7 @@ public class MyConfig(ConfigFile config)
     public ConfigHandplant Handplant = new(config, "Handplant");
     public ConfigMisc Misc = new(config, "Misc");
     public ConfigNonStable NonStable = new(config, "NonStable");
-    public ConfigDumpsterKick DumpsterKick = new(config, "Dumpster Kick");
-    public ConfigSpeedometer Speedometer = new(config, "Speedometer");
+    public ConfigPopJump PopJump = new(config, "Pop Jump");
 
     public enum DoubleJumpType
     {
@@ -539,14 +538,14 @@ public class MyConfig(ConfigFile config)
         public ConfigEntry<BoostReturnType> BoostReturnType = config.Bind(
            category,
            "Boost Trick Returns Air Boost",
-           MyConfig.BoostReturnType.Once,
+           MovementConfig.BoostReturnType.Once,
            "Restores air boost after using an air boost trick. Options: Once per jump, every boost trick, or disabled."
        );
 
         public ConfigEntry<BoostReturnType> BoostDashReturnType = config.Bind(
            category,
            "Boost Trick Returns Air Dash",
-           MyConfig.BoostReturnType.Once,
+           MovementConfig.BoostReturnType.Once,
            "Restores air dash after using an air boost trick. Options: Once per jump, every boost trick, or disabled."
        );
 
@@ -1260,16 +1259,16 @@ public class MyConfig(ConfigFile config)
             "The bias towards using the average or max speed when using the BlendMaxAverage mode. 0 lean more towards the average, 1 will lean more towards the max"
         );
 
-        public ConfigEntry<string> preset = config.Bind(
+        public ConfigEntry<string> MVPreset = config.Bind(
             category,
-            "Preset",
+            "Movement Preset",
             "None",
-            "Preset to use when launching the game."
+            "Movement preset to use when launching the game."
         );
 
-        public ConfigEntry<bool> presetEnabled = config.Bind(
+        public ConfigEntry<bool> MVPresetEnabled = config.Bind(
            category,
-           "Preset Enabled",
+           "Movement Preset Enabled",
            true,
            "Whether the preset is enabled on launch or not."
        );
@@ -1382,72 +1381,43 @@ public class MyConfig(ConfigFile config)
             "Allows the player to surf on non stable surfaces by holding the slide button."
         );
     }
-    public class ConfigDumpsterKick(ConfigFile config, string category)
+    public class ConfigPopJump(ConfigFile config, string category)
     {
       public ConfigEntry<bool> Enabled = config.Bind(
           category,
-          "Dumpster Kick Enabled",
+          "Pop Jump Enabled",
           true,
           "When enabled, jumping after getting bounced back by a vending machine/dumpster/etc will convert all of your forward momentum into upward momentum"
           );
       public ConfigEntry<string> Name = config.Bind(
           category,
-          "Dumpster Kick Name",
-          "Dumpster Kick",
-          "Trick name that appears when performing a Dumpster Kick"
+          "Pop Jump Name",
+          "Pop Jump",
+          "Trick name that appears when performing a Pop Jump"
           );
       public ConfigEntry<float> GracePeriod = config.Bind(
           category,
-          "Dumpster Kick Grace Period",
+          "Pop Jump Grace Period",
           1.0f,
-          "The time window you can perform a Dumpster Kick in starting from when you hit a dumpster/vending machine."
+          "The time window you can perform a Pop Jump in starting from when you hit a dumpster/vending machine."
           );
       public ConfigEntry<float> SpeedMultiplier = config.Bind(
           category,
-          "Dumpster Kick Speed Multiplier",
+          "Pop Jump Speed Multiplier",
           1.0f,
           "The multiplier by which your total speed gets converted to upwards velocity."
           );
       public ConfigEntry<float> pointsPerSpeed = config.Bind(
            category,
-           "Dumpster Kick Base Points",
+           "Pop Jump Base Points",
            1.0f,
-           "Points given per one speed unit when performing a Dumpster Kick. The exact points given are points=max(float(Base Points * Speed Units), Minimum Dumpster Kick Points)."
+           "Points given per one speed unit when performing a Pop Jump. The exact points given are points=max(float(Base Points * Speed Units), Minimum Pop Jump Points)."
        );
         public ConfigEntry<int> pointsMin = config.Bind(
            category,
-           "Minimum Dumpster Kick Points",
+           "Minimum Pop Jump Points",
            200,
-           "Minimum amount of points(flat, not per speed unit) given when performing a Dumpster Kick."
+           "Minimum amount of points(flat, not per speed unit) given when performing a Pop Jump."
        );
-    }
-
-    public class ConfigSpeedometer(ConfigFile config, string category)
-    {
-      public ConfigEntry<bool> Enabled = config.Bind(
-            category,
-            "Enable Speedometer",
-            true,
-            "Enables the built-in spedometer"
-          );
-
-      public ConfigEntry<MovementPlus.SpeedDisplay.Representation> SpeedRep = config.Bind(
-            category,
-            "Speed Representation Mode",
-            MovementPlus.SpeedDisplay.Representation.SpeedUnits,
-            "Sets the units your speed will be displayed in in-game."
-          );
-      public ConfigEntry<bool> Rainbow = config.Bind(
-          category,
-          "Rainbow Mode",
-          true,
-          "Changes the color of your spedometer as your speed changes."
-          );
-      public ConfigEntry<bool> UseTotalSpeed = config.Bind(
-          category,
-          "Use Total Speed",
-          true,
-          "Set to true to use the player's total speed, otherwise set to false to only use forward speed."
-          );
     }
 }

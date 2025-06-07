@@ -4,9 +4,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
-using MovementPlus.SpeedDisplay;
+using MovementFunk.SpeedDisplay;
 
-namespace MovementPlus
+namespace MovementFunk
 {
     internal class PresetApp : CustomApp
     {
@@ -15,7 +15,7 @@ namespace MovementPlus
 
         public static void Init()
         {
-            string iconPath = Path.Combine(MovementPlusPlugin.Instance.Dir, "MF_icon.png");
+            string iconPath = Path.Combine(MovementFunkPlugin.Instance.Dir, "MF_icon.png");
 
             try
             {
@@ -41,7 +41,7 @@ namespace MovementPlus
         private void PopulateList()
         {
             ScrollView.AddButton(NoneButton());
-            presets = MPPresetManager.GetAvailablePresets();
+            presets = MFPresetManager.GetAvailablePresets();
             if (presets.Count > 0)
             {
                 foreach (string preset in presets)
@@ -58,7 +58,7 @@ namespace MovementPlus
             var button = PhoneUIUtility.CreateSimpleButton(preset);
             button.OnConfirm += () =>
             {
-                MPPresetManager.ApplyPreset(preset);
+                MFPresetManager.ApplyMovementPreset(preset);
                 Speedometer.UpdateSpeedRep();
             };
             return button;
@@ -69,7 +69,7 @@ namespace MovementPlus
             var button = PhoneUIUtility.CreateSimpleButton("None");
             button.OnConfirm += () =>
             {
-                MPPresetManager.NoPreset();
+                MFPresetManager.NoMovementPreset();
             };
             return button;
         }

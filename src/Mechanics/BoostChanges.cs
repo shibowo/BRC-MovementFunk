@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace MovementPlus.Mechanics
+namespace MovementFunk.Mechanics
 {
     internal class BoostChanges
     {
@@ -8,9 +8,9 @@ namespace MovementPlus.Mechanics
 
         public static void Update()
         {
-            if (MovementPlusPlugin.ConfigSettings.BoostGeneral.InfiniteBoost.Value)
+            if (MovementFunkPlugin.ConfigSettings.BoostGeneral.InfiniteBoost.Value)
             {
-                MovementPlusPlugin.player.boostCharge = MovementPlusPlugin.player.maxBoostCharge;
+                MovementFunkPlugin.player.boostCharge = MovementFunkPlugin.player.maxBoostCharge;
             }
             if (RailGoon.hasGooned)
             {
@@ -18,14 +18,14 @@ namespace MovementPlus.Mechanics
                 return;
             }
 
-            if (MovementPlusPlugin.player.ability == MovementPlusPlugin.player.wallrunAbility)
+            if (MovementFunkPlugin.player.ability == MovementFunkPlugin.player.wallrunAbility)
             {
                 return;
             }
 
-            if (MovementPlusPlugin.player.ability != MovementPlusPlugin.player.boostAbility && MovementPlusPlugin.ConfigSettings.BoostGeneral.SpeedScale.Value)
+            if (MovementFunkPlugin.player.ability != MovementFunkPlugin.player.boostAbility && MovementFunkPlugin.ConfigSettings.BoostGeneral.SpeedScale.Value)
             {
-                MovementPlusPlugin.player.normalBoostSpeed = Mathf.Max(defaultBoostSpeed, MPMovementMetrics.AverageForwardSpeed(), MovementPlusPlugin.player.GetForwardSpeed());
+                MovementFunkPlugin.player.normalBoostSpeed = Mathf.Max(defaultBoostSpeed, MFMovementMetrics.AverageForwardSpeed(), MovementFunkPlugin.player.GetForwardSpeed());
             }
         }
     }

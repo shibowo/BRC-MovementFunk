@@ -2,11 +2,11 @@
 using Reptile;
 using UnityEngine;
 
-namespace MovementPlus.Patches
+namespace MovementFunk.Patches
 {
     internal static class BoostAbilityPatch
     {
-        private static MyConfig ConfigSettings = MovementPlusPlugin.ConfigSettings;
+        private static MovementConfig ConfigSettings = MovementFunkPlugin.ConfigSettings;
 
         private static float defaultBoostSpeed;
         private static float preY;
@@ -15,9 +15,9 @@ namespace MovementPlus.Patches
         [HarmonyPostfix]
         private static void BoostAbility_OnStartAbility_Postfix(BoostAbility __instance)
         {
-            if (__instance.p.isAI || MovementPlusPlugin.ConfigSettings.Misc.DisablePatch.Value) { return; }
+            if (__instance.p.isAI || MovementFunkPlugin.ConfigSettings.Misc.DisablePatch.Value) { return; }
 
-            MPVariables.boostAbilityTimer = MovementPlusPlugin.ConfigSettings.BoostGeneral.decc.Value;
+            MFVariables.boostAbilityTimer = MovementFunkPlugin.ConfigSettings.BoostGeneral.decc.Value;
             preY = __instance.p.GetVelocity().y;
         }
 
@@ -25,8 +25,8 @@ namespace MovementPlus.Patches
         [HarmonyPostfix]
         private static void BoostAbility_Init_Postfix(BoostAbility __instance)
         {
-            if (__instance.p.isAI || MovementPlusPlugin.ConfigSettings.Misc.DisablePatch.Value) { return; }
-            __instance.decc = MovementPlusPlugin.ConfigSettings.BoostGeneral.decc.Value;
+            if (__instance.p.isAI || MovementFunkPlugin.ConfigSettings.Misc.DisablePatch.Value) { return; }
+            __instance.decc = MovementFunkPlugin.ConfigSettings.BoostGeneral.decc.Value;
             defaultBoostSpeed = __instance.p.normalBoostSpeed;
         }
 
@@ -34,10 +34,10 @@ namespace MovementPlus.Patches
         [HarmonyPostfix]
         private static void BoostAbility_FixedUpdateAbility_Postfix(BoostAbility __instance)
         {
-            if (__instance.p.isAI || MovementPlusPlugin.ConfigSettings.Misc.DisablePatch.Value) { return; }
-            ConfigSettings = MovementPlusPlugin.ConfigSettings;
+            if (__instance.p.isAI || MovementFunkPlugin.ConfigSettings.Misc.DisablePatch.Value) { return; }
+            ConfigSettings = MovementFunkPlugin.ConfigSettings;
 
-            MPVariables.boostAbilityTimer += Core.dt;
+            MFVariables.boostAbilityTimer += Core.dt;
 
             if (__instance.p.IsGrounded() && __instance.p.IsComboing() && ConfigSettings.ComboGeneral.BoostEnabled.Value)
             {
@@ -50,16 +50,16 @@ namespace MovementPlus.Patches
             {
                 if (__instance.state == BoostAbility.State.START_BOOST)
                 {
-                    float speed = (__instance.p.ability == __instance.p.grindAbility) ? MPMovementMetrics.AverageForwardSpeed() : MPMovementMetrics.AverageTotalSpeed();
+                    float speed = (__instance.p.ability == __instance.p.grindAbility) ? MFMovementMetrics.AverageForwardSpeed() : MFMovementMetrics.AverageTotalSpeed();
                     float highestSpeed = Mathf.Max(defaultBoostSpeed, speed);
-                    float newSpeed = MPMath.LosslessClamp(highestSpeed, ConfigSettings.BoostGeneral.StartAmount.Value, ConfigSettings.BoostGeneral.StartCap.Value);
+                    float newSpeed = MFMath.LosslessClamp(highestSpeed, ConfigSettings.BoostGeneral.StartAmount.Value, ConfigSettings.BoostGeneral.StartCap.Value);
                     __instance.p.normalBoostSpeed = newSpeed;
                     return;
                 }
             }
             if (ConfigSettings.BoostGeneral.TotalSpeedEnabled.Value)
             {
-                float newSpeed = MPMath.LosslessClamp(MPMovementMetrics.AverageForwardSpeed(), MPMovementMetrics.AverageTotalSpeed() - MPMovementMetrics.AverageForwardSpeed(), ConfigSettings.BoostGeneral.TotalSpeedCap.Value);
+                float newSpeed = MFMath.LosslessClamp(MFMovementMetrics.AverageForwardSpeed(), MFMovementMetrics.AverageTotalSpeed() - MFMovementMetrics.AverageForwardSpeed(), ConfigSettings.BoostGeneral.TotalSpeedCap.Value);
                 __instance.p.normalBoostSpeed = newSpeed;
             }
         }
@@ -68,13 +68,13 @@ namespace MovementPlus.Patches
         {
             if (!__instance.p.IsGrounded())
             {
-                if (__instance.state == BoostAbility.State.START_BOOST && MovementPlusPlugin.ConfigSettings.BoostGeneral.Force0.Value)
+                if (__instance.state == BoostAbility.State.START_BOOST && MovementFunkPlugin.ConfigSettings.BoostGeneral.Force0.Value)
                 {
                     __instance.p.motor.SetVelocityYOneTime(0f);
                     return;
                 }
 
-                if (MovementPlusPlugin.ConfigSettings.BoostGeneral.RetainY.Value)
+                if (MovementFunkPlugin.ConfigSettings.BoostGeneral.RetainY.Value)
                 {
                     __instance.p.motor.SetVelocityYOneTime(preY);
                     preY -= __instance.p.motor.gravity * Core.dt;
@@ -86,7 +86,7 @@ namespace MovementPlus.Patches
         [HarmonyPrefix]
         private static void BoostAbility_OnJump_PreFix(BoostAbility __instance)
         {
-            if (__instance.p.isAI || MovementPlusPlugin.ConfigSettings.Misc.DisablePatch.Value) { return; }
+            if (__instance.p.isAI || MovementFunkPlugin.ConfigSettings.Misc.DisablePatch.Value) { return; }
             preY = __instance.p.jumpSpeed;
             if (__instance.p.IsComboing())
             {

@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace MovementPlus.Mechanics
+namespace MovementFunk.Mechanics
 {
     internal class BoostHardCorner
     {
@@ -19,7 +19,7 @@ namespace MovementPlus.Mechanics
 
         public static void CheckBoostInput()
         {
-            if (MovementPlusPlugin.player.boostButtonNew && Time.time >= cooldownEndTime)
+            if (MovementFunkPlugin.player.boostButtonNew && Time.time >= cooldownEndTime)
             {
                 lastBoostPressTime = Time.time;
             }

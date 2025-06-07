@@ -3,7 +3,7 @@ using Reptile;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace MovementPlus.Patches
+namespace MovementFunk.Patches
 {
     internal static class VertAbilityPatch
     {
@@ -11,7 +11,7 @@ namespace MovementPlus.Patches
         [HarmonyPostfix]
         private static void VertAbility_OnStartAbility_Postfix(VertAbility __instance)
         {
-            if (__instance.p.isAI || MovementPlusPlugin.ConfigSettings.Misc.DisablePatch.Value) { return; }
+            if (__instance.p.isAI || MovementFunkPlugin.ConfigSettings.Misc.DisablePatch.Value) { return; }
             __instance.p.airDashAbility.haveAirDash = false;
         }
 
@@ -19,7 +19,7 @@ namespace MovementPlus.Patches
         [HarmonyPostfix]
         private static void VertAbility_OnStopAbility_Postfix(VertAbility __instance)
         {
-            if (__instance.p.isAI || MovementPlusPlugin.ConfigSettings.Misc.DisablePatch.Value) { return; }
+            if (__instance.p.isAI || MovementFunkPlugin.ConfigSettings.Misc.DisablePatch.Value) { return; }
             __instance.p.airDashAbility.haveAirDash = true;
         }
 
@@ -27,20 +27,20 @@ namespace MovementPlus.Patches
         [HarmonyPostfix]
         private static void VertAbility_FixedUpdateAbility_Postfix(VertAbility __instance)
         {
-            if (__instance.p.isAI || MovementPlusPlugin.ConfigSettings.Misc.DisablePatch.Value) { return; }
+            if (__instance.p.isAI || MovementFunkPlugin.ConfigSettings.Misc.DisablePatch.Value) { return; }
             if (__instance.p.jumpButtonNew)
             {
                 __instance.p.StopCurrentAbility();
 
-                List<string> backButton = MPMisc.StringToList("down");
-                bool isBackHeld = MPInputBuffer.WasPressedRecentlyOrIsHeld(backButton, 0.1f);
+                List<string> backButton = MFMisc.StringToList("down");
+                bool isBackHeld = MFInputBuffer.WasPressedRecentlyOrIsHeld(backButton, 0.1f);
 
                 if (!isBackHeld)
                 {
                     __instance.p.SetRotation(__instance.p.tf.rotation * Quaternion.Euler(0, 180, 0));
                 }
 
-                Vector3 newVelocity = MPMovementMetrics.AverageForwardDir() * MPMovementMetrics.AverageTotalSpeed();
+                Vector3 newVelocity = MFMovementMetrics.AverageForwardDir() * MFMovementMetrics.AverageTotalSpeed();
 
                 if (__instance.p.slideButtonHeld)
                 {

@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace MovementPlus
+namespace MovementFunk
 {
-    internal class MPMisc
+    internal class MFMisc
     {
         public static List<string> StringToList(string input)
         {

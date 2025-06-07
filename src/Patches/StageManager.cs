@@ -1,7 +1,7 @@
 ﻿using HarmonyLib;
 using Reptile;
 
-namespace MovementPlus.Patches
+namespace MovementFunk.Patches
 {
     internal static class StageManagerPatch
     {
@@ -9,10 +9,10 @@ namespace MovementPlus.Patches
         [HarmonyPrefix]
         private static void StageManager_OnStageInitialized_Prefix(StageManager __instance)
         {
-            if (MovementPlusPlugin.ConfigSettings.Misc.DisablePatch.Value) { return; }
-            if (MovementPlusPlugin.ConfigSettings.Misc.ReturnSpeedLoading.Value)
+            if (MovementFunkPlugin.ConfigSettings.Misc.DisablePatch.Value) { return; }
+            if (MovementFunkPlugin.ConfigSettings.Misc.ReturnSpeedLoading.Value)
             {
-                MovementPlusPlugin.player.SetForwardSpeed(MPMovementMetrics.AverageForwardSpeed());
+                MovementFunkPlugin.player.SetForwardSpeed(MFMovementMetrics.AverageForwardSpeed());
             }
         }
     }

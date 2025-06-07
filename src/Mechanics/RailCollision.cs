@@ -1,7 +1,7 @@
 ﻿using Reptile;
 using UnityEngine;
 
-namespace MovementPlus.Mechanics
+namespace MovementFunk.Mechanics
 {
     internal class RailCollision
     {
@@ -11,11 +11,11 @@ namespace MovementPlus.Mechanics
 
         public static void Update()
         {
-            if (MovementPlusPlugin.player.isAI || !MovementPlusPlugin.ConfigSettings.RailGeneral.Detection.Value) { return; }
+            if (MovementFunkPlugin.player.isAI || !MovementFunkPlugin.ConfigSettings.RailGeneral.Detection.Value) { return; }
             previousPosition = currentPosition;
-            currentPosition = MovementPlusPlugin.player.transform.position;
+            currentPosition = MovementFunkPlugin.player.transform.position;
 
-            playerSpeed = MovementPlusPlugin.player.GetTotalSpeed();
+            playerSpeed = MovementFunkPlugin.player.GetTotalSpeed();
 
             RaycastHit[] hits = LogHitsBetweenPositions();
             DetectMissedGrinds(hits);
@@ -36,13 +36,13 @@ namespace MovementPlus.Mechanics
                 {
                     GrindLine grindLine = hit.collider.gameObject.GetComponent<GrindLine>();
 
-                    if (grindLine != null && MovementPlusPlugin.player.grindAbility.CanSetToLine(grindLine))
+                    if (grindLine != null && MovementFunkPlugin.player.grindAbility.CanSetToLine(grindLine))
                     {
                         float distanceToRail = Vector3.Distance(currentPosition, hit.point);
 
                         if (distanceToRail <= playerSpeed * Time.deltaTime)
                         {
-                            MovementPlusPlugin.player.grindAbility.SetToLine(grindLine);
+                            MovementFunkPlugin.player.grindAbility.SetToLine(grindLine);
                             break;
                         }
                     }

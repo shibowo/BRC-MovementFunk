@@ -3,16 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-namespace MovementPlus
+namespace MovementFunk
 {
-    internal class MPTrickManager
+    internal class MFTrickManager
     {
         public static Queue<string> recentTricks = new Queue<string>();
         private const int MAX_TRICKS = 100;
 
         public static void Update()
         {
-            if (MovementPlusPlugin.player.IsComboing() == false)
+            if (MovementFunkPlugin.player.IsComboing() == false)
             {
                 recentTricks.Clear();
             }
@@ -43,27 +43,27 @@ namespace MovementPlus
 
         public static void DoTrick(string name, int points)
         {
-            MovementPlusPlugin.player.currentTrickName = name;
-            MovementPlusPlugin.player.currentTrickPoints = points;
+            MovementFunkPlugin.player.currentTrickName = name;
+            MovementFunkPlugin.player.currentTrickPoints = points;
 
-            if (MovementPlusPlugin.player.tricksInCombo == 0 && MovementPlusPlugin.player.ui != null)
+            if (MovementFunkPlugin.player.tricksInCombo == 0 && MovementFunkPlugin.player.ui != null)
             {
-                MovementPlusPlugin.player.ui.SetTrickingChargeBarActive(true);
+                MovementFunkPlugin.player.ui.SetTrickingChargeBarActive(true);
             }
-            MovementPlusPlugin.player.tricksInCombo++;
-            if (MovementPlusPlugin.player.tricksInCombo >= 5)
+            MovementFunkPlugin.player.tricksInCombo++;
+            if (MovementFunkPlugin.player.tricksInCombo >= 5)
             {
-                float num = MovementPlusPlugin.player.gainBoostChargeCurve.Evaluate(Mathf.Min((float)MovementPlusPlugin.player.tricksInCombo, 50f) / 50f);
-                MovementPlusPlugin.player.showAddCharge = num;
-                MovementPlusPlugin.player.AddBoostCharge(num);
+                float num = MovementFunkPlugin.player.gainBoostChargeCurve.Evaluate(Mathf.Min((float)MovementFunkPlugin.player.tricksInCombo, 50f) / 50f);
+                MovementFunkPlugin.player.showAddCharge = num;
+                MovementFunkPlugin.player.AddBoostCharge(num);
             }
-            if (MovementPlusPlugin.player.scoreMultiplier == 0f)
+            if (MovementFunkPlugin.player.scoreMultiplier == 0f)
             {
-                MovementPlusPlugin.player.scoreMultiplier = 1f;
+                MovementFunkPlugin.player.scoreMultiplier = 1f;
             }
-            MovementPlusPlugin.player.currentTrickOnFoot = !MovementPlusPlugin.player.usingEquippedMovestyle;
-            MovementPlusPlugin.player.baseScore += (float)((int)((float)MovementPlusPlugin.player.currentTrickPoints * MovementPlusPlugin.player.scoreFactor));
-            MovementPlusPlugin.player.didAbilityTrick = true;
+            MovementFunkPlugin.player.currentTrickOnFoot = !MovementFunkPlugin.player.usingEquippedMovestyle;
+            MovementFunkPlugin.player.baseScore += (float)((int)((float)MovementFunkPlugin.player.currentTrickPoints * MovementFunkPlugin.player.scoreFactor));
+            MovementFunkPlugin.player.didAbilityTrick = true;
         }
     }
 }

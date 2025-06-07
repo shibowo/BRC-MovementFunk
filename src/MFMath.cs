@@ -1,8 +1,8 @@
 ﻿using UnityEngine;
 
-namespace MovementPlus
+namespace MovementFunk
 {
-    internal class MPMath
+    internal class MFMath
     {
         public static float Remap(float val, float in1, float in2, float out1, float out2)
         {

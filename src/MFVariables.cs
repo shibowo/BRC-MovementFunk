@@ -1,9 +1,9 @@
 ﻿using Reptile;
 using UnityEngine;
 
-namespace MovementPlus
+namespace MovementFunk
 {
-    internal class MPVariables
+    internal class MFVariables
     {
         public static bool canResetAirBoost = true;
         public static bool canResetAirDash = true;
@@ -30,7 +30,7 @@ namespace MovementPlus
         {
             if (jumpedFromRail)
             {
-                MovementPlusPlugin.player.SetForwardSpeed(Mathf.Max(MPMovementMetrics.AverageForwardSpeed(), MovementPlusPlugin.player.GetForwardSpeed()));
+                MovementFunkPlugin.player.SetForwardSpeed(Mathf.Max(MFMovementMetrics.AverageForwardSpeed(), MovementFunkPlugin.player.GetForwardSpeed()));
                 jumpedFromRailTimer -= Core.dt;
             }
             if (jumpedFromRailTimer <= 0f)

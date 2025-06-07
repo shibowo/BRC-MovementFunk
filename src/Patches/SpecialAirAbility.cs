@@ -2,23 +2,23 @@
 using Reptile;
 using UnityEngine;
 
-namespace MovementPlus.Patches
+namespace MovementFunk.Patches
 {
     internal static class SpecialAirAbilityPatch
     {
-        private static MyConfig ConfigSettings = MovementPlusPlugin.ConfigSettings;
+        private static MovementConfig ConfigSettings = MovementFunkPlugin.ConfigSettings;
 
         [HarmonyPatch(typeof(SpecialAirAbility), nameof(SpecialAirAbility.OnStartAbility))]
         [HarmonyPrefix]
         private static void SpecialAirAbility_OnStartAbility_Prefix(SpecialAirAbility __instance)
         {
-            if (__instance.p.isAI || MovementPlusPlugin.ConfigSettings.Misc.DisablePatch.Value) { return; }
-            ConfigSettings = MovementPlusPlugin.ConfigSettings;
+            if (__instance.p.isAI || MovementFunkPlugin.ConfigSettings.Misc.DisablePatch.Value) { return; }
+            ConfigSettings = MovementFunkPlugin.ConfigSettings;
             if (ConfigSettings.SuperTrickJump.Enabled.Value)
             {
                 var num = Mathf.Max(__instance.p.GetForwardSpeed() - ConfigSettings.SuperTrickJump.Threshold.Value, 0f);
 
-                __instance.jumpSpeed = MPMath.LosslessClamp(__instance.jumpSpeed, num * ConfigSettings.SuperTrickJump.Amount.Value, ConfigSettings.SuperTrickJump.Cap.Value);
+                __instance.jumpSpeed = MFMath.LosslessClamp(__instance.jumpSpeed, num * ConfigSettings.SuperTrickJump.Amount.Value, ConfigSettings.SuperTrickJump.Cap.Value);
                 __instance.duration = 0.3f;
             }
         }
@@ -27,8 +27,8 @@ namespace MovementPlus.Patches
         [HarmonyPostfix]
         private static void SpecialAirAbility_OnStopAbility_Prefix(SpecialAirAbility __instance)
         {
-            if (__instance.p.isAI || MovementPlusPlugin.ConfigSettings.Misc.DisablePatch.Value) { return; }
-            __instance.jumpSpeed = MPVariables.defaultJumpSpeed;
+            if (__instance.p.isAI || MovementFunkPlugin.ConfigSettings.Misc.DisablePatch.Value) { return; }
+            __instance.jumpSpeed = MFVariables.defaultJumpSpeed;
         }
     }
 }

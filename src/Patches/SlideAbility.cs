@@ -1,24 +1,24 @@
 ﻿using HarmonyLib;
-using MovementPlus.Mechanics;
+using MovementFunk.Mechanics;
 using Reptile;
 using UnityEngine;
 
-namespace MovementPlus.Patches
+namespace MovementFunk.Patches
 {
     internal static class SlideAbilityPatch
     {
-        private static MyConfig ConfigSettings = MovementPlusPlugin.ConfigSettings;
+        private static MovementConfig ConfigSettings = MovementFunkPlugin.ConfigSettings;
 
         [HarmonyPatch(typeof(SlideAbility), nameof(SlideAbility.FixedUpdateAbility))]
         [HarmonyPostfix]
         private static void SlideAbility_FixedUpdateAbility_Postfix(SlideAbility __instance)
         {
-            if (__instance.p.isAI || MovementPlusPlugin.ConfigSettings.Misc.DisablePatch.Value) { return; }
-            ConfigSettings = MovementPlusPlugin.ConfigSettings;
+            if (__instance.p.isAI || MovementFunkPlugin.ConfigSettings.Misc.DisablePatch.Value) { return; }
+            ConfigSettings = MovementFunkPlugin.ConfigSettings;
             float speed = Mathf.Max(ConfigSettings.SuperSlide.Speed.Value, __instance.p.GetForwardSpeed());
             if (ConfigSettings.SuperSlide.Enabled.Value)
             {
-                speed = MPMath.LosslessClamp(speed, ConfigSettings.SuperSlide.Amount.Value, ConfigSettings.SuperSlide.Cap.Value);
+                speed = MFMath.LosslessClamp(speed, ConfigSettings.SuperSlide.Amount.Value, ConfigSettings.SuperSlide.Cap.Value);
             }
             __instance.superSpeed = speed;
 
@@ -66,10 +66,10 @@ namespace MovementPlus.Patches
         [HarmonyPostfix]
         private static void SlideAbility_OnStartAbility_Postfix(SlideAbility __instance)
         {
-            if (__instance.p.isAI || MovementPlusPlugin.ConfigSettings.Misc.DisablePatch.Value) { return; }
+            if (__instance.p.isAI || MovementFunkPlugin.ConfigSettings.Misc.DisablePatch.Value) { return; }
             if (PerfectManual.slideBoost)
             {
-                __instance.trickName = MovementPlusPlugin.ConfigSettings.PerfectManual.Prefix.Value + " " + __instance.trickName;
+                __instance.trickName = MovementFunkPlugin.ConfigSettings.PerfectManual.Prefix.Value + " " + __instance.trickName;
             }
         }
     }

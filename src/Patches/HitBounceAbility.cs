@@ -1,7 +1,7 @@
 ﻿using HarmonyLib;
 using Reptile;
 
-namespace MovementPlus.Patches
+namespace MovementFunk.Patches
 {
     internal static class HitBounceAbilityPatch
     {
@@ -9,9 +9,9 @@ namespace MovementPlus.Patches
         [HarmonyPrefix]
         private static void HitBounceAbility_SetState_Prefix(HitBounceAbility __instance)
         {
-            if (__instance.p.isAI || MovementPlusPlugin.ConfigSettings.Misc.DisablePatch.Value) { return; }
-            if (MovementPlusPlugin.ConfigSettings.DumpsterKick.Enabled.Value){
-              MPVariables.savedSpeedBeforeHitBounce = MPMovementMetrics.AverageTotalSpeed();
+            if (__instance.p.isAI || MovementFunkPlugin.ConfigSettings.Misc.DisablePatch.Value) { return; }
+            if (MovementFunkPlugin.ConfigSettings.PopJump.Enabled.Value){
+              MFVariables.savedSpeedBeforeHitBounce = MFMovementMetrics.AverageTotalSpeed();
             }
         }
     }

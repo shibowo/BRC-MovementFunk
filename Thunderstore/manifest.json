@@ -1,6 +1,6 @@
 {
     "name": "MovementFunk",
-    "version_number": "0.1.0",
+    "version_number": "0.2.0",
     "website_url": "https://github.com/shibowo/BRC-MovementFunk",
     "description": "A fork of MovementPlus. Movement + funk. get it?",
     "dependencies": ["BepInEx-BepInExPack-5.4.2100"]

@@ -1,44 +1,44 @@
 ﻿using BepInEx;
 using BepInEx.Logging;
 using HarmonyLib;
-using MovementPlus.Mechanics;
-using MovementPlus.SpeedDisplay;
+using MovementFunk.Mechanics;
+using MovementFunk.SpeedDisplay;
 using Reptile;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 
-namespace MovementPlus
+namespace MovementFunk
 {
     [BepInPlugin(MyGUID, PluginName, VersionString)]
-    public class MovementPlusPlugin : BaseUnityPlugin
+    public class MovementFunkPlugin : BaseUnityPlugin
     {
         public const string MyGUID = "shibowo.MovementFunk";
         private const string PluginName = "MovementFunk";
-        private const string VersionString = "0.1.0";
+        private const string VersionString = "0.2.0";
 
-        public static MovementPlusPlugin Instance { get; private set; }
+        public static MovementFunkPlugin Instance { get; private set; }
         public string Dir => Path.GetDirectoryName(Info.Location);
 
         private Harmony harmony;
         public static Player player;
         public static ManualLogSource PubLogger; //plugin's logger instance is protected.
-        public static MyConfig ConfigSettings;
+        public static MovementConfig ConfigSettings;
+        public static SpeedometerConfig SpeedometerSettings;
 
         private void Awake()
         {
             harmony = new Harmony(MyGUID);
-            ConfigSettings = new MyConfig(Config);
             Instance = this;
             PubLogger = BepInEx.Logging.Logger.CreateLogSource(PluginName);
 
-            PatchAllInNamespace(harmony, "MovementPlus.Patches");
+            PatchAllInNamespace(harmony, "MovementFunk.Patches");
 
-            MPMovementMetrics.Init();
+            MFMovementMetrics.Init();
             SpeedReturn.Init();
             PresetApp.Init();
-            MPAnimation.Init();
-            MPPresetManager.LaunchPreset();
+            MFAnimation.Init();
+            MFPresetManager.LaunchPreset();
 
             Logger.LogInfo($"{PluginName} has been loaded!");
         }
@@ -50,18 +50,18 @@ namespace MovementPlus
                 Fastfall.Update();
                 VertChanges.Update();
                 BoostChanges.Update();
-                MPMovementMetrics.Update();
-                MPVariables.Update();
+                MFMovementMetrics.Update();
+                MFVariables.Update();
                 PerfectManual.Update();
                 SpeedLimit.Update();
                 NonStableChanges.Update();
                 SpeedReturn.Update();
-                MPInputBuffer.Update();
-                MPTrickManager.Update();
+                MFInputBuffer.Update();
+                MFTrickManager.Update();
                 RailCollision.Update();
                 GoonStorageMinMax.Update();
                 BoostHardCorner.Update();
-                DumpsterKick.Update();
+                PopJump.Update();
             }
         }
 

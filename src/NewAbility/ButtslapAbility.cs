@@ -1,7 +1,7 @@
 ﻿using Reptile;
 using UnityEngine;
 
-namespace MovementPlus.NewAbility
+namespace MovementFunk.NewAbility
 {
     public class ButtslapAbility : Ability
     {
@@ -9,7 +9,7 @@ namespace MovementPlus.NewAbility
         {
         }
 
-        private static MyConfig ConfigSettings = MovementPlusPlugin.ConfigSettings;
+        private static MovementConfig ConfigSettings = MovementFunkPlugin.ConfigSettings;
 
         private float buttslapTimer;
         private bool boosted;
@@ -25,7 +25,7 @@ namespace MovementPlus.NewAbility
 
         public void Activation()
         {
-            ConfigSettings = MovementPlusPlugin.ConfigSettings;
+            ConfigSettings = MovementFunkPlugin.ConfigSettings;
             if (!this.p.motor.isGrounded && this.p.jumpButtonNew && ConfigSettings.Buttslap.Enabled.Value && this.p.ability == this.p.groundTrickAbility && !this.p.isJumping)
             {
                 boosted = this.p.groundTrickAbility.boostTrick;
@@ -35,7 +35,7 @@ namespace MovementPlus.NewAbility
 
         public override void OnStartAbility()
         {
-            ConfigSettings = MovementPlusPlugin.ConfigSettings;
+            ConfigSettings = MovementFunkPlugin.ConfigSettings;
             if (!ConfigSettings.Buttslap.MultiEnabled.Value)
             {
                 this.p.StopCurrentAbility();
@@ -45,7 +45,7 @@ namespace MovementPlus.NewAbility
                 this.buttslapTimer = ConfigSettings.Buttslap.Timer.Value;
                 this.buttslapAmount = 0;
             }
-            type = MPVariables.buttslapType;
+            type = MFVariables.buttslapType;
             this.PerformButtslap();
         }
 
@@ -92,7 +92,7 @@ namespace MovementPlus.NewAbility
 
         private void PerformTrick(string type, bool boosted)
         {
-            ConfigSettings = MovementPlusPlugin.ConfigSettings;
+            ConfigSettings = MovementFunkPlugin.ConfigSettings;
             this.buttslapAmount++;
             string baseName;
             int points;
@@ -173,17 +173,17 @@ namespace MovementPlus.NewAbility
                 }
             }
 
-            MPTrickManager.AddTrick(baseName);
-            points = MPTrickManager.CalculateTrickValue(baseName, points, minPoints, ConfigSettings.Misc.listLength.Value, ConfigSettings.Misc.repsToMin.Value);
+            MFTrickManager.AddTrick(baseName);
+            points = MFTrickManager.CalculateTrickValue(baseName, points, minPoints, ConfigSettings.Misc.listLength.Value, ConfigSettings.Misc.repsToMin.Value);
 
             string name = $"{baseName} x {this.buttslapAmount}";
             this.p.currentTrickName = name;
-            MPTrickManager.DoTrick(name, points);
+            MFTrickManager.DoTrick(name, points);
 
             jumpAmount += Mathf.Max(this.p.GetVelocity().y, 0f);
             this.p.DoJumpEffects(this.p.motor.groundNormalVisual * -1f);
             this.p.motor.SetVelocityYOneTime(jumpAmount);
-            this.p.SetForwardSpeed(MPMath.LosslessClamp(this.p.GetForwardSpeed(), forwardAmount, cap));
+            this.p.SetForwardSpeed(MFMath.LosslessClamp(this.p.GetForwardSpeed(), forwardAmount, cap));
             this.p.DoComboTimeOut(comboAmount);
         }
     }

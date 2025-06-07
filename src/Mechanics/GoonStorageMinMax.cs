@@ -1,19 +1,19 @@
-﻿namespace MovementPlus.Mechanics
+﻿namespace MovementFunk.Mechanics
 {
     internal class GoonStorageMinMax
     {
         public static void Update()
         {
-            var player = MovementPlusPlugin.player;
-            var ConfigSettings = MovementPlusPlugin.ConfigSettings;
+            var player = MovementFunkPlugin.player;
+            var ConfigSettings = MovementFunkPlugin.ConfigSettings;
             if (player.ability != player.wallrunAbility)
             {
                 float minimum = ConfigSettings.WallGeneral.goonStorageMin.Value;
                 float maximum = ConfigSettings.WallGeneral.goonStorageMax.Value;
 
-                float clampedValue = MPMath.Clamp(player.wallrunAbility.lastSpeed, minimum, maximum);
+                float clampedValue = MFMath.Clamp(player.wallrunAbility.lastSpeed, minimum, maximum);
 
-                MPVariables.savedGoon = clampedValue;
+                MFVariables.savedGoon = clampedValue;
                 player.wallrunAbility.lastSpeed = clampedValue;
                 player.wallrunAbility.customVelocity = clampedValue * player.wallrunAbility.customVelocity.normalized;
             }

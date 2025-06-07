@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-namespace MovementPlus.Mechanics
+namespace MovementFunk.Mechanics
 {
     internal class SpeedReturn
     {
@@ -15,7 +15,7 @@ namespace MovementPlus.Mechanics
 
         public static void Update()
         {
-            if (MovementPlusPlugin.player.isAI || !MovementPlusPlugin.ConfigSettings.Misc.ReturnSpeed.Value) { return; }
+            if (MovementFunkPlugin.player.isAI || !MovementFunkPlugin.ConfigSettings.Misc.ReturnSpeed.Value) { return; }
             PredictMovement();
             CheckIfSlow();
         }
@@ -23,16 +23,16 @@ namespace MovementPlus.Mechanics
         private static void PredictMovement()
         {
             float predictionTime = 0.1f;
-            Vector3 predictedPosition = MovementPlusPlugin.player.transform.position + MovementPlusPlugin.player.GetVelocity() * predictionTime;
+            Vector3 predictedPosition = MovementFunkPlugin.player.transform.position + MovementFunkPlugin.player.GetVelocity() * predictionTime;
 
-            Vector3 direction = (predictedPosition - MovementPlusPlugin.player.transform.position).normalized;
-            float distance = Vector3.Distance(predictedPosition, MovementPlusPlugin.player.transform.position);
+            Vector3 direction = (predictedPosition - MovementFunkPlugin.player.transform.position).normalized;
+            float distance = Vector3.Distance(predictedPosition, MovementFunkPlugin.player.transform.position);
 
             int layerMask = LayerMask.GetMask("Default");
 
             Vector3 raycastOriginOffset = new Vector3(0, 0.15f, 0);
 
-            RaycastHit[] hits = Physics.RaycastAll(MovementPlusPlugin.player.transform.position + raycastOriginOffset, direction, distance, layerMask);
+            RaycastHit[] hits = Physics.RaycastAll(MovementFunkPlugin.player.transform.position + raycastOriginOffset, direction, distance, layerMask);
 
             hitAngles.Clear();
 
@@ -54,8 +54,8 @@ namespace MovementPlus.Mechanics
 
         private static void CheckIfSlow()
         {
-            float currentSpeed = MovementPlusPlugin.player.GetForwardSpeed();
-            float averageSpeed = MPMovementMetrics.AverageForwardSpeed();
+            float currentSpeed = MovementFunkPlugin.player.GetForwardSpeed();
+            float averageSpeed = MFMovementMetrics.AverageForwardSpeed();
             float threshold = 30;
             float minimumSpeed = 13;
 
@@ -63,16 +63,16 @@ namespace MovementPlus.Mechanics
 
             bool isSpeedBelowAverage = currentSpeed < averageSpeed;
             bool isDifferenceBeyondThreshold = percentageDifference > threshold;
-            bool isAbilityAllowed = MovementPlusPlugin.player.ability == MovementPlusPlugin.player.airTrickAbility ||
-            MovementPlusPlugin.player.ability == MovementPlusPlugin.player.groundTrickAbility ||
-            MovementPlusPlugin.player.ability == MovementPlusPlugin.player.slideAbility ||
-                                    MovementPlusPlugin.player.ability == null;
+            bool isAbilityAllowed = MovementFunkPlugin.player.ability == MovementFunkPlugin.player.airTrickAbility ||
+            MovementFunkPlugin.player.ability == MovementFunkPlugin.player.groundTrickAbility ||
+            MovementFunkPlugin.player.ability == MovementFunkPlugin.player.slideAbility ||
+                                    MovementFunkPlugin.player.ability == null;
             bool isAboveMinimumSpeed = currentSpeed > minimumSpeed;
-            bool isOnVert = MovementPlusPlugin.player.vertShape != null;
+            bool isOnVert = MovementFunkPlugin.player.vertShape != null;
 
             if (isSpeedBelowAverage && isDifferenceBeyondThreshold && !hitWall && isAbilityAllowed && isAboveMinimumSpeed && !isOnVert)
             {
-                MovementPlusPlugin.player.SetForwardSpeed(averageSpeed);
+                MovementFunkPlugin.player.SetForwardSpeed(averageSpeed);
             }
         }
     }

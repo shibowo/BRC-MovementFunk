@@ -1,16 +1,16 @@
 ﻿using HarmonyLib;
-using MovementPlus.Mechanics;
+using MovementFunk.Mechanics;
 using Reptile;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
 using UnityEngine;
 
-namespace MovementPlus.Patches
+namespace MovementFunk.Patches
 {
     internal static class AirDashAbilityPatch
     {
-        private static MyConfig ConfigSettings = MovementPlusPlugin.ConfigSettings;
+        private static MovementConfig ConfigSettings = MovementFunkPlugin.ConfigSettings;
 
         private static bool showBoost = false;
 
@@ -61,14 +61,14 @@ namespace MovementPlus.Patches
 
             private static float ModifyNumValue(AirDashAbility airDashAbility, float originalNum)
             {
-                ConfigSettings = MovementPlusPlugin.ConfigSettings;
-                if (airDashAbility.p.isAI && !MovementPlusPlugin.ConfigSettings.Misc.airDashChangeEnabled.Value || ConfigSettings.Misc.DisablePatch.Value) { return originalNum; }
-                return MPMath.Remap(originalNum, -1f, 1f, ConfigSettings.Misc.airDashStrength.Value, 1f);
+                ConfigSettings = MovementFunkPlugin.ConfigSettings;
+                if (airDashAbility.p.isAI && !MovementFunkPlugin.ConfigSettings.Misc.airDashChangeEnabled.Value || ConfigSettings.Misc.DisablePatch.Value) { return originalNum; }
+                return MFMath.Remap(originalNum, -1f, 1f, ConfigSettings.Misc.airDashStrength.Value, 1f);
             }
 
             private static void CustomSetVelocity(Player player, Vector3 velocity, AirDashAbility airDashAbility)
             {
-                ConfigSettings = MovementPlusPlugin.ConfigSettings;
+                ConfigSettings = MovementFunkPlugin.ConfigSettings;
                 Vector3 vector = airDashAbility.p.moveInput.sqrMagnitude == 0f
                     ? (airDashAbility.dirIfNoSteer ?? airDashAbility.p.dir)
                     : airDashAbility.p.moveInput;
@@ -96,13 +96,13 @@ namespace MovementPlus.Patches
 
             private static void ApplyDoubleJump(AirDashAbility airDashAbility, Vector3 vector)
             {
-                ConfigSettings = MovementPlusPlugin.ConfigSettings;
+                ConfigSettings = MovementFunkPlugin.ConfigSettings;
                 float newYVelocity = CalculateNewYVelocity(airDashAbility);
                 airDashAbility.p.SetVelocity(new Vector3(airDashAbility.p.GetVelocity().x, newYVelocity, airDashAbility.p.GetVelocity().z));
 
                 airDashAbility.targetSpeed = airDashAbility.p.GetForwardSpeed();
                 string animationToPlay = airDashAbility.p.moveStyle == MoveStyle.INLINE ? "airTrick0" : ConfigSettings.Misc.airDashDoubleJumpAnim.Value;
-                airDashAbility.p.PlayAnim(MPAnimation.GetAnimationByName(animationToPlay), true, true, -1f);
+                airDashAbility.p.PlayAnim(MFAnimation.GetAnimationByName(animationToPlay), true, true, -1f);
                 airDashAbility.p.audioManager.PlayVoice(ref airDashAbility.p.currentVoicePriority, airDashAbility.p.character, AudioClipID.VoiceJump, airDashAbility.p.playerGameplayVoicesAudioSource, VoicePriority.MOVEMENT);
                 airDashAbility.p.DoHighJumpEffects(airDashAbility.p.tf.up);
                 showBoost = false;
@@ -110,7 +110,7 @@ namespace MovementPlus.Patches
 
             private static void ApplyNormalAirDash(AirDashAbility airDashAbility, Vector3 vector)
             {
-                ConfigSettings = MovementPlusPlugin.ConfigSettings;
+                ConfigSettings = MovementFunkPlugin.ConfigSettings;
                 Vector3 newVelocity = new Vector3(
                     vector.x * airDashAbility.airDashSpeed,
                     Mathf.Max(airDashAbility.airDashInitialUpSpeed, airDashAbility.p.GetVelocity().y),
@@ -125,20 +125,20 @@ namespace MovementPlus.Patches
 
             private static float CalculateNewYVelocity(AirDashAbility airDashAbility)
             {
-                ConfigSettings = MovementPlusPlugin.ConfigSettings;
+                ConfigSettings = MovementFunkPlugin.ConfigSettings;
                 float currentYVelocity = airDashAbility.p.GetVelocity().y;
                 float jumpAmount = ConfigSettings.Misc.airDashDoubleJumpAmount.Value;
 
                 switch (ConfigSettings.Misc.airDashDoubleJumpType.Value)
                 {
-                    case MyConfig.DoubleJumpType.Additive:
+                    case MovementConfig.DoubleJumpType.Additive:
                         return Mathf.Max(currentYVelocity + jumpAmount, jumpAmount);
 
-                    case MyConfig.DoubleJumpType.Replace:
+                    case MovementConfig.DoubleJumpType.Replace:
                         return jumpAmount;
 
-                    case MyConfig.DoubleJumpType.Capped:
-                        return MPMath.LosslessClamp(Mathf.Max(currentYVelocity, 0f), jumpAmount, jumpAmount);
+                    case MovementConfig.DoubleJumpType.Capped:
+                        return MFMath.LosslessClamp(Mathf.Max(currentYVelocity, 0f), jumpAmount, jumpAmount);
 
                     default:
                         return currentYVelocity;
@@ -150,7 +150,7 @@ namespace MovementPlus.Patches
         [HarmonyPostfix]
         private static void AirDashAbility_FixedUpdateAbility_Postfix(AirDashAbility __instance)
         {
-            if (__instance.p.isAI || MovementPlusPlugin.ConfigSettings.Misc.DisablePatch.Value) { return; }
+            if (__instance.p.isAI || MovementFunkPlugin.ConfigSettings.Misc.DisablePatch.Value) { return; }
             if (!showBoost)
             {
                 __instance.p.SetBoostpackAndFrictionEffects(BoostpackEffectMode.OFF, FrictionEffectMode.OFF);

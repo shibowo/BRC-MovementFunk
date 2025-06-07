@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace MovementPlus.Mechanics
+namespace MovementFunk.Mechanics
 {
     internal class VertChanges
     {
@@ -9,7 +9,7 @@ namespace MovementPlus.Mechanics
 
         public static void Update()
         {
-            if (MovementPlusPlugin.player.ability != MovementPlusPlugin.player.vertAbility)
+            if (MovementFunkPlugin.player.ability != MovementFunkPlugin.player.vertAbility)
             {
                 HandleVertAbility();
             }
@@ -17,12 +17,12 @@ namespace MovementPlus.Mechanics
 
         private static void HandleVertAbility()
         {
-            if (MovementPlusPlugin.ConfigSettings.VertGeneral.Enabled.Value)
+            if (MovementFunkPlugin.ConfigSettings.VertGeneral.Enabled.Value)
             {
                 UpdateVertBottomExitSpeed();
             }
 
-            if (MovementPlusPlugin.ConfigSettings.VertGeneral.JumpEnabled.Value)
+            if (MovementFunkPlugin.ConfigSettings.VertGeneral.JumpEnabled.Value)
             {
                 UpdateVertTopJumpSpeed();
             }
@@ -30,19 +30,19 @@ namespace MovementPlus.Mechanics
 
         private static void UpdateVertBottomExitSpeed()
         {
-            float playerTotal = MPMovementMetrics.AverageTotalSpeed();
-            var x = playerTotal + MovementPlusPlugin.ConfigSettings.VertGeneral.ExitSpeed.Value;
-            x = Mathf.Min(x, MovementPlusPlugin.ConfigSettings.VertGeneral.ExitSpeedCap.Value);
-            MovementPlusPlugin.player.vertMaxSpeed = Mathf.Max(defaultVertMaxSpeed, MovementPlusPlugin.player.GetTotalSpeed());
-            MovementPlusPlugin.player.vertBottomExitSpeed = x;
+            float playerTotal = MFMovementMetrics.AverageTotalSpeed();
+            var x = playerTotal + MovementFunkPlugin.ConfigSettings.VertGeneral.ExitSpeed.Value;
+            x = Mathf.Min(x, MovementFunkPlugin.ConfigSettings.VertGeneral.ExitSpeedCap.Value);
+            MovementFunkPlugin.player.vertMaxSpeed = Mathf.Max(defaultVertMaxSpeed, MovementFunkPlugin.player.GetTotalSpeed());
+            MovementFunkPlugin.player.vertBottomExitSpeed = x;
         }
 
         private static void UpdateVertTopJumpSpeed()
         {
-            float playerTotal = MPMovementMetrics.AverageTotalSpeed();
-            var x = Mathf.Max(defaultVertTopJumpSpeed, playerTotal * MovementPlusPlugin.ConfigSettings.VertGeneral.JumpStrength.Value);
-            x = Mathf.Min(MovementPlusPlugin.ConfigSettings.VertGeneral.JumpCap.Value, x);
-            MovementPlusPlugin.player.vertTopJumpSpeed = x;
+            float playerTotal = MFMovementMetrics.AverageTotalSpeed();
+            var x = Mathf.Max(defaultVertTopJumpSpeed, playerTotal * MovementFunkPlugin.ConfigSettings.VertGeneral.JumpStrength.Value);
+            x = Mathf.Min(MovementFunkPlugin.ConfigSettings.VertGeneral.JumpCap.Value, x);
+            MovementFunkPlugin.player.vertTopJumpSpeed = x;
         }
     }
 }

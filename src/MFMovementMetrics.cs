@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace MovementPlus
+namespace MovementFunk
 {
-    internal class MPMovementMetrics
+    internal class MFMovementMetrics
     {
         public static Queue<float> forwardSpeeds;
         public static Queue<float> totalSpeeds;
@@ -28,18 +28,18 @@ namespace MovementPlus
         {
             SaveSpeed();
             TimeInAir();
-            LogSpeed(MovementPlusPlugin.ConfigSettings.Misc.averageSpeedTimer.Value);
+            LogSpeed(MovementFunkPlugin.ConfigSettings.Misc.averageSpeedTimer.Value);
             LogForward(0.032f);
         }
 
         public static void LogSpeed(float time)
         {
-            if (MovementPlusPlugin.player.CheckVert())
+            if (MovementFunkPlugin.player.CheckVert())
             {
                 return;
             }
-            forwardSpeeds.Enqueue(MovementPlusPlugin.player.GetForwardSpeed());
-            totalSpeeds.Enqueue(MovementPlusPlugin.player.GetTotalSpeed());
+            forwardSpeeds.Enqueue(MovementFunkPlugin.player.GetForwardSpeed());
+            totalSpeeds.Enqueue(MovementFunkPlugin.player.GetTotalSpeed());
             if (averageSpeedTimer >= time)
             {
                 forwardSpeeds.Dequeue();
@@ -89,16 +89,16 @@ namespace MovementPlus
 
         private static float CalculateSpeedBasedOnMode(float average, float maxSpeed)
         {
-            switch (MovementPlusPlugin.ConfigSettings.Misc.averageSpeedMode.Value)
+            switch (MovementFunkPlugin.ConfigSettings.Misc.averageSpeedMode.Value)
             {
-                case MyConfig.AverageSpeedMode.Average:
+                case MovementConfig.AverageSpeedMode.Average:
                     return average;
 
-                case MyConfig.AverageSpeedMode.Max:
+                case MovementConfig.AverageSpeedMode.Max:
                     return maxSpeed;
 
-                case MyConfig.AverageSpeedMode.BlendMaxAverage:
-                    float bias = MovementPlusPlugin.ConfigSettings.Misc.averageSpeedBias.Value;
+                case MovementConfig.AverageSpeedMode.BlendMaxAverage:
+                    float bias = MovementFunkPlugin.ConfigSettings.Misc.averageSpeedBias.Value;
 
                     float blendFactor = (maxSpeed - average) / (maxSpeed + float.Epsilon);
 
@@ -113,7 +113,7 @@ namespace MovementPlus
 
         private static void LogForward(float time)
         {
-            forwardDirs.Enqueue(MovementPlusPlugin.player.tf.forward);
+            forwardDirs.Enqueue(MovementFunkPlugin.player.tf.forward);
             if (averageForwardTimer >= time)
             {
                 forwardDirs.Dequeue();
@@ -136,14 +136,14 @@ namespace MovementPlus
 
         private static void SaveSpeed()
         {
-            noAbilitySpeed = (MovementPlusPlugin.player.ability == MovementPlusPlugin.player.grindAbility || MovementPlusPlugin.player.ability == MovementPlusPlugin.player.handplantAbility)
-            ? Mathf.Max(noAbilitySpeed, MovementPlusPlugin.player.grindAbility.speed)
-            : MovementPlusPlugin.player.GetForwardSpeed();
+            noAbilitySpeed = (MovementFunkPlugin.player.ability == MovementFunkPlugin.player.grindAbility || MovementFunkPlugin.player.ability == MovementFunkPlugin.player.handplantAbility)
+            ? Mathf.Max(noAbilitySpeed, MovementFunkPlugin.player.grindAbility.speed)
+            : MovementFunkPlugin.player.GetForwardSpeed();
         }
 
         private static void TimeInAir()
         {
-            bool isGrounded = MovementPlusPlugin.player.TreatPlayerAsSortaGrounded();
+            bool isGrounded = MovementFunkPlugin.player.TreatPlayerAsSortaGrounded();
 
             if (isGrounded)
             {

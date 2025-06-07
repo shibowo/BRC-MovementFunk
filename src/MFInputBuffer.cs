@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-namespace MovementPlus
+namespace MovementFunk
 {
-    internal static class MPInputBuffer
+    internal static class MFInputBuffer
     {
         private static Dictionary<string, float> _lastPressedTimes = new Dictionary<string, float>();
         private static Player _player;
@@ -21,7 +21,7 @@ namespace MovementPlus
 
         public static void Update()
         {
-            _player = MovementPlusPlugin.player;
+            _player = MovementFunkPlugin.player;
             if (_player == null)
                 return;
 

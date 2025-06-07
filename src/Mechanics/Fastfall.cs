@@ -1,7 +1,7 @@
 ﻿using Reptile;
 using UnityEngine;
 
-namespace MovementPlus.Mechanics
+namespace MovementFunk.Mechanics
 {
     internal class Fastfall
     {
@@ -10,11 +10,11 @@ namespace MovementPlus.Mechanics
 
         public static void Update()
         {
-            Player player = MovementPlusPlugin.player;
+            Player player = MovementFunkPlugin.player;
             bool isSlideButtonPressed = player.slideButtonNew;
             bool isNotSortaGrounded = !player.TreatPlayerAsSortaGrounded();
-            bool isFallingOrOffConfig = player.motor.velocity.y <= 0f || !MovementPlusPlugin.ConfigSettings.FastFall.FallEnabled.Value;
-            bool isFastFallEnabled = MovementPlusPlugin.ConfigSettings.FastFall.Enabled.Value;
+            bool isFallingOrOffConfig = player.motor.velocity.y <= 0f || !MovementFunkPlugin.ConfigSettings.FastFall.FallEnabled.Value;
+            bool isFastFallEnabled = MovementFunkPlugin.ConfigSettings.FastFall.Enabled.Value;
             bool isNotHandplant = player.ability != player.handplantAbility;
 
             bool shouldFastFall = isSlideButtonPressed &&
@@ -26,7 +26,7 @@ namespace MovementPlus.Mechanics
 
             if (shouldFastFall)
             {
-                float fastFallAmount = MovementPlusPlugin.ConfigSettings.FastFall.Amount.Value;
+                float fastFallAmount = MovementFunkPlugin.ConfigSettings.FastFall.Amount.Value;
                 float newVelocityY = Mathf.Min(player.motor.velocity.y + fastFallAmount, fastFallAmount);
 
                 player.motor.SetVelocityYOneTime(newVelocityY);
@@ -38,7 +38,7 @@ namespace MovementPlus.Mechanics
 
                 player.grindAbility.cooldown = 0f;
 
-                if (player.ability == player.boostAbility && MovementPlusPlugin.ConfigSettings.FastFall.CancelBoost.Value)
+                if (player.ability == player.boostAbility && MovementFunkPlugin.ConfigSettings.FastFall.CancelBoost.Value)
                 {
                     player.StopCurrentAbility();
                 }

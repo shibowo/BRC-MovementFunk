@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace MovementPlus.Mechanics
+namespace MovementFunk.Mechanics
 {
     internal class RailGoon
     {
@@ -14,15 +14,15 @@ namespace MovementPlus.Mechanics
 
         private static void ApplyRailGoon()
         {
-            if (!railGoonAppllied && MovementPlusPlugin.ConfigSettings.RailGoon.Enabled.Value && hasGooned)
+            if (!railGoonAppllied && MovementFunkPlugin.ConfigSettings.RailGoon.Enabled.Value && hasGooned)
             {
-                MovementPlusPlugin.player.grindAbility.speed = MPMath.LosslessClamp(Mathf.Max(MPMovementMetrics.AverageForwardSpeed(), BoostChanges.defaultBoostSpeed), MovementPlusPlugin.ConfigSettings.RailGoon.Amount.Value, MovementPlusPlugin.ConfigSettings.RailGoon.Cap.Value);
+                MovementFunkPlugin.player.grindAbility.speed = MFMath.LosslessClamp(Mathf.Max(MFMovementMetrics.AverageForwardSpeed(), BoostChanges.defaultBoostSpeed), MovementFunkPlugin.ConfigSettings.RailGoon.Amount.Value, MovementFunkPlugin.ConfigSettings.RailGoon.Cap.Value);
                 railGoonAppllied = true;
 
-                string name = MovementPlusPlugin.ConfigSettings.RailGoon.Name.Value;
-                MPTrickManager.AddTrick(MovementPlusPlugin.ConfigSettings.RailGoon.Name.Value);
-                int points = MPTrickManager.CalculateTrickValue(name, MovementPlusPlugin.ConfigSettings.RailGoon.points.Value, MovementPlusPlugin.ConfigSettings.RailGoon.pointsMin.Value, MovementPlusPlugin.ConfigSettings.Misc.listLength.Value, MovementPlusPlugin.ConfigSettings.Misc.repsToMin.Value);
-                MPTrickManager.DoTrick(name, points);
+                string name = MovementFunkPlugin.ConfigSettings.RailGoon.Name.Value;
+                MFTrickManager.AddTrick(MovementFunkPlugin.ConfigSettings.RailGoon.Name.Value);
+                int points = MFTrickManager.CalculateTrickValue(name, MovementFunkPlugin.ConfigSettings.RailGoon.points.Value, MovementFunkPlugin.ConfigSettings.RailGoon.pointsMin.Value, MovementFunkPlugin.ConfigSettings.Misc.listLength.Value, MovementFunkPlugin.ConfigSettings.Misc.repsToMin.Value);
+                MFTrickManager.DoTrick(name, points);
             }
         }
     }

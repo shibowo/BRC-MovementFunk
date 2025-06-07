@@ -2,7 +2,7 @@
 using System.Linq;
 using UnityEngine;
 
-namespace MovementPlus.NewAbility
+namespace MovementFunk.NewAbility
 {
     public class SurfAbility : Ability
     {
@@ -10,7 +10,7 @@ namespace MovementPlus.NewAbility
         {
         }
 
-        private static MyConfig ConfigSettings = MovementPlusPlugin.ConfigSettings;
+        private static MovementConfig ConfigSettings = MovementFunkPlugin.ConfigSettings;
 
         private float gravity;
 
@@ -50,8 +50,8 @@ namespace MovementPlus.NewAbility
             bool isCooldownReady = CDTimer <= 0f;
             bool isNotCurrentAbility = this.p.ability != this;
             bool isGroundAngleSuitable = this.p.motor.groundAngle < 85f;
-            bool isSurfEnabled = MovementPlusPlugin.ConfigSettings.NonStable.SurfEnabled.Value;
-            bool isNotHandplant = MovementPlusPlugin.player.ability != MovementPlusPlugin.player.handplantAbility;
+            bool isSurfEnabled = MovementFunkPlugin.ConfigSettings.NonStable.SurfEnabled.Value;
+            bool isNotHandplant = MovementFunkPlugin.player.ability != MovementFunkPlugin.player.handplantAbility;
 
             if (isOnNonStableGround &&
                 isSlideButtonHeld &&
@@ -70,7 +70,7 @@ namespace MovementPlus.NewAbility
         {
             if (!surfLite)
             {
-                this.customVelocity = MPMovementMetrics.AverageForwardDir() * MPMovementMetrics.AverageTotalSpeed();
+                this.customVelocity = MFMovementMetrics.AverageForwardDir() * MFMovementMetrics.AverageTotalSpeed();
                 this.customVelocity.y = 0f;
                 gravity = 0f;
                 customGravity = gravity;
@@ -97,7 +97,7 @@ namespace MovementPlus.NewAbility
 
         private void UpdateVelocity()
         {
-            customVelocity = MPMovementMetrics.AverageForwardDir() * MPMovementMetrics.AverageTotalSpeed();
+            customVelocity = MFMovementMetrics.AverageForwardDir() * MFMovementMetrics.AverageTotalSpeed();
         }
 
         private void HandleSlideButtonInput()
@@ -231,7 +231,7 @@ namespace MovementPlus.NewAbility
 
         private float CalculateSlidingSpeed(Vector3 forwardDirection, Vector3 slidingDirection)
         {
-            return MPMath.Remap(Vector3.Dot(forwardDirection, slidingDirection), -1f, 1f, 1f, 0f);
+            return MFMath.Remap(Vector3.Dot(forwardDirection, slidingDirection), -1f, 1f, 1f, 0f);
         }
 
         private void AdjustVerticalVelocity(Vector3 currentVelocity, Vector3 forwardDirection)
