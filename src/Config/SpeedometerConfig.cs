@@ -34,6 +34,20 @@ public class SpeedometerConfig(ConfigFile config){
         true,
         "Outlines the text of your speedometer."
         );
+
+    public ConfigEntry<float> LabelGap = config.Bind(
+        category,
+        "Label Gap",
+        30.0f,
+        "Sets the gap between the speedometer text and the \"x tricks combo\" label."
+        );
+
+    public ConfigEntry<bool> UseMonospace = config.Bind(
+        category,
+        "Use Monospace Font",
+        true,
+        "Turns the speedometer font into a monospace font. This eliminates the jitter that the original font might have at times."
+        );
   }
 
   public class ColorConfig(ConfigFile config, string category){

@@ -4,6 +4,7 @@ using UnityEngine.UI;
 using TMPro;
 using System;
 using System.Text;
+using System.Globalization;
 
 namespace MovementFunk.SpeedDisplay
 { 
@@ -26,12 +27,16 @@ namespace MovementFunk.SpeedDisplay
     private static float colorShiftRate = 0.2f;
     private static float redlineThreshold; 
     private static bool enabledOnce = false;
+    private static float labelGap; 
+    private static readonly CultureInfo labelCulture = CultureInfo.InvariantCulture;
 
     //these ratios are taken off SoftGoat's spedometer, not sure how these were calculated
     //followup: it appears that player speed is meters per second, at least I can assume so
-    private const float MFH_ratio = 2.236936f;
+    private const float MPH_ratio = 2.236936f;
     private const float KPH_ratio = 3.6f;
     
+    private const string CloseMonoTag = "</mspace>";
+    private const string StartMonoTag = "<mspace=1.133em>";
 
     public static void Init(TextMeshProUGUI someLabel){
       if(!Config.Representation.Enabled.Value) return;
@@ -46,13 +51,17 @@ namespace MovementFunk.SpeedDisplay
         someLabel.fontMaterial.SetColor(ShaderUtilities.ID_OutlineColor, Color.black);
         someLabel.fontMaterial.SetFloat(ShaderUtilities.ID_OutlineWidth, 0.075f);
       }
-
+      
+      labelGap = Config.Representation.LabelGap.Value;
       redlineThreshold = Config.Color.RedlineThreshold.Value;
       enabledOnce = true;
-      speedometerText = Instantiate(someLabel, someLabel.transform.parent);
-      someLabel.transform.position += Vector3.up * 20.0f;
-      spmStrBuilder = new StringBuilder();
 
+      speedometerText = Instantiate(someLabel, someLabel.transform.parent);
+      someLabel.transform.position += Vector3.up * labelGap;
+      if(Config.Representation.UseMonospace.Value){
+        speedometerText.richText = true;
+      }
+      spmStrBuilder = new StringBuilder();
       UpdateSpeedRep();
     }
     public static void Update(){
@@ -78,19 +87,24 @@ namespace MovementFunk.SpeedDisplay
       switch(rep){
         case Representation.SpeedUnits:
           speed *= 10;
-          spmStrBuilder.AppendFormat("{0:0} {1}", speed, speedRep);
+          spmStrBuilder.AppendFormat(labelCulture, "{0:0} {1}", speed, speedRep);
           break;
         case Representation.KilometersPerHour:
           speed *= KPH_ratio;
-          spmStrBuilder.AppendFormat("{0:0.0} {1}", speed, speedRep);
+          spmStrBuilder.AppendFormat(labelCulture, "{0:0.0} {1}", speed, speedRep);
           break;
         case Representation.MilesPerHour:
-          speed *= MFH_ratio;
-          spmStrBuilder.AppendFormat("{0:0.0} {1}", speed, speedRep);
+          speed *= MPH_ratio;
+          spmStrBuilder.AppendFormat(labelCulture, "{0:0.0} {1}", speed, speedRep);
           break;
         default:
-          spmStrBuilder.AppendFormat("{0:0.0} {1}", speed, speedRep);
+          spmStrBuilder.AppendFormat(labelCulture, "{0:0.0} {1}", speed, speedRep);
           break;
+      }
+      if(Config.Representation.UseMonospace.Value){
+        //int sepIndex = 0;
+        spmStrBuilder.Insert(0, CloseMonoTag);
+        spmStrBuilder.Insert(CloseMonoTag.Length + 1, StartMonoTag);
       }
       speedometerText.SetText(spmStrBuilder);
     }
