@@ -5,6 +5,7 @@ public class SpeedometerConfig(ConfigFile config){
   public RepresentationConfig Representation = new(config, "Representation");
   public ColorConfig Color = new(config, "Color");
   public MiscConfig Misc = new(config, "Misc");
+  public FormatConfig Formatting = new(config, "Text Formatting");
 
   public class RepresentationConfig(ConfigFile config, string category)
   {
@@ -28,7 +29,9 @@ public class SpeedometerConfig(ConfigFile config){
         true,
         "Set to true to use the player's total speed, otherwise set to false to only use forward speed."
         );
-    public ConfigEntry<bool> OutlinesEnabled = config.Bind(
+  }
+  public class FormatConfig(ConfigFile config, string category){
+        public ConfigEntry<bool> OutlinesEnabled = config.Bind(
         category,
         "Enable Outlines",
         true,
@@ -48,8 +51,13 @@ public class SpeedometerConfig(ConfigFile config){
         true,
         "Turns the speedometer font into a monospace font. This eliminates the jitter that the original font might have at times."
         );
+    public ConfigEntry<bool> MonospacedDot = config.Bind(
+        category,
+        "Monospaced Dot",
+        false,
+        "Makes the decimal dot also monospaced."
+        );
   }
-
   public class ColorConfig(ConfigFile config, string category){
     public ConfigEntry<bool> Enabled = config.Bind(
         category,

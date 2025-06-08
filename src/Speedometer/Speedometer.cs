@@ -41,7 +41,7 @@ namespace MovementFunk.SpeedDisplay
     public static void Init(TextMeshProUGUI someLabel){
       if(!Config.Representation.Enabled.Value) return;
       
-      if(Config.Representation.OutlinesEnabled.Value){
+      if(Config.Formatting.OutlinesEnabled.Value){
         //stupid ahh localizer breaks the outline on the spedometer
         //thanks to SoftGoat for this one, again.
         var localizer = someLabel.GetComponent<TMProFontLocalizer>();
@@ -52,13 +52,13 @@ namespace MovementFunk.SpeedDisplay
         someLabel.fontMaterial.SetFloat(ShaderUtilities.ID_OutlineWidth, 0.075f);
       }
       
-      labelGap = Config.Representation.LabelGap.Value;
+      labelGap = Config.Formatting.LabelGap.Value;
       redlineThreshold = Config.Color.RedlineThreshold.Value;
       enabledOnce = true;
 
       speedometerText = Instantiate(someLabel, someLabel.transform.parent);
       someLabel.transform.position += Vector3.up * labelGap;
-      if(Config.Representation.UseMonospace.Value){
+      if(Config.Formatting.UseMonospace.Value){
         speedometerText.richText = true;
       }
       spmStrBuilder = new StringBuilder();
@@ -101,8 +101,12 @@ namespace MovementFunk.SpeedDisplay
           spmStrBuilder.AppendFormat(labelCulture, "{0:0.0} {1}", speed, speedRep);
           break;
       }
-      if(Config.Representation.UseMonospace.Value){
-        //int sepIndex = 0;
+      if(Config.Formatting.UseMonospace.Value){
+        if(!Config.Formatting.MonospacedDot.Value && rep != Representation.SpeedUnits){
+          int sepIndex = spmStrBuilder.ToString().IndexOf(labelCulture.NumberFormat.NumberDecimalSeparator);
+          spmStrBuilder.Insert(sepIndex, CloseMonoTag);
+          spmStrBuilder.Insert(sepIndex + CloseMonoTag.Length + 1, StartMonoTag);
+        }
         spmStrBuilder.Insert(0, CloseMonoTag);
         spmStrBuilder.Insert(CloseMonoTag.Length + 1, StartMonoTag);
       }
