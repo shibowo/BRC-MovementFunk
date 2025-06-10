@@ -632,8 +632,8 @@ public class MovementConfig(ConfigFile config)
         public ConfigEntry<bool> ChangeDirectionEnabled = config.Bind(
          category,
          "Change Grind Direction On Start Grind Enabled",
-         true,
-         "Allows the player to choose where they want to grind when first starting a grind."
+         false,
+         "(WARNING: This feature is obsolete and breaks vertical grinds. Use at your own risk.)Allows the player to choose where they want to grind when first starting a grind."
      );
 
         public ConfigEntry<float> ChangeDirectionAngle = config.Bind(

@@ -56,7 +56,6 @@ namespace MovementFunk.Patches
                 float maxDot = Mathf.Cos(maxAngleChange * Mathf.Deg2Rad);
 
                 float dotProduct = Vector3.Dot(playerForward, vector);
-
                 if (dotProduct < maxDot)
                 {
                     vector = (playerForward + (vector - playerForward).normalized * maxDot).normalized;
