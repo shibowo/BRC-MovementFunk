@@ -13,20 +13,22 @@ namespace MovementFunk.SpeedDisplay
     SpeedUnits,
     KilometersPerHour,
     MilesPerHour,
-    MetersPerSecond,
-    None
+    MetersPerSecond 
   }
 
   public class Speedometer : MonoBehaviour{
     private static float speed = 0.0f;
-    private static TextMeshProUGUI speedometerText;
+    private static TextMeshProUGUI speedometerLabel;
+    private static TextMeshProUGUI goonStorageLabel;
+    private static TextMeshProUGUI trickComboLabel;
     private static string speedRep;
+    private static string goonStorageText;
     private static StringBuilder spmStrBuilder;
+    private static StringBuilder gstStrBuilder;
     private static Representation rep;
     private static SpeedometerConfig Config = MovementFunkPlugin.SpeedometerSettings;
     private static float colorShiftRate = 0.2f;
     private static float redlineThreshold; 
-    private static bool enabledOnce = false;
     private static float labelGap; 
     private static readonly CultureInfo labelCulture = CultureInfo.InvariantCulture;
 
@@ -34,13 +36,13 @@ namespace MovementFunk.SpeedDisplay
     //followup: it appears that player speed is meters per second, at least I can assume so
     private const float MPH_ratio = 2.236936f;
     private const float KPH_ratio = 3.6f;
-    
+
     private const string CloseMonoTag = "</mspace>";
     private const string StartMonoTag = "<mspace=1.133em>";
 
     public static void Init(TextMeshProUGUI someLabel){
       if(!Config.Representation.Enabled.Value) return;
-      
+
       if(Config.Formatting.OutlinesEnabled.Value){
         //stupid ahh localizer breaks the outline on the spedometer
         //thanks to SoftGoat for this one, again.
@@ -51,19 +53,35 @@ namespace MovementFunk.SpeedDisplay
         someLabel.fontMaterial.SetColor(ShaderUtilities.ID_OutlineColor, Color.black);
         someLabel.fontMaterial.SetFloat(ShaderUtilities.ID_OutlineWidth, 0.075f);
       }
-      
+
       labelGap = Config.Formatting.LabelGap.Value;
       redlineThreshold = Config.Color.RedlineThreshold.Value;
-      enabledOnce = true;
+      speedometerLabel = Instantiate(someLabel, someLabel.transform.parent);
 
-      speedometerText = Instantiate(someLabel, someLabel.transform.parent);
-      someLabel.transform.position += Vector3.up * labelGap;
-      if(Config.Formatting.UseMonospace.Value){
-        speedometerText.richText = true;
+      if(Config.Representation.GoonStorageEnabled.Value){
+        goonStorageLabel = Instantiate(someLabel, someLabel.transform.parent);
+        gstStrBuilder = new StringBuilder();
+        goonStorageLabel.transform.position += Vector3.up * labelGap;
+        goonStorageText = Config.Representation.GoonStorageText.Value;
+
+        someLabel.maxVisibleLines = 0; //I am not sure if it's a good idea to Destroy() this...
+        goonStorageLabel.enableWordWrapping = false;
+        goonStorageLabel.enableAutoSizing = false;
+        goonStorageLabel.fontSize = 32.0f;
+        labelGap *= 2;
+         
+        if(!Config.Representation.AltTrickComboCount.Value){
+          someLabel.transform.position += Vector3.up * labelGap;
+        }
       }
+      if(Config.Formatting.UseMonospace.Value){
+        speedometerLabel.richText = true;
+      }
+      someLabel.transform.position += Vector3.up * labelGap;
       spmStrBuilder = new StringBuilder();
       UpdateSpeedRep();
     }
+
     public static void Update(){
       if(!Config.Representation.Enabled.Value) return;
 
@@ -76,49 +94,64 @@ namespace MovementFunk.SpeedDisplay
 
       if(Config.Color.Enabled.Value){
         if(speed < redlineThreshold){
-          speedometerText.color = SetSaturationTo(Color.red, speed / redlineThreshold);
+          speedometerLabel.color = SetSaturationTo(Color.red, speed / redlineThreshold);
         }
         else if(Config.Color.Rainbow.Value){
-          speedometerText.color = ShiftHueWithSpeed(speedometerText.color, speed);
+          speedometerLabel.color = ShiftHueWithSpeed(speedometerLabel.color, speed);
         }
       }
-
+      
+      if(Config.Representation.GoonStorageEnabled.Value){
+        gstStrBuilder.Clear();
+      }
       spmStrBuilder.Clear();
+
       switch(rep){
         case Representation.SpeedUnits:
           speed *= 10;
-          spmStrBuilder.AppendFormat(labelCulture, "{0:0} {1}", speed, speedRep);
           break;
         case Representation.KilometersPerHour:
           speed *= KPH_ratio;
-          spmStrBuilder.AppendFormat(labelCulture, "{0:0.0} {1}", speed, speedRep);
           break;
         case Representation.MilesPerHour:
           speed *= MPH_ratio;
-          spmStrBuilder.AppendFormat(labelCulture, "{0:0.0} {1}", speed, speedRep);
           break;
         default:
-          spmStrBuilder.AppendFormat(labelCulture, "{0:0.0} {1}", speed, speedRep);
           break;
+      }
+      if(rep == Representation.SpeedUnits){
+        spmStrBuilder.AppendFormat(labelCulture, "{0:0} {1}", speed, speedRep);
+        gstStrBuilder.AppendFormat(labelCulture, "{0}{1:0} {2}", goonStorageText, MFVariables.savedGoon * 10, speedRep);
+      }
+      else{
+        spmStrBuilder.AppendFormat(labelCulture, "{0:0.0} {1}", speed, speedRep);
+        gstStrBuilder.AppendFormat(labelCulture, "{0}{1:0.0} {2}", goonStorageText, MFVariables.savedGoon, speedRep);
       }
       if(Config.Formatting.UseMonospace.Value){
         if(!Config.Formatting.MonospacedDot.Value && rep != Representation.SpeedUnits){
           int sepIndex = spmStrBuilder.ToString().IndexOf(labelCulture.NumberFormat.NumberDecimalSeparator);
           spmStrBuilder.Insert(sepIndex, CloseMonoTag);
           spmStrBuilder.Insert(sepIndex + CloseMonoTag.Length + 1, StartMonoTag);
+          if(Config.Representation.GoonStorageEnabled.Value){  
+            int sepIndexGst = spmStrBuilder.ToString().IndexOf(labelCulture.NumberFormat.NumberDecimalSeparator);
+            gstStrBuilder.Insert(sepIndexGst, CloseMonoTag);
+            gstStrBuilder.Insert(sepIndexGst + CloseMonoTag.Length + 1, StartMonoTag);
+          }
         }
         spmStrBuilder.Insert(0, CloseMonoTag);
-        spmStrBuilder.Insert(CloseMonoTag.Length + 1, StartMonoTag);
+        spmStrBuilder.Insert(CloseMonoTag.Length, StartMonoTag);
+        if(Config.Representation.GoonStorageEnabled.Value){  
+          gstStrBuilder.Insert(0, CloseMonoTag);
+          gstStrBuilder.Insert(CloseMonoTag.Length, StartMonoTag);
+        }
       }
-      speedometerText.SetText(spmStrBuilder);
+      speedometerLabel.SetText(spmStrBuilder);
+      if(Config.Representation.GoonStorageEnabled.Value){
+        goonStorageLabel.SetText(gstStrBuilder);
+      }
     }
 
     public static void UpdateSpeedRep(){
-      if(!Config.Representation.Enabled.Value){
-        speedometerText.text = ""; 
-        return;
-      }
-
       rep = Config.Representation.SpeedRep.Value;
 
       switch(rep){
@@ -134,13 +167,24 @@ namespace MovementFunk.SpeedDisplay
         case Representation.MetersPerSecond:
           speedRep = "M/S";
           break;
-        case Representation.None:
         default:
-          speedRep = "";
+          speedRep = string.Empty;
           break;
       }  
     }
-
+    public static void InitAltTrickLabel(TextMeshProUGUI someLabel){
+      if(!Config.Representation.AltTrickComboCount.Value) return;
+      trickComboLabel = Instantiate(someLabel, someLabel.transform.parent);
+    }
+    public static void UpdateAltTrickLabel(){
+      if(!Config.Representation.AltTrickComboCount.Value) return;
+      if(MovementFunkPlugin.player.IsComboing()){
+        trickComboLabel.SetText("(tricks: x{0})", MovementFunkPlugin.player.tricksInCombo);
+      }
+      else{
+        trickComboLabel.text = string.Empty;
+      }
+    }
     private static Color ShiftHueWithSpeed(Color color, float speed){
       float hue, saturation, value;
       Color.RGBToHSV(color, out hue, out saturation, out value);

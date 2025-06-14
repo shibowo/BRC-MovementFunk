@@ -22,12 +22,35 @@ public class SpeedometerConfig(ConfigFile config){
         MovementFunk.SpeedDisplay.Representation.SpeedUnits,
         "Sets the units your speed will be displayed in in-game."
         );
-
+    public ConfigEntry<bool> SpeedUnitsEnabled = config.Bind(
+        category,
+        "Display Speed Unit Text",
+        true,
+        "Enables/Disables the speed unit text(e.g. KM/H, MPH etc)."
+        );
     public ConfigEntry<bool> UseTotalSpeed = config.Bind(
         category,
         "Use Total Speed",
         true,
         "Set to true to use the player's total speed, otherwise set to false to only use forward speed."
+        );
+    public ConfigEntry<bool> GoonStorageEnabled = config.Bind(
+        category,
+        "Display Goon Storage",
+        true,
+        "Shows goon storage."
+        );
+    public ConfigEntry<string> GoonStorageText = config.Bind(
+        category,
+        "Goon Storage Text",
+        "STRG: ",
+        "A piece of text that displays right before your goon storage count, i.e. STRG: {goonStorageCount}."
+        );
+    public ConfigEntry<bool> AltTrickComboCount = config.Bind(
+        category,
+        "Alternative Trick Combo Count",
+        true,
+        "Puts the trick count near the trick names rather than above the boost meter."
         );
   }
   public class FormatConfig(ConfigFile config, string category){

@@ -326,6 +326,12 @@ namespace MovementFunk.Patches
         private static void Player_GameplayUI_Init_Postfix(GameplayUI __instance){
           if (MovementFunkPlugin.ConfigSettings.Misc.DisablePatch.Value) { return; }
           Speedometer.Init(__instance.tricksInComboLabel);
+          Speedometer.InitAltTrickLabel(__instance.trickNameLabel);
+        }
+        [HarmonyPatch(typeof(Player), nameof(Player.ScoreDisplayUpdate))]
+        [HarmonyPostfix]
+        private static void Player_ScoreDisplayUpdate_Postfix(Player __instance){
+          Speedometer.UpdateAltTrickLabel(); 
         }
     }
 }
