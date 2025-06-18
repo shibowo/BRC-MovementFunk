@@ -9,23 +9,23 @@ namespace MovementFunk.Patches
 {
     internal static class GrindAbilityPatch
     {
-        private static MovementConfig ConfigSettings = MovementFunkPlugin.ConfigSettings;
+        private static MovementConfig MovementSettings = MovementFunkPlugin.MovementSettings;
         public static float lastCornerTime;
 
         [HarmonyPatch(typeof(GrindAbility), nameof(GrindAbility.Init))]
         [HarmonyPrefix]
         private static void GrindAbility_Init_Prefix(GrindAbility __instance)
         {
-            if (__instance.p.isAI || MovementFunkPlugin.ConfigSettings.Misc.DisablePatch.Value) { return; }
-            ConfigSettings = MovementFunkPlugin.ConfigSettings;
-            __instance.grindDeccAboveNormal = ConfigSettings.RailGeneral.Decc.Value;
+            if (__instance.p.isAI || MovementFunkPlugin.MovementSettings.Misc.DisablePatch.Value) { return; }
+            MovementSettings = MovementFunkPlugin.MovementSettings;
+            __instance.grindDeccAboveNormal = MovementSettings.RailGeneral.Decc.Value;
         }
 
         [HarmonyPatch(typeof(GrindAbility), nameof(GrindAbility.GetPlayerDirForLine))]
         [HarmonyPrefix]
         private static bool GrindAbility_GetPlayerDirForLine_Prefix(GrindAbility __instance, GrindLine setGrindLine, ref Vector3 __result)
         {
-            if (__instance.p.isAI || !MovementFunkPlugin.ConfigSettings.RailGeneral.ChangeDirectionEnabled.Value || MovementFunkPlugin.ConfigSettings.Misc.DisablePatch.Value) { return true; }
+            if (__instance.p.isAI || !MovementFunkPlugin.MovementSettings.RailGeneral.ChangeDirectionEnabled.Value || MovementFunkPlugin.MovementSettings.Misc.DisablePatch.Value) { return true; }
 
             Vector3 playerForward = Vector3.ProjectOnPlane(__instance.p.GetVelocity(), Vector3.up);
             if (playerForward == Vector3.zero)
@@ -52,7 +52,7 @@ namespace MovementFunk.Patches
             }
             else
             {
-                float maxAngleChange = MovementFunkPlugin.ConfigSettings.RailGeneral.ChangeDirectionAngle.Value;
+                float maxAngleChange = MovementFunkPlugin.MovementSettings.RailGeneral.ChangeDirectionAngle.Value;
                 float maxDot = Mathf.Cos(maxAngleChange * Mathf.Deg2Rad);
 
                 float dotProduct = Vector3.Dot(playerForward, vector);
@@ -70,7 +70,7 @@ namespace MovementFunk.Patches
         [HarmonyPrefix]
         private static void GrindAbility_OnStartAbility_Prefix(GrindAbility __instance)
         {
-            if (__instance.p.isAI || MovementFunkPlugin.ConfigSettings.Misc.DisablePatch.Value) { return; }
+            if (__instance.p.isAI || MovementFunkPlugin.MovementSettings.Misc.DisablePatch.Value) { return; }
             __instance.trickTimer = 0f;
             __instance.inRetour = false;
         }
@@ -80,7 +80,7 @@ namespace MovementFunk.Patches
         private static bool GrindAbility_UpdateSpeed_Prefix(GrindAbility __instance)
         {
             if (__instance.p.isAI) { return true; }
-            ConfigSettings = MovementFunkPlugin.ConfigSettings;
+            MovementSettings = MovementFunkPlugin.MovementSettings;
             if (__instance.p.abilityTimer <= 0.025f && !__instance.p.isJumping)
             {
                 float newSpeed = MFMovementMetrics.AverageForwardSpeed();
@@ -101,7 +101,7 @@ namespace MovementFunk.Patches
             if (__instance.p.boosting)
             {
                 float newSpeed = Mathf.Max(MFMovementMetrics.AverageForwardSpeed(), __instance.speed);
-                __instance.speed = MFMath.LosslessClamp(newSpeed, ConfigSettings.BoostGeneral.RailAmount.Value * Core.dt, ConfigSettings.BoostGeneral.RailCap.Value);
+                __instance.speed = MFMath.LosslessClamp(newSpeed, MovementSettings.BoostGeneral.RailAmount.Value * Core.dt, MovementSettings.BoostGeneral.RailCap.Value);
             }
             if (__instance.softCornerBoost)
             {
@@ -154,7 +154,7 @@ namespace MovementFunk.Patches
             if (instance.p.boosting)
             {
                 float newSpeed = Mathf.Max(MFMovementMetrics.AverageForwardSpeed(), instance.speed);
-                var config = MovementFunkPlugin.ConfigSettings;
+                var config = MovementFunkPlugin.MovementSettings;
                 instance.speed = MFMath.LosslessClamp(
                     newSpeed,
                     config.BoostGeneral.RailAmount.Value * Core.dt,
@@ -236,7 +236,7 @@ namespace MovementFunk.Patches
         [HarmonyPostfix]
         private static void GrindAbility_FixedUpdateAbility_Postfix(GrindAbility __instance)
         {
-            if (__instance.p.isAI || MovementFunkPlugin.ConfigSettings.Misc.DisablePatch.Value) { return; }
+            if (__instance.p.isAI || MovementFunkPlugin.MovementSettings.Misc.DisablePatch.Value) { return; }
 
             float currentPos = __instance.grindLine.GetAbsoluteLinePos(__instance.p.tf.position, __instance.p.dir);
             if (__instance.p.abilityTimer >= 0.1f)
@@ -253,12 +253,12 @@ namespace MovementFunk.Patches
                 __instance.JumpOut(__instance.grindLine.isPole || (num6 > -0.25f && num6 < 0.35f));
             }
 
-            if (!MovementFunkPlugin.ConfigSettings.RailGeneral.RailReversalEnabled.Value)
+            if (!MovementFunkPlugin.MovementSettings.RailGeneral.RailReversalEnabled.Value)
             {
                 return;
             }
 
-            List<string> buttons = MFMisc.StringToList(MovementFunkPlugin.ConfigSettings.RailGeneral.RailReversalButtons.Value);
+            List<string> buttons = MFMisc.StringToList(MovementFunkPlugin.MovementSettings.RailGeneral.RailReversalButtons.Value);
             bool buttonsActive = MFInputBuffer.WasPressedRecentlyOrIsHeld(buttons, 0.1f);
             if (buttonsActive)
             {
@@ -270,7 +270,7 @@ namespace MovementFunk.Patches
 
         public static void RailReverse(GrindAbility ability)
         {
-            if (Time.time - lastReverseTime < MovementFunkPlugin.ConfigSettings.RailGeneral.RailReversalCD.Value)
+            if (Time.time - lastReverseTime < MovementFunkPlugin.MovementSettings.RailGeneral.RailReversalCD.Value)
                 return;
             ability.timeSinceLastNode = 0f;
             ability.posOnLine = 0f;
@@ -291,20 +291,20 @@ namespace MovementFunk.Patches
         [HarmonyPrefix]
         private static bool GrindAbility_JumpOut_Prefix(bool flipOut, GrindAbility __instance)
         {
-            if (__instance.p.isAI || MovementFunkPlugin.ConfigSettings.Misc.DisablePatch.Value) return true;
+            if (__instance.p.isAI || MovementFunkPlugin.MovementSettings.Misc.DisablePatch.Value) return true;
 
             SetupJump(__instance);
 
             if (flipOut)
             {
-                if (ConfigSettings.RailGeneral.ModifyFlipout.Value)
+                if (MovementSettings.RailGeneral.ModifyFlipout.Value)
                     ModifiedFlipOut(__instance, ref flipOut);
                 else
                     OriginalFlipOut(__instance, ref flipOut);
             }
             else
             {
-                if (ConfigSettings.RailGeneral.ModifyJump.Value)
+                if (MovementSettings.RailGeneral.ModifyJump.Value)
                     ModifiedJump(__instance);
                 else
                     OriginalJump(__instance);
@@ -347,7 +347,7 @@ namespace MovementFunk.Patches
             Vector3 normalized = Vector3.ProjectOnPlane(up, Vector3.up).normalized;
             instance.p.SetRotHard(Quaternion.LookRotation(normalized));
             float num = instance.p.jumpSpeed * 0.35f;
-            float num2 = instance.p.abilityTimer <= ConfigSettings.RailFrameboost.Grace.Value ? MFMovementMetrics.noAbilitySpeed : instance.p.maxMoveSpeed;
+            float num2 = instance.p.abilityTimer <= MovementSettings.RailFrameboost.Grace.Value ? MFMovementMetrics.noAbilitySpeed : instance.p.maxMoveSpeed;
             instance.p.SetVelocity(num * Vector3.up + normalized * num2);
             instance.p.ActivateAbility(instance.p.flipOutJumpAbility);
         }
@@ -401,14 +401,14 @@ namespace MovementFunk.Patches
             slope = (float)Math.Round(slope, 2);
             float orientation = Vector3.Dot(instance.p.tf.up, Vector3.up);
 
-            if (orientation >= 0.35f && Vector3.Dot(up, Vector3.up) > 0 && ConfigSettings.RailSlope.Enabled.Value)
+            if (orientation >= 0.35f && Vector3.Dot(up, Vector3.up) > 0 && MovementSettings.RailSlope.Enabled.Value)
             {
                 ApplyRailSlopeModifications(ref num, ref num2, slope);
             }
 
             ApplyBoostingOrSliding(instance, ref num);
 
-            if (instance.p.abilityTimer <= ConfigSettings.RailFrameboost.Grace.Value && ConfigSettings.RailFrameboost.Enabled.Value)
+            if (instance.p.abilityTimer <= MovementSettings.RailFrameboost.Grace.Value && MovementSettings.RailFrameboost.Enabled.Value)
             {
                 ApplyFrameboost(instance, ref num2);
             }
@@ -418,17 +418,17 @@ namespace MovementFunk.Patches
 
         private static void ApplyRailSlopeModifications(ref float jumpHeight, ref float jumpSpeed, float slope)
         {
-            float bonusJump = slope * ConfigSettings.RailSlope.SlopeJumpAmount.Value;
-            float bonusSpeed = slope * -ConfigSettings.RailSlope.SlopeSpeedAmount.Value;
+            float bonusJump = slope * MovementSettings.RailSlope.SlopeJumpAmount.Value;
+            float bonusSpeed = slope * -MovementSettings.RailSlope.SlopeSpeedAmount.Value;
 
             bonusJump *= MFMovementMetrics.AverageTotalSpeed() / 10f;
             bonusSpeed *= MFMovementMetrics.AverageTotalSpeed() / 10f;
 
-            bonusSpeed = Mathf.Clamp(bonusSpeed, ConfigSettings.RailSlope.SlopeSpeedMin.Value, ConfigSettings.RailSlope.SlopeSpeedMax.Value);
-            bonusJump = Mathf.Clamp(bonusJump, ConfigSettings.RailSlope.SlopeJumpMin.Value, bonusJump);
+            bonusSpeed = Mathf.Clamp(bonusSpeed, MovementSettings.RailSlope.SlopeSpeedMin.Value, MovementSettings.RailSlope.SlopeSpeedMax.Value);
+            bonusJump = Mathf.Clamp(bonusJump, MovementSettings.RailSlope.SlopeJumpMin.Value, bonusJump);
 
-            jumpHeight = Mathf.Clamp(jumpHeight + bonusJump, ConfigSettings.RailSlope.SlopeJumpMin.Value, ConfigSettings.RailSlope.SlopeJumpMax.Value);
-            jumpSpeed = (bonusSpeed > 0f) ? MFMath.LosslessClamp(jumpSpeed, bonusSpeed, ConfigSettings.RailSlope.SlopeSpeedCap.Value) : jumpSpeed + bonusSpeed;
+            jumpHeight = Mathf.Clamp(jumpHeight + bonusJump, MovementSettings.RailSlope.SlopeJumpMin.Value, MovementSettings.RailSlope.SlopeJumpMax.Value);
+            jumpSpeed = (bonusSpeed > 0f) ? MFMath.LosslessClamp(jumpSpeed, bonusSpeed, MovementSettings.RailSlope.SlopeSpeedCap.Value) : jumpSpeed + bonusSpeed;
         }
 
         private static void ApplyBoostingOrSliding(GrindAbility instance, ref float jumpHeight)
@@ -452,7 +452,7 @@ namespace MovementFunk.Patches
 
         private static void ApplyFrameboost(GrindAbility instance, ref float jumpSpeed)
         {
-            float newSpeed = MFMath.LosslessClamp(jumpSpeed, ConfigSettings.RailFrameboost.Amount.Value, ConfigSettings.RailFrameboost.Cap.Value);
+            float newSpeed = MFMath.LosslessClamp(jumpSpeed, MovementSettings.RailFrameboost.Amount.Value, MovementSettings.RailFrameboost.Cap.Value);
             jumpSpeed = newSpeed;
             instance.p.DoTrick(Player.TrickType.GRIND, "Frameboost", 0);
         }
@@ -468,7 +468,7 @@ namespace MovementFunk.Patches
         [HarmonyPrefix]
         private static bool GrindAbility_RewardTilting_Prefix(Vector3 rightDir, Vector3 nextLineDir, GrindAbility __instance)
         {
-            if (__instance.p.isAI || !__instance.grindLine.cornerBoost || !MovementFunkPlugin.ConfigSettings.RailGeneral.ChangeEnabled.Value || MovementFunkPlugin.ConfigSettings.Misc.DisablePatch.Value) return true;
+            if (__instance.p.isAI || !__instance.grindLine.cornerBoost || !MovementFunkPlugin.MovementSettings.RailGeneral.ChangeEnabled.Value || MovementFunkPlugin.MovementSettings.Misc.DisablePatch.Value) return true;
 
             Vector3 currentSegmentDir = (__instance.nextNode.position - __instance.p.tf.position).normalized;
             currentSegmentDir = Vector3.ProjectOnPlane(currentSegmentDir, Vector3.up).normalized;
@@ -484,10 +484,10 @@ namespace MovementFunk.Patches
 
             if (turnSide != Side.NONE) __instance.softCornerBoost = false;
 
-            bool isHardCorner = Mathf.Abs(turnAngle) > ConfigSettings.RailGeneral.HCThresh.Value;
+            bool isHardCorner = Mathf.Abs(turnAngle) > MovementSettings.RailGeneral.HCThresh.Value;
             bool correctInput = (playerTiltSide == turnSide);
 
-            bool boostHeld = __instance.p.boostButtonHeld && MovementFunkPlugin.ConfigSettings.RailGeneral.BoostCornerEnabled.Value;
+            bool boostHeld = __instance.p.boostButtonHeld && MovementFunkPlugin.MovementSettings.RailGeneral.BoostCornerEnabled.Value;
 
             correctInput = correctInput || (boostHeld && isHardCorner);
 
@@ -498,7 +498,7 @@ namespace MovementFunk.Patches
                     __instance.p.StartScreenShake(ScreenShakeType.LIGHT, 0.2f, false);
                     __instance.p.AudioManager.PlaySfxGameplay(SfxCollectionID.GenericMovementSfx, AudioClipID.singleBoost, __instance.p.playerOneShotAudioSource, 0f);
                     __instance.p.ringParticles.Emit(1);
-                    __instance.speed = MFMath.LosslessClamp(__instance.speed, ConfigSettings.RailGeneral.HardAmount.Value, ConfigSettings.RailGeneral.HardCap.Value);
+                    __instance.speed = MFMath.LosslessClamp(__instance.speed, MovementSettings.RailGeneral.HardAmount.Value, MovementSettings.RailGeneral.HardCap.Value);
                     __instance.p.HardCornerGrindLine(__instance.nextNode);
                     return false;
                 }
@@ -516,11 +516,11 @@ namespace MovementFunk.Patches
         [HarmonyPostfix]
         private static void GrindAbility_OnStopAbility_Postfix(GrindAbility __instance)
         {
-            if (__instance.p.isAI || MovementFunkPlugin.ConfigSettings.Misc.DisablePatch.Value) { return; }
+            if (__instance.p.isAI || MovementFunkPlugin.MovementSettings.Misc.DisablePatch.Value) { return; }
             RailGoon.hasGooned = false;
             RailGoon.railGoonAppllied = false;
-            __instance.cooldown = MovementFunkPlugin.ConfigSettings.RailGeneral.railCD.Value;
-            if (MovementFunkPlugin.ConfigSettings.RailGeneral.KeepVelOnExit.Value)
+            __instance.cooldown = MovementFunkPlugin.MovementSettings.RailGeneral.railCD.Value;
+            if (MovementFunkPlugin.MovementSettings.RailGeneral.KeepVelOnExit.Value)
             {
                 __instance.p.SetVelocity(__instance.customVelocity);
             }

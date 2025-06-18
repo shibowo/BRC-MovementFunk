@@ -12,16 +12,13 @@ namespace MovementFunk.Patches
 {
     internal static class PlayerPatch
     {
-        private static MovementConfig ConfigSettings = MovementFunkPlugin.ConfigSettings;
-
-        public static ButtslapAbility buttslapAbility;
-        public static SurfAbility surfAbility;
+        private static MovementConfig MovementSettings = MovementFunkPlugin.MovementSettings;
 
         [HarmonyPatch(typeof(Player), nameof(Player.Init))]
         [HarmonyPostfix]
         private static void Player_Init_Postfix(Player __instance)
         {
-            if (__instance.isAI || MovementFunkPlugin.ConfigSettings.Misc.DisablePatch.Value) { return; }
+            if (__instance.isAI || MovementFunkPlugin.MovementSettings.Misc.DisablePatch.Value) { return; }
             if (MovementFunkPlugin.player == null)
             {
                 MovementFunkPlugin.player = __instance;
@@ -29,13 +26,14 @@ namespace MovementFunk.Patches
                 VertChanges.defaultVertMaxSpeed = __instance.vertMaxSpeed;
                 VertChanges.defaultVertTopJumpSpeed = __instance.vertTopJumpSpeed;
                 MFVariables.defaultJumpSpeed = __instance.specialAirAbility.jumpSpeed;
-                __instance.motor.maxFallSpeed = ConfigSettings.Misc.maxFallSpeed.Value;
+                __instance.motor.maxFallSpeed = MovementSettings.Misc.maxFallSpeed.Value;
 
                 __instance.wallrunAbility.lastSpeed = MFVariables.savedLastSpeed;
-                buttslapAbility = new ButtslapAbility(__instance);
-                surfAbility = new SurfAbility(__instance);
+                
+                MovementFunkPlugin.abilityManager = new MFAbilityManager(__instance);
+                MovementFunkPlugin.abilityManager.InitCustomAbilities();
 
-                if (ConfigSettings.Misc.collisionChangeEnabled.Value)
+                if (MovementSettings.Misc.collisionChangeEnabled.Value)
                 {
                     var bodies = __instance.GetComponentsInChildren<Rigidbody>();
                     foreach (var body in bodies)
@@ -50,10 +48,10 @@ namespace MovementFunk.Patches
         [HarmonyPostfix]
         private static void Player_FixedUpdatePlayer_Postfix(Player __instance)
         {
-            if (__instance.isAI || MovementFunkPlugin.ConfigSettings.Misc.DisablePatch.Value) { return; }
+            if (__instance.isAI || MovementFunkPlugin.MovementSettings.Misc.DisablePatch.Value) { return; }
+            
+            MovementFunkPlugin.abilityManager.ActivateCustomAbilities();
 
-            buttslapAbility.Activation();
-            surfAbility.Activation();
             if (!__instance.IsComboing())
             {
                 __instance.ClearMultipliersDone();
@@ -89,7 +87,7 @@ namespace MovementFunk.Patches
 
             private static void JumpPadSetForwardSpeed(Player player)
             {
-                if (player.isAI || MovementFunkPlugin.ConfigSettings.Misc.DisablePatch.Value)
+                if (player.isAI || MovementFunkPlugin.MovementSettings.Misc.DisablePatch.Value)
                 {
                     player.SetForwardSpeed(player.maxMoveSpeed + 2f);
                 }
@@ -102,9 +100,9 @@ namespace MovementFunk.Patches
         [HarmonyPostfix]
         private static void Player_Jump_Postfix(Player __instance)
         {
-            if (__instance.isAI || MovementFunkPlugin.ConfigSettings.Misc.DisablePatch.Value) { return; }
-            ConfigSettings = MovementFunkPlugin.ConfigSettings;
-            if (Fastfall.timeSinceLastFastFall < MovementFunkPlugin.ConfigSettings.WaveDash.grace.Value && !__instance.slideButtonHeld)
+            if (__instance.isAI || MovementFunkPlugin.MovementSettings.Misc.DisablePatch.Value) { return; }
+            MovementSettings = MovementFunkPlugin.MovementSettings;
+            if (Fastfall.timeSinceLastFastFall < MovementFunkPlugin.MovementSettings.WaveDash.grace.Value && !__instance.slideButtonHeld)
             {
                 float speed;
                 string name;
@@ -112,19 +110,19 @@ namespace MovementFunk.Patches
 
                 if (__instance.boostButtonHeld)
                 {
-                    speed = MFMovementMetrics.AverageForwardSpeed() + MovementFunkPlugin.ConfigSettings.WaveDash.BoostSpeed.Value;
-                    name = MovementFunkPlugin.ConfigSettings.WaveDash.BoostName.Value;
+                    speed = MFMovementMetrics.AverageForwardSpeed() + MovementFunkPlugin.MovementSettings.WaveDash.BoostSpeed.Value;
+                    name = MovementFunkPlugin.MovementSettings.WaveDash.BoostName.Value;
                     MFTrickManager.AddTrick(name);
-                    points = MFTrickManager.CalculateTrickValue(name, ConfigSettings.WaveDash.BoostPoints.Value, ConfigSettings.WaveDash.BoostPointsMin.Value, ConfigSettings.Misc.listLength.Value, ConfigSettings.Misc.repsToMin.Value);
+                    points = MFTrickManager.CalculateTrickValue(name, MovementSettings.WaveDash.BoostPoints.Value, MovementSettings.WaveDash.BoostPointsMin.Value, MovementSettings.Misc.listLength.Value, MovementSettings.Misc.repsToMin.Value);
                     MFTrickManager.DoTrick(name, points);
                     __instance.StopCurrentAbility();
                 }
                 else
                 {
-                    speed = MFMovementMetrics.AverageForwardSpeed() + MovementFunkPlugin.ConfigSettings.WaveDash.NormalSpeed.Value;
-                    name = MovementFunkPlugin.ConfigSettings.WaveDash.NormalName.Value;
+                    speed = MFMovementMetrics.AverageForwardSpeed() + MovementFunkPlugin.MovementSettings.WaveDash.NormalSpeed.Value;
+                    name = MovementFunkPlugin.MovementSettings.WaveDash.NormalName.Value;
                     MFTrickManager.AddTrick(name);
-                    points = MFTrickManager.CalculateTrickValue(name, ConfigSettings.WaveDash.NormalPoints.Value, ConfigSettings.WaveDash.NormalPointsMin.Value, ConfigSettings.Misc.listLength.Value, ConfigSettings.Misc.repsToMin.Value);
+                    points = MFTrickManager.CalculateTrickValue(name, MovementSettings.WaveDash.NormalPoints.Value, MovementSettings.WaveDash.NormalPointsMin.Value, MovementSettings.Misc.listLength.Value, MovementSettings.Misc.repsToMin.Value);
                     MFTrickManager.DoTrick(name, points);
                 }
 
@@ -157,9 +155,9 @@ namespace MovementFunk.Patches
 
             private static void HardLanding(Player player)
             {
-                var config = MovementFunkPlugin.ConfigSettings.Misc;
+                var config = MovementFunkPlugin.MovementSettings.Misc;
 
-                if (player.isAI || !config.HardLandingEnabled.Value || MovementFunkPlugin.ConfigSettings.Misc.DisablePatch.Value)
+                if (player.isAI || !config.HardLandingEnabled.Value || MovementFunkPlugin.MovementSettings.Misc.DisablePatch.Value)
                 {
                     player.SetSpeedFlat(player.maxMoveSpeed);
                     return;
@@ -202,8 +200,8 @@ namespace MovementFunk.Patches
         [HarmonyPrefix]
         private static bool Player_LandCombo_Prefix(Player __instance)
         {
-            if (__instance.isAI || MovementFunkPlugin.ConfigSettings.Misc.DisablePatch.Value) { return true; }
-            ConfigSettings = MovementFunkPlugin.ConfigSettings;
+            if (__instance.isAI || MovementFunkPlugin.MovementSettings.Misc.DisablePatch.Value) { return true; }
+            MovementSettings = MovementFunkPlugin.MovementSettings;
             if (__instance.comboTimeOutTimer <= 0)
             {
                 if (WorldHandler.instance.currentEncounter != null)
@@ -212,11 +210,11 @@ namespace MovementFunk.Patches
                 }
                 return true;
             }
-            if (__instance.boosting && ConfigSettings.ComboGeneral.BoostEnabled.Value)
+            if (__instance.boosting && MovementSettings.ComboGeneral.BoostEnabled.Value)
             {
                 return false;
             }
-            if (ConfigSettings.ComboGeneral.NoAbilityEnabled.Value)
+            if (MovementSettings.ComboGeneral.NoAbilityEnabled.Value)
             {
                 return false;
             }
@@ -227,7 +225,7 @@ namespace MovementFunk.Patches
         [HarmonyPrefix]
         private static bool Player_ClearMultipliersDone_Prefix(Player __instance)
         {
-            if (__instance.isAI || MovementFunkPlugin.ConfigSettings.Misc.DisablePatch.Value) { return true; }
+            if (__instance.isAI || MovementFunkPlugin.MovementSettings.Misc.DisablePatch.Value) { return true; }
             if (__instance.comboTimeOutTimer <= 0 || !__instance.IsComboing())
             {
                 return true;
@@ -239,7 +237,7 @@ namespace MovementFunk.Patches
         [HarmonyPostfix]
         private static void Player_RegainAirMobility_Postfix(Player __instance)
         {
-            if (__instance.isAI || MovementFunkPlugin.ConfigSettings.Misc.DisablePatch.Value) { return; }
+            if (__instance.isAI || MovementFunkPlugin.MovementSettings.Misc.DisablePatch.Value) { return; }
             Fastfall.canFastFall = true;
             MFVariables.canResetAirBoost = true;
             MFVariables.canResetAirDash = true;
@@ -266,20 +264,20 @@ namespace MovementFunk.Patches
 
             private static void NoAbilityComboTimeout(Player player)
             {
-                if (player.isAI || MovementFunkPlugin.ConfigSettings.Misc.DisablePatch.Value)
+                if (player.isAI || MovementFunkPlugin.MovementSettings.Misc.DisablePatch.Value)
                 {
                     player.LandCombo();
                     return;
                 }
-                ConfigSettings = MovementFunkPlugin.ConfigSettings;
-                if (player.IsComboing() && Fastfall.timeSinceLastFastFall <= ConfigSettings.WaveDash.grace.Value)
+                MovementSettings = MovementFunkPlugin.MovementSettings;
+                if (player.IsComboing() && Fastfall.timeSinceLastFastFall <= MovementSettings.WaveDash.grace.Value)
                 {
                     return;
                 }
-                if (player.IsComboing() && ConfigSettings.ComboGeneral.NoAbilityEnabled.Value && !player.boosting)
+                if (player.IsComboing() && MovementSettings.ComboGeneral.NoAbilityEnabled.Value && !player.boosting)
                 {
                     float num = Mathf.Min(player.GetForwardSpeed() / player.boostSpeed, 0.95f);
-                    player.DoComboTimeOut(Mathf.Max(Core.dt * (1f - num), Core.dt / 2f) * ConfigSettings.ComboGeneral.NoAbilityTimeout.Value);
+                    player.DoComboTimeOut(Mathf.Max(Core.dt * (1f - num), Core.dt / 2f) * MovementSettings.ComboGeneral.NoAbilityTimeout.Value);
                     return;
                 }
                 player.LandCombo();
@@ -290,7 +288,7 @@ namespace MovementFunk.Patches
         [HarmonyPostfix]
         private static void Player_DoTrick_Postfix(Player __instance, Player.TrickType type, string trickName = "", int trickNum = 0)
         {
-            if (__instance.isAI || MovementFunkPlugin.ConfigSettings.Misc.DisablePatch.Value) { return; }
+            if (__instance.isAI || MovementFunkPlugin.MovementSettings.Misc.DisablePatch.Value) { return; }
             if (__instance.ability != __instance.slideAbility)
             {
                 MFTrickManager.AddTrick(type.ToString());
@@ -301,14 +299,14 @@ namespace MovementFunk.Patches
         [HarmonyPrefix]
         private static bool Player_JumpIsAllowed_Prefix(Player __instance, ref bool __result)
         {
-            if (__instance.isAI || MovementFunkPlugin.ConfigSettings.Misc.DisablePatch.Value) { return true; }
-            ConfigSettings = MovementFunkPlugin.ConfigSettings;
+            if (__instance.isAI || MovementFunkPlugin.MovementSettings.Misc.DisablePatch.Value) { return true; }
+            MovementSettings = MovementFunkPlugin.MovementSettings;
             bool abilityAllowsJump = __instance.ability == null || __instance.ability.allowNormalJump;
             bool jumpNotConsumed = !__instance.jumpConsumed;
             bool noVertShape = __instance.vertShape == null;
             bool isGroundedOrRecentlyGrounded = __instance.IsGrounded() ||
                                                 __instance.timeSinceLastAbleToJump <= __instance.JumpPostGroundingGraceTime;
-            bool buttslapCheck = __instance.ability == __instance.groundTrickAbility && !__instance.IsGrounded() && ConfigSettings.Buttslap.Enabled.Value;
+            bool buttslapCheck = __instance.ability == __instance.groundTrickAbility && !__instance.IsGrounded() && MovementSettings.Buttslap.Enabled.Value;
 
             __result = jumpNotConsumed && abilityAllowsJump && noVertShape && isGroundedOrRecentlyGrounded && !buttslapCheck;
 
@@ -318,16 +316,10 @@ namespace MovementFunk.Patches
         [HarmonyPatch(typeof(Player), nameof(Player.ChargeAndSpeedDisplayUpdate))]
         [HarmonyPostfix]
         private static void ChargeAndSpeedDisplayUpdate_Postfix(Player __instance){
-          if (__instance.isAI || MovementFunkPlugin.ConfigSettings.Misc.DisablePatch.Value) { return; }
+          if (__instance.isAI || MovementFunkPlugin.MovementSettings.Misc.DisablePatch.Value) { return; }
           Speedometer.Update();
         }
-        [HarmonyPatch(typeof(GameplayUI), nameof(GameplayUI.Init))]
-        [HarmonyPostfix]
-        private static void Player_GameplayUI_Init_Postfix(GameplayUI __instance){
-          if (MovementFunkPlugin.ConfigSettings.Misc.DisablePatch.Value) { return; }
-          Speedometer.Init(__instance.tricksInComboLabel);
-          Speedometer.InitAltTrickLabel(__instance.trickNameLabel);
-        }
+
         [HarmonyPatch(typeof(Player), nameof(Player.ScoreDisplayUpdate))]
         [HarmonyPostfix]
         private static void Player_ScoreDisplayUpdate_Postfix(Player __instance){

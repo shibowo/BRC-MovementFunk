@@ -10,24 +10,24 @@ namespace MovementFunk.Mechanics
     }
 
     private static void PerformPopJump(){ 
-     if (MovementFunkPlugin.player.isAI || !MovementFunkPlugin.ConfigSettings.PopJump.Enabled.Value) {return;}
+     if (MovementFunkPlugin.player.isAI || !MovementFunkPlugin.MovementSettings.PopJump.Enabled.Value) {return;}
      Player player = MovementFunkPlugin.player;
      HitBounceAbility hitBounceAbility = player.hitBounceAbility;
 
-     bool bouncingOut = hitBounceAbility.state == HitBounceAbility.State.BOUNCE_OUT; //is this even counted anymore
+     bool bouncingOut = hitBounceAbility.state == HitBounceAbility.State.BOUNCE_OUT;
      bool is_hitbouncing = player.ability == player.hitBounceAbility;
-     bool timerExpired = player.abilityTimer > MovementFunkPlugin.ConfigSettings.PopJump.GracePeriod.Value; 
+     bool timerExpired = player.abilityTimer > MovementFunkPlugin.MovementSettings.PopJump.GracePeriod.Value; 
      bool sortaGrounded = player.TreatPlayerAsSortaGrounded();
      bool shouldPopJump = sortaGrounded && bouncingOut && !timerExpired && is_hitbouncing;
      
      if(hitBounceAbility.p.jumpButtonNew && shouldPopJump){
-       string name = MovementFunkPlugin.ConfigSettings.PopJump.Name.Value;
+       string name = MovementFunkPlugin.MovementSettings.PopJump.Name.Value;
        MFTrickManager.AddTrick(name);
        
-       int trickMinPoints = MovementFunkPlugin.ConfigSettings.PopJump.pointsMin.Value;
-       int trickPoints = Mathf.Max((int)(MovementFunkPlugin.ConfigSettings.PopJump.pointsPerSpeed.Value * MFVariables.savedSpeedBeforeHitBounce), trickMinPoints);
-       int trickListLength = MovementFunkPlugin.ConfigSettings.Misc.listLength.Value;
-       int trickRepsToMin = MovementFunkPlugin.ConfigSettings.Misc.repsToMin.Value;
+       int trickMinPoints = MovementFunkPlugin.MovementSettings.PopJump.PointsMin.Value;
+       int trickPoints = Mathf.Max((int)(MovementFunkPlugin.MovementSettings.PopJump.PointsPerSpeed.Value * MFVariables.savedSpeedBeforeHitBounce), trickMinPoints);
+       int trickListLength = MovementFunkPlugin.MovementSettings.Misc.listLength.Value;
+       int trickRepsToMin = MovementFunkPlugin.MovementSettings.Misc.repsToMin.Value;
 
        int points = MFTrickManager.CalculateTrickValue(name, trickPoints, trickMinPoints, trickListLength, trickRepsToMin); 
        player.StopCurrentAbility();
@@ -36,7 +36,7 @@ namespace MovementFunk.Mechanics
        player.AudioManager.PlaySfxGameplay(global::Reptile.SfxCollectionID.MoveStyle_0_Default, global::Reptile.AudioClipID.LegSweep, player.playerOneShotAudioSource, 0f);
        
        player.PlayAnim(player.jumpHash, true, true, -1f);
-       float speed = MFVariables.savedSpeedBeforeHitBounce * MovementFunkPlugin.ConfigSettings.PopJump.SpeedMultiplier.Value;
+       float speed = MFVariables.savedSpeedBeforeHitBounce * MovementFunkPlugin.MovementSettings.PopJump.SpeedMultiplier.Value;
        player.motor.SetVelocityYOneTime(MFVariables.savedSpeedBeforeHitBounce); 
      } 
     }

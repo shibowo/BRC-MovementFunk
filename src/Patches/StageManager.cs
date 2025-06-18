@@ -9,8 +9,8 @@ namespace MovementFunk.Patches
         [HarmonyPrefix]
         private static void StageManager_OnStageInitialized_Prefix(StageManager __instance)
         {
-            if (MovementFunkPlugin.ConfigSettings.Misc.DisablePatch.Value) { return; }
-            if (MovementFunkPlugin.ConfigSettings.Misc.ReturnSpeedLoading.Value)
+            if (MovementFunkPlugin.MovementSettings.Misc.DisablePatch.Value) { return; }
+            if (MovementFunkPlugin.MovementSettings.Misc.ReturnSpeedLoading.Value)
             {
                 MovementFunkPlugin.player.SetForwardSpeed(MFMovementMetrics.AverageForwardSpeed());
             }

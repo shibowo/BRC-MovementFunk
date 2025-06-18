@@ -25,6 +25,7 @@ public class MovementConfig(ConfigFile config)
     public ConfigMisc Misc = new(config, "Misc");
     public ConfigNonStable NonStable = new(config, "NonStable");
     public ConfigPopJump PopJump = new(config, "Pop Jump");
+    public ConfigMortarStrike MortarStrike = new(config, "Mortar Strike");
 
     public enum DoubleJumpType
     {
@@ -1407,17 +1408,54 @@ public class MovementConfig(ConfigFile config)
           1.0f,
           "The multiplier by which your total speed gets converted to upwards velocity."
           );
-      public ConfigEntry<float> pointsPerSpeed = config.Bind(
+      public ConfigEntry<float> PointsPerSpeed = config.Bind(
            category,
            "Pop Jump Base Points",
            1.0f,
            "Points given per one speed unit when performing a Pop Jump. The exact points given are points=max(float(Base Points * Speed Units), Minimum Pop Jump Points)."
        );
-        public ConfigEntry<int> pointsMin = config.Bind(
+        public ConfigEntry<int> PointsMin = config.Bind(
            category,
            "Minimum Pop Jump Points",
            200,
            "Minimum amount of points(flat, not per speed unit) given when performing a Pop Jump."
        );
+    }
+
+    public class ConfigMortarStrike(ConfigFile config, string category){
+      public ConfigEntry<bool> Enabled = config.Bind(
+          category,
+          "Mortar Strike Enabled",
+          true,
+          "This is basically Meteor Drop."
+          );
+      public ConfigEntry<string> Name = config.Bind(
+          category,
+          "Mortar Strike Name",
+          "Mortar Strike",
+          "Trick name that appears when performing a Mortar Strike."
+          );
+      public ConfigEntry<int> Points = config.Bind(
+          category,
+          "Maximum Mortar Strike Points",
+          500,
+          "Maximum amount of points that can be gained from performing a Mortar Strike"
+          );
+
+      public ConfigEntry<int> PointsMin = config.Bind(
+          category,
+          "Minimum Mortar Strike Points",
+          100,
+          "Minimum amount of points that can be gained from performing a Mortar Strike"
+          );
+      public ConfigEntry<string> Keybinds = config.Bind(
+          category,
+          "Mortar Strike Keybinds",
+          "anyTrick, slide",
+          "The buttons used to trigger a mortar strike.\n" +
+          "Button list:\n"+
+          "boost, dance, jump, phone, slide, switchStyle, trick1, trick2, trick3,  walk" +
+          "anyTrick, anyTwoTricks"
+          );
     }
 }

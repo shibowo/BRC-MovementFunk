@@ -9,8 +9,8 @@ namespace MovementFunk.Patches
         [HarmonyPrefix]
         private static void HitBounceAbility_SetState_Prefix(HitBounceAbility __instance)
         {
-            if (__instance.p.isAI || MovementFunkPlugin.ConfigSettings.Misc.DisablePatch.Value) { return; }
-            if (MovementFunkPlugin.ConfigSettings.PopJump.Enabled.Value){
+            if (__instance.p.isAI || MovementFunkPlugin.MovementSettings.Misc.DisablePatch.Value) { return; }
+            if (MovementFunkPlugin.MovementSettings.PopJump.Enabled.Value){
               MFVariables.savedSpeedBeforeHitBounce = MFMovementMetrics.AverageTotalSpeed();
             }
         }

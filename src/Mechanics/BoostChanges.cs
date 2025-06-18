@@ -8,7 +8,7 @@ namespace MovementFunk.Mechanics
 
         public static void Update()
         {
-            if (MovementFunkPlugin.ConfigSettings.BoostGeneral.InfiniteBoost.Value)
+            if (MovementFunkPlugin.MovementSettings.BoostGeneral.InfiniteBoost.Value)
             {
                 MovementFunkPlugin.player.boostCharge = MovementFunkPlugin.player.maxBoostCharge;
             }
@@ -23,7 +23,7 @@ namespace MovementFunk.Mechanics
                 return;
             }
 
-            if (MovementFunkPlugin.player.ability != MovementFunkPlugin.player.boostAbility && MovementFunkPlugin.ConfigSettings.BoostGeneral.SpeedScale.Value)
+            if (MovementFunkPlugin.player.ability != MovementFunkPlugin.player.boostAbility && MovementFunkPlugin.MovementSettings.BoostGeneral.SpeedScale.Value)
             {
                 MovementFunkPlugin.player.normalBoostSpeed = Mathf.Max(defaultBoostSpeed, MFMovementMetrics.AverageForwardSpeed(), MovementFunkPlugin.player.GetForwardSpeed());
             }

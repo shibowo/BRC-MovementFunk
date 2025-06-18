@@ -15,7 +15,7 @@ namespace MovementFunk.Mechanics
 
         public static void Update()
         {
-            if (MovementFunkPlugin.player.isAI || !MovementFunkPlugin.ConfigSettings.Misc.ReturnSpeed.Value) { return; }
+            if (MovementFunkPlugin.player.isAI || !MovementFunkPlugin.MovementSettings.Misc.ReturnSpeed.Value) { return; }
             PredictMovement();
             CheckIfSlow();
         }

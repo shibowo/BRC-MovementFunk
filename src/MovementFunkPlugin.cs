@@ -15,7 +15,7 @@ namespace MovementFunk
     {
         public const string MyGUID = "shibowo.MovementFunk";
         private const string PluginName = "MovementFunk";
-        private const string VersionString = "0.2.1";
+        private const string VersionString = "0.3.0";
 
         public static MovementFunkPlugin Instance { get; private set; }
         public string Dir => Path.GetDirectoryName(Info.Location);
@@ -23,8 +23,9 @@ namespace MovementFunk
         private Harmony harmony;
         public static Player player;
         public static ManualLogSource PubLogger; //plugin's logger instance is protected.
-        public static MovementConfig ConfigSettings;
+        public static MovementConfig MovementSettings;
         public static SpeedometerConfig SpeedometerSettings;
+        public static MFAbilityManager abilityManager;
 
         private void Awake()
         {

@@ -7,22 +7,22 @@ namespace MovementFunk.Patches
 {
     internal static class SlideAbilityPatch
     {
-        private static MovementConfig ConfigSettings = MovementFunkPlugin.ConfigSettings;
+        private static MovementConfig MovementSettings = MovementFunkPlugin.MovementSettings;
 
         [HarmonyPatch(typeof(SlideAbility), nameof(SlideAbility.FixedUpdateAbility))]
         [HarmonyPostfix]
         private static void SlideAbility_FixedUpdateAbility_Postfix(SlideAbility __instance)
         {
-            if (__instance.p.isAI || MovementFunkPlugin.ConfigSettings.Misc.DisablePatch.Value) { return; }
-            ConfigSettings = MovementFunkPlugin.ConfigSettings;
-            float speed = Mathf.Max(ConfigSettings.SuperSlide.Speed.Value, __instance.p.GetForwardSpeed());
-            if (ConfigSettings.SuperSlide.Enabled.Value)
+            if (__instance.p.isAI || MovementFunkPlugin.MovementSettings.Misc.DisablePatch.Value) { return; }
+            MovementSettings = MovementFunkPlugin.MovementSettings;
+            float speed = Mathf.Max(MovementSettings.SuperSlide.Speed.Value, __instance.p.GetForwardSpeed());
+            if (MovementSettings.SuperSlide.Enabled.Value)
             {
-                speed = MFMath.LosslessClamp(speed, ConfigSettings.SuperSlide.Amount.Value, ConfigSettings.SuperSlide.Cap.Value);
+                speed = MFMath.LosslessClamp(speed, MovementSettings.SuperSlide.Amount.Value, MovementSettings.SuperSlide.Cap.Value);
             }
             __instance.superSpeed = speed;
 
-            if (ConfigSettings.Misc.SlopeSlideSpeedChange.Value)
+            if (MovementSettings.Misc.SlopeSlideSpeedChange.Value)
             {
                 Vector3 velocity = __instance.p.GetVelocity();
                 float forwardSpeed = __instance.p.GetForwardSpeed();
@@ -49,14 +49,14 @@ namespace MovementFunk.Patches
                 switch (slopeCase)
                 {
                     case -1:
-                        __instance.slopeSlideSpeed = forwardSpeed + (groundAngle * ConfigSettings.Misc.SlopeSlideSpeedDown.Value);
+                        __instance.slopeSlideSpeed = forwardSpeed + (groundAngle * MovementSettings.Misc.SlopeSlideSpeedDown.Value);
                         break;
 
                     case 0:
                         break;
 
                     case 1:
-                        __instance.slopeSlideSpeed = forwardSpeed - (groundAngle * ConfigSettings.Misc.SlopeSlideSpeedUp.Value);
+                        __instance.slopeSlideSpeed = forwardSpeed - (groundAngle * MovementSettings.Misc.SlopeSlideSpeedUp.Value);
                         break;
                 }
             }
@@ -66,10 +66,10 @@ namespace MovementFunk.Patches
         [HarmonyPostfix]
         private static void SlideAbility_OnStartAbility_Postfix(SlideAbility __instance)
         {
-            if (__instance.p.isAI || MovementFunkPlugin.ConfigSettings.Misc.DisablePatch.Value) { return; }
+            if (__instance.p.isAI || MovementFunkPlugin.MovementSettings.Misc.DisablePatch.Value) { return; }
             if (PerfectManual.slideBoost)
             {
-                __instance.trickName = MovementFunkPlugin.ConfigSettings.PerfectManual.Prefix.Value + " " + __instance.trickName;
+                __instance.trickName = MovementFunkPlugin.MovementSettings.PerfectManual.Prefix.Value + " " + __instance.trickName;
             }
         }
     }

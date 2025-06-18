@@ -46,17 +46,17 @@ namespace MovementFunk
                                                       true,
                                                       MetadataHelper.GetMetadata(MovementFunkPlugin.Instance));
 
-       MovementFunkPlugin.ConfigSettings = new MovementConfig(movementCfgFile);
+       MovementFunkPlugin.MovementSettings = new MovementConfig(movementCfgFile);
        MovementFunkPlugin.SpeedometerSettings = new SpeedometerConfig(speedometerCfgFile);
 
-       if (MovementFunkPlugin.ConfigSettings.Misc.MVPresetEnabled.Value)
+       if (MovementFunkPlugin.MovementSettings.Misc.MVPresetEnabled.Value)
         {
-          if (MovementFunkPlugin.ConfigSettings.Misc.MVPreset.Value == "None")
+          if (MovementFunkPlugin.MovementSettings.Misc.MVPreset.Value == "None")
           {
             NoMovementPreset();
             return;
           }
-          ApplyMovementPreset(MovementFunkPlugin.ConfigSettings.Misc.MVPreset.Value);
+          ApplyMovementPreset(MovementFunkPlugin.MovementSettings.Misc.MVPreset.Value);
         }
        if(MovementFunkPlugin.SpeedometerSettings.Misc.SPPresetEnabled.Value){
          if(MovementFunkPlugin.SpeedometerSettings.Misc.SPPreset.Value == "None"){
@@ -68,11 +68,11 @@ namespace MovementFunk
       }
       public static void ApplyMovementPreset(string presetName){
         NoMovementPreset();
-        MovementFunkPlugin.ConfigSettings.Misc.MVPreset.Value = presetName;
+        MovementFunkPlugin.MovementSettings.Misc.MVPreset.Value = presetName;
 
         var Instance = MovementFunkPlugin.Instance;
         var MyGUID = MovementFunkPlugin.MyGUID;
-        var ConfigSettings = MovementFunkPlugin.ConfigSettings;
+        var MovementSettings = MovementFunkPlugin.MovementSettings;
         string movementFunkDir = Instance.Config.ConfigFilePath.Replace(MyGUID + ".cfg", string.Empty) + @"MovementFunk\";
         string movementDir = movementFunkDir + @"MovementPresets\";
         if(!Directory.Exists(movementFunkDir)){
@@ -84,7 +84,7 @@ namespace MovementFunk
         if(Directory.Exists(movementDir)){
           string configPath = movementDir + presetName + ".cfg";
           MovementConfig configFile = new MovementConfig(new ConfigFile(configPath, false));
-          MovementFunkPlugin.ConfigSettings = configFile;
+          MovementFunkPlugin.MovementSettings = configFile;
           if (MovementFunkPlugin.player != null)
           {
             //UpdateInitVars();
@@ -100,11 +100,11 @@ namespace MovementFunk
       public static void ApplySpeedometerPreset(string presetName)
       {
         NoMovementPreset();
-        MovementFunkPlugin.ConfigSettings.Misc.MVPreset.Value = presetName;
+        MovementFunkPlugin.MovementSettings.Misc.MVPreset.Value = presetName;
 
         var Instance = MovementFunkPlugin.Instance;
         var MyGUID = MovementFunkPlugin.MyGUID;
-        var ConfigSettings = MovementFunkPlugin.ConfigSettings;
+        var MovementSettings = MovementFunkPlugin.MovementSettings;
         string movementFunkDir = Instance.Config.ConfigFilePath.Replace(MyGUID + ".cfg", string.Empty) + @"MovementFunk\";
         string speedometerDir = movementFunkDir + @"SpeedometerPresets\";
         if(!Directory.Exists(movementFunkDir)){
@@ -115,7 +115,7 @@ namespace MovementFunk
         if(Directory.Exists(speedometerDir)){
           string configPath = speedometerDir + presetName + ".cfg";
           MovementConfig configFile = new MovementConfig(new ConfigFile(configPath, false));
-          MovementFunkPlugin.ConfigSettings = configFile;
+          MovementFunkPlugin.MovementSettings = configFile;
           if (MovementFunkPlugin.player != null)
           {
             //UpdateInitVars();
@@ -132,8 +132,8 @@ namespace MovementFunk
         {
             string movementFunkDir = MovementFunkPlugin.Instance.Config.ConfigFilePath.Replace(MovementFunkPlugin.MyGUID + ".cfg", string.Empty) + @"MovementFunk\";
             MovementConfig MVConfig = new MovementConfig(movementCfgFile);
-            MovementFunkPlugin.ConfigSettings = MVConfig;
-            MovementFunkPlugin.ConfigSettings.Misc.MVPreset.Value = "None";
+            MovementFunkPlugin.MovementSettings = MVConfig;
+            MovementFunkPlugin.MovementSettings.Misc.MVPreset.Value = "None";
         }
         public static void NoSpeedometerPreset()
         {
@@ -169,7 +169,7 @@ namespace MovementFunk
             if (MovementFunkPlugin.player != null)
             {
                 Player player = MovementFunkPlugin.player;
-                MovementConfig config = MovementFunkPlugin.ConfigSettings;
+                MovementConfig config = MovementFunkPlugin.MovementSettings;
 
                 player.grindAbility.grindDeccAboveNormal = config.RailGeneral.Decc.Value;
 

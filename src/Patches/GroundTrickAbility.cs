@@ -7,19 +7,19 @@ namespace MovementFunk.Patches
 {
     internal static class GroundTrickAbilityPatch
     {
-        private static MovementConfig ConfigSettings = MovementFunkPlugin.ConfigSettings;
+        private static MovementConfig MovementSettings = MovementFunkPlugin.MovementSettings;
 
         [HarmonyPatch(typeof(GroundTrickAbility), nameof(GroundTrickAbility.OnStartAbility))]
         [HarmonyPostfix]
         private static void GroundTrickAbility_OnStartAbility_Postfix(GroundTrickAbility __instance)
         {
-            if (__instance.p.isAI || MovementFunkPlugin.ConfigSettings.Misc.DisablePatch.Value) { return; }
-            ConfigSettings = MovementFunkPlugin.ConfigSettings;
-            __instance.decc = ConfigSettings.Misc.groundTrickDecc.Value;
+            if (__instance.p.isAI || MovementFunkPlugin.MovementSettings.Misc.DisablePatch.Value) { return; }
+            MovementSettings = MovementFunkPlugin.MovementSettings;
+            __instance.decc = MovementSettings.Misc.groundTrickDecc.Value;
 
             bool isOnFoot = __instance.p.moveStyle == MoveStyle.ON_FOOT;
-            bool shouldAllowJumpOnFoot = ConfigSettings.Misc.JumpGroundTrickFoot.Value;
-            bool shouldAllowJumpOnMovestyle = ConfigSettings.Misc.JumpGroundTrickMove.Value;
+            bool shouldAllowJumpOnFoot = MovementSettings.Misc.JumpGroundTrickFoot.Value;
+            bool shouldAllowJumpOnMovestyle = MovementSettings.Misc.JumpGroundTrickMove.Value;
 
             __instance.allowNormalJump = (isOnFoot && shouldAllowJumpOnFoot) ||
                                          (!isOnFoot && shouldAllowJumpOnMovestyle);
@@ -29,7 +29,7 @@ namespace MovementFunk.Patches
         [HarmonyPostfix]
         private static void GroundTrickAbility_FixedUpdateAbility_Postfix(GroundTrickAbility __instance)
         {
-            if (__instance.p.isAI || MovementFunkPlugin.ConfigSettings.Misc.DisablePatch.Value) return;
+            if (__instance.p.isAI || MovementFunkPlugin.MovementSettings.Misc.DisablePatch.Value) return;
 
             if (ShouldActivateSpecialAirAbility(__instance))
             {
@@ -47,9 +47,9 @@ namespace MovementFunk.Patches
                    instance.allowNormalJump &&
                    !instance.p.specialAirAbility.locked &&
                    !instance.p.onLauncher &&
-                   (instance.p.moveStyle == MoveStyle.ON_FOOT || (MovementFunkPlugin.ConfigSettings.SuperTrickJump.MSSuperTrick.Value && MSSuperTrickCheck(instance))) &&
+                   (instance.p.moveStyle == MoveStyle.ON_FOOT || (MovementFunkPlugin.MovementSettings.SuperTrickJump.MSSuperTrick.Value && MSSuperTrickCheck(instance))) &&
                    instance.p.IsGrounded() &&
-                   MovementFunkPlugin.ConfigSettings.SuperTrickJump.EarlySuperTrick.Value;
+                   MovementFunkPlugin.MovementSettings.SuperTrickJump.EarlySuperTrick.Value;
         }
 
         private static bool MSSuperTrickCheck(GroundTrickAbility instance)
@@ -95,7 +95,7 @@ namespace MovementFunk.Patches
 
             private static void CustomJump(Player player)
             {
-                if (player.isAI || !MovementFunkPlugin.ConfigSettings.SuperTrickJump.MSSuperTrick.Value || MovementFunkPlugin.ConfigSettings.Misc.DisablePatch.Value)
+                if (player.isAI || !MovementFunkPlugin.MovementSettings.SuperTrickJump.MSSuperTrick.Value || MovementFunkPlugin.MovementSettings.Misc.DisablePatch.Value)
                 {
                     player.Jump();
                 }
@@ -107,7 +107,7 @@ namespace MovementFunk.Patches
 
             private static void CustomActivateAbility(Player player, Ability ability)
             {
-                if (player.isAI || !MovementFunkPlugin.ConfigSettings.SuperTrickJump.MSSuperTrick.Value || MovementFunkPlugin.ConfigSettings.Misc.DisablePatch.Value)
+                if (player.isAI || !MovementFunkPlugin.MovementSettings.SuperTrickJump.MSSuperTrick.Value || MovementFunkPlugin.MovementSettings.Misc.DisablePatch.Value)
                 {
                     player.ActivateAbility(ability);
                 }

@@ -8,7 +8,7 @@ namespace MovementFunk.Patches
 {
     internal static class HandplantAbilityPatch
     {
-        private static MovementConfig ConfigSettings = MovementFunkPlugin.ConfigSettings;
+        private static MovementConfig MovementSettings = MovementFunkPlugin.MovementSettings;
 
         [HarmonyPatch(typeof(HandplantAbility), nameof(HandplantAbility.FixedUpdateAbility))]
         public static class HandplantAbility_FixedUpdateAbility_Transpiler
@@ -34,18 +34,18 @@ namespace MovementFunk.Patches
         [HarmonyPostfix]
         public static void HandplantAbility_FixedUpdateAbility_Postfix(HandplantAbility __instance)
         {
-            if (__instance.p.isAI || MovementFunkPlugin.ConfigSettings.Misc.DisablePatch.Value) { return; }
-            ConfigSettings = MovementFunkPlugin.ConfigSettings;
-            if (__instance.p.abilityTimer <= 0.12f + ConfigSettings.RailFrameboost.Grace.Value)
+            if (__instance.p.isAI || MovementFunkPlugin.MovementSettings.Misc.DisablePatch.Value) { return; }
+            MovementSettings = MovementFunkPlugin.MovementSettings;
+            if (__instance.p.abilityTimer <= 0.12f + MovementSettings.RailFrameboost.Grace.Value)
             {
                 __instance.p.SetForwardSpeed(Mathf.Max(MFMovementMetrics.noAbilitySpeed, __instance.p.GetForwardSpeed()));
             }
-            if (__instance.p.AnyTrickInput() && ConfigSettings.Handplant.Enabled.Value)
+            if (__instance.p.AnyTrickInput() && MovementSettings.Handplant.Enabled.Value)
             {
                 float jumpAmount = __instance.p.jumpSpeed;
-                if (__instance.p.abilityTimer <= 0.12f + ConfigSettings.RailFrameboost.Grace.Value)
+                if (__instance.p.abilityTimer <= 0.12f + MovementSettings.RailFrameboost.Grace.Value)
                 {
-                    jumpAmount = Mathf.Max(jumpAmount, MFMovementMetrics.noAbilitySpeed * ConfigSettings.Handplant.Strength.Value);
+                    jumpAmount = Mathf.Max(jumpAmount, MFMovementMetrics.noAbilitySpeed * MovementSettings.Handplant.Strength.Value);
                 }
                 __instance.p.ActivateAbility(__instance.p.groundTrickAbility);
                 __instance.p.motor.SetVelocityYOneTime(jumpAmount);

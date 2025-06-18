@@ -10,7 +10,7 @@ namespace MovementFunk.Mechanics
 
         public static void Update()
         {
-            if (!MovementFunkPlugin.ConfigSettings.PerfectManual.Enabled.Value) { return; }
+            if (!MovementFunkPlugin.MovementSettings.PerfectManual.Enabled.Value) { return; }
 
             if (!MovementFunkPlugin.player.IsGrounded())
             {
@@ -26,12 +26,12 @@ namespace MovementFunk.Mechanics
             if (slideTimerStarted)
             {
                 slideTimer += Time.deltaTime;
-                if (MovementFunkPlugin.player.IsGrounded() && MovementFunkPlugin.player.timeGrounded <= MovementFunkPlugin.ConfigSettings.PerfectManual.Grace.Value && !slideBoost)
+                if (MovementFunkPlugin.player.IsGrounded() && MovementFunkPlugin.player.timeGrounded <= MovementFunkPlugin.MovementSettings.PerfectManual.Grace.Value && !slideBoost)
                 {
                     DoPerfectManual();
                 }
 
-                if (slideTimer >= MovementFunkPlugin.ConfigSettings.PerfectManual.Grace.Value)
+                if (slideTimer >= MovementFunkPlugin.MovementSettings.PerfectManual.Grace.Value)
                 {
                     slideTimerStarted = false;
                 }
@@ -40,7 +40,7 @@ namespace MovementFunk.Mechanics
 
         private static void DoPerfectManual()
         {
-            MovementFunkPlugin.player.SetForwardSpeed(MFMath.LosslessClamp(MFMovementMetrics.AverageForwardSpeed(), MovementFunkPlugin.ConfigSettings.PerfectManual.Amount.Value, MovementFunkPlugin.ConfigSettings.PerfectManual.Cap.Value));
+            MovementFunkPlugin.player.SetForwardSpeed(MFMath.LosslessClamp(MFMovementMetrics.AverageForwardSpeed(), MovementFunkPlugin.MovementSettings.PerfectManual.Amount.Value, MovementFunkPlugin.MovementSettings.PerfectManual.Cap.Value));
             slideBoost = true;
             MovementFunkPlugin.player.CreateHighJumpDustEffect(MovementFunkPlugin.player.tf.up);
         }

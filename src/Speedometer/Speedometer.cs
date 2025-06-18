@@ -27,7 +27,7 @@ namespace MovementFunk.SpeedDisplay
     private static StringBuilder gstStrBuilder;
     private static Representation rep;
     private static SpeedometerConfig Config = MovementFunkPlugin.SpeedometerSettings;
-    private static float colorShiftRate = 0.2f;
+    private static float colorShiftRate;
     private static float redlineThreshold; 
     private static float labelGap; 
     private static readonly CultureInfo labelCulture = CultureInfo.InvariantCulture;
@@ -42,6 +42,10 @@ namespace MovementFunk.SpeedDisplay
 
     public static void Init(TextMeshProUGUI someLabel){
       if(!Config.Representation.Enabled.Value) return;
+      
+      if(Config.Color.Enabled.Value){
+        colorShiftRate = Config.Color.ColorShiftRate.Value;
+      }
 
       if(Config.Formatting.OutlinesEnabled.Value){
         //stupid ahh localizer breaks the outline on the spedometer
@@ -121,11 +125,11 @@ namespace MovementFunk.SpeedDisplay
       }
       if(rep == Representation.SpeedUnits){
         spmStrBuilder.AppendFormat(labelCulture, "{0:0} {1}", speed, speedRep);
-        gstStrBuilder.AppendFormat(labelCulture, "{0}{1:0} {2}", goonStorageText, MFVariables.savedGoon * 10, speedRep);
+        gstStrBuilder.AppendFormat(labelCulture, "{0} {1:0} {2}", goonStorageText, MFVariables.savedGoon * 10, speedRep);
       }
       else{
         spmStrBuilder.AppendFormat(labelCulture, "{0:0.0} {1}", speed, speedRep);
-        gstStrBuilder.AppendFormat(labelCulture, "{0}{1:0.0} {2}", goonStorageText, MFVariables.savedGoon, speedRep);
+        gstStrBuilder.AppendFormat(labelCulture, "{0} {1:0.0} {2}", goonStorageText, MFVariables.savedGoon, speedRep);
       }
       if(Config.Formatting.UseMonospace.Value){
         if(!Config.Formatting.MonospacedDot.Value && rep != Representation.SpeedUnits){
@@ -175,6 +179,8 @@ namespace MovementFunk.SpeedDisplay
     public static void InitAltTrickLabel(TextMeshProUGUI someLabel){
       if(!Config.Representation.AltTrickComboCount.Value) return;
       trickComboLabel = Instantiate(someLabel, someLabel.transform.parent);
+      LayoutElement layoutElement = trickComboLabel.GetComponent<LayoutElement>();
+      layoutElement.minWidth = 200;
     }
     public static void UpdateAltTrickLabel(){
       if(!Config.Representation.AltTrickComboCount.Value) return;

@@ -14,14 +14,14 @@ namespace MovementFunk.Mechanics
 
         private static void ApplyRailGoon()
         {
-            if (!railGoonAppllied && MovementFunkPlugin.ConfigSettings.RailGoon.Enabled.Value && hasGooned)
+            if (!railGoonAppllied && MovementFunkPlugin.MovementSettings.RailGoon.Enabled.Value && hasGooned)
             {
-                MovementFunkPlugin.player.grindAbility.speed = MFMath.LosslessClamp(Mathf.Max(MFMovementMetrics.AverageForwardSpeed(), BoostChanges.defaultBoostSpeed), MovementFunkPlugin.ConfigSettings.RailGoon.Amount.Value, MovementFunkPlugin.ConfigSettings.RailGoon.Cap.Value);
+                MovementFunkPlugin.player.grindAbility.speed = MFMath.LosslessClamp(Mathf.Max(MFMovementMetrics.AverageForwardSpeed(), BoostChanges.defaultBoostSpeed), MovementFunkPlugin.MovementSettings.RailGoon.Amount.Value, MovementFunkPlugin.MovementSettings.RailGoon.Cap.Value);
                 railGoonAppllied = true;
 
-                string name = MovementFunkPlugin.ConfigSettings.RailGoon.Name.Value;
-                MFTrickManager.AddTrick(MovementFunkPlugin.ConfigSettings.RailGoon.Name.Value);
-                int points = MFTrickManager.CalculateTrickValue(name, MovementFunkPlugin.ConfigSettings.RailGoon.points.Value, MovementFunkPlugin.ConfigSettings.RailGoon.pointsMin.Value, MovementFunkPlugin.ConfigSettings.Misc.listLength.Value, MovementFunkPlugin.ConfigSettings.Misc.repsToMin.Value);
+                string name = MovementFunkPlugin.MovementSettings.RailGoon.Name.Value;
+                MFTrickManager.AddTrick(MovementFunkPlugin.MovementSettings.RailGoon.Name.Value);
+                int points = MFTrickManager.CalculateTrickValue(name, MovementFunkPlugin.MovementSettings.RailGoon.points.Value, MovementFunkPlugin.MovementSettings.RailGoon.pointsMin.Value, MovementFunkPlugin.MovementSettings.Misc.listLength.Value, MovementFunkPlugin.MovementSettings.Misc.repsToMin.Value);
                 MFTrickManager.DoTrick(name, points);
             }
         }

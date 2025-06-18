@@ -17,12 +17,12 @@ namespace MovementFunk.Mechanics
 
         private static void HandleVertAbility()
         {
-            if (MovementFunkPlugin.ConfigSettings.VertGeneral.Enabled.Value)
+            if (MovementFunkPlugin.MovementSettings.VertGeneral.Enabled.Value)
             {
                 UpdateVertBottomExitSpeed();
             }
 
-            if (MovementFunkPlugin.ConfigSettings.VertGeneral.JumpEnabled.Value)
+            if (MovementFunkPlugin.MovementSettings.VertGeneral.JumpEnabled.Value)
             {
                 UpdateVertTopJumpSpeed();
             }
@@ -31,8 +31,8 @@ namespace MovementFunk.Mechanics
         private static void UpdateVertBottomExitSpeed()
         {
             float playerTotal = MFMovementMetrics.AverageTotalSpeed();
-            var x = playerTotal + MovementFunkPlugin.ConfigSettings.VertGeneral.ExitSpeed.Value;
-            x = Mathf.Min(x, MovementFunkPlugin.ConfigSettings.VertGeneral.ExitSpeedCap.Value);
+            var x = playerTotal + MovementFunkPlugin.MovementSettings.VertGeneral.ExitSpeed.Value;
+            x = Mathf.Min(x, MovementFunkPlugin.MovementSettings.VertGeneral.ExitSpeedCap.Value);
             MovementFunkPlugin.player.vertMaxSpeed = Mathf.Max(defaultVertMaxSpeed, MovementFunkPlugin.player.GetTotalSpeed());
             MovementFunkPlugin.player.vertBottomExitSpeed = x;
         }
@@ -40,8 +40,8 @@ namespace MovementFunk.Mechanics
         private static void UpdateVertTopJumpSpeed()
         {
             float playerTotal = MFMovementMetrics.AverageTotalSpeed();
-            var x = Mathf.Max(defaultVertTopJumpSpeed, playerTotal * MovementFunkPlugin.ConfigSettings.VertGeneral.JumpStrength.Value);
-            x = Mathf.Min(MovementFunkPlugin.ConfigSettings.VertGeneral.JumpCap.Value, x);
+            var x = Mathf.Max(defaultVertTopJumpSpeed, playerTotal * MovementFunkPlugin.MovementSettings.VertGeneral.JumpStrength.Value);
+            x = Mathf.Min(MovementFunkPlugin.MovementSettings.VertGeneral.JumpCap.Value, x);
             MovementFunkPlugin.player.vertTopJumpSpeed = x;
         }
     }

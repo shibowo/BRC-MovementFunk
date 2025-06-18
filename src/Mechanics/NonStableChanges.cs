@@ -6,7 +6,7 @@ namespace MovementFunk.Mechanics
     {
         public static void Update()
         {
-            if (MovementFunkPlugin.player.IsOnNonStableGround() && (MovementFunkPlugin.player.ability == null || MovementFunkPlugin.player.ability == MovementFunkPlugin.player.airTrickAbility) && MovementFunkPlugin.ConfigSettings.NonStable.Enabled.Value)
+            if (MovementFunkPlugin.player.IsOnNonStableGround() && (MovementFunkPlugin.player.ability == null || MovementFunkPlugin.player.ability == MovementFunkPlugin.player.airTrickAbility) && MovementFunkPlugin.MovementSettings.NonStable.Enabled.Value)
             {
                 Vector3 velocity = MovementFunkPlugin.player.GetVelocity();
 

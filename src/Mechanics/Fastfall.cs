@@ -13,8 +13,8 @@ namespace MovementFunk.Mechanics
             Player player = MovementFunkPlugin.player;
             bool isSlideButtonPressed = player.slideButtonNew;
             bool isNotSortaGrounded = !player.TreatPlayerAsSortaGrounded();
-            bool isFallingOrOffConfig = player.motor.velocity.y <= 0f || !MovementFunkPlugin.ConfigSettings.FastFall.FallEnabled.Value;
-            bool isFastFallEnabled = MovementFunkPlugin.ConfigSettings.FastFall.Enabled.Value;
+            bool isFallingOrOffConfig = player.motor.velocity.y <= 0f || !MovementFunkPlugin.MovementSettings.FastFall.FallEnabled.Value;
+            bool isFastFallEnabled = MovementFunkPlugin.MovementSettings.FastFall.Enabled.Value;
             bool isNotHandplant = player.ability != player.handplantAbility;
 
             bool shouldFastFall = isSlideButtonPressed &&
@@ -26,7 +26,7 @@ namespace MovementFunk.Mechanics
 
             if (shouldFastFall)
             {
-                float fastFallAmount = MovementFunkPlugin.ConfigSettings.FastFall.Amount.Value;
+                float fastFallAmount = MovementFunkPlugin.MovementSettings.FastFall.Amount.Value;
                 float newVelocityY = Mathf.Min(player.motor.velocity.y + fastFallAmount, fastFallAmount);
 
                 player.motor.SetVelocityYOneTime(newVelocityY);
@@ -38,7 +38,7 @@ namespace MovementFunk.Mechanics
 
                 player.grindAbility.cooldown = 0f;
 
-                if (player.ability == player.boostAbility && MovementFunkPlugin.ConfigSettings.FastFall.CancelBoost.Value)
+                if (player.ability == player.boostAbility && MovementFunkPlugin.MovementSettings.FastFall.CancelBoost.Value)
                 {
                     player.StopCurrentAbility();
                 }

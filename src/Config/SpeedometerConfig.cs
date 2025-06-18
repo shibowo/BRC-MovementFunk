@@ -43,7 +43,7 @@ public class SpeedometerConfig(ConfigFile config){
     public ConfigEntry<string> GoonStorageText = config.Bind(
         category,
         "Goon Storage Text",
-        "STRG: ",
+        "STRG:",
         "A piece of text that displays right before your goon storage count, i.e. STRG: {goonStorageCount}."
         );
     public ConfigEntry<bool> AltTrickComboCount = config.Bind(
@@ -99,6 +99,12 @@ public class SpeedometerConfig(ConfigFile config){
         "Swagometer",
         true,
         "Changes the color of your spedometer as your speed changes."
+        );
+    public ConfigEntry<float> ColorShiftRate = config.Bind(
+        category,
+        "Color Shift Rate",
+        0.2f,
+        "How quickly the colors shift in swagometer mode."
         );
   }
   public class MiscConfig(ConfigFile config, string category){

@@ -28,7 +28,7 @@ namespace MovementFunk
         {
             SaveSpeed();
             TimeInAir();
-            LogSpeed(MovementFunkPlugin.ConfigSettings.Misc.averageSpeedTimer.Value);
+            LogSpeed(MovementFunkPlugin.MovementSettings.Misc.averageSpeedTimer.Value);
             LogForward(0.032f);
         }
 
@@ -89,7 +89,7 @@ namespace MovementFunk
 
         private static float CalculateSpeedBasedOnMode(float average, float maxSpeed)
         {
-            switch (MovementFunkPlugin.ConfigSettings.Misc.averageSpeedMode.Value)
+            switch (MovementFunkPlugin.MovementSettings.Misc.averageSpeedMode.Value)
             {
                 case MovementConfig.AverageSpeedMode.Average:
                     return average;
@@ -98,7 +98,7 @@ namespace MovementFunk
                     return maxSpeed;
 
                 case MovementConfig.AverageSpeedMode.BlendMaxAverage:
-                    float bias = MovementFunkPlugin.ConfigSettings.Misc.averageSpeedBias.Value;
+                    float bias = MovementFunkPlugin.MovementSettings.Misc.averageSpeedBias.Value;
 
                     float blendFactor = (maxSpeed - average) / (maxSpeed + float.Epsilon);
 

@@ -11,7 +11,7 @@ namespace MovementFunk.Mechanics
 
         public static void Update()
         {
-            if (MovementFunkPlugin.player.isAI || !MovementFunkPlugin.ConfigSettings.RailGeneral.Detection.Value) { return; }
+            if (MovementFunkPlugin.player.isAI || !MovementFunkPlugin.MovementSettings.RailGeneral.Detection.Value) { return; }
             previousPosition = currentPosition;
             currentPosition = MovementFunkPlugin.player.transform.position;
 

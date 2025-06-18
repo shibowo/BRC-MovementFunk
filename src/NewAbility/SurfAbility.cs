@@ -10,7 +10,7 @@ namespace MovementFunk.NewAbility
         {
         }
 
-        private static MovementConfig ConfigSettings = MovementFunkPlugin.ConfigSettings;
+        private static MovementConfig MovementSettings = MovementFunkPlugin.MovementSettings;
 
         private float gravity;
 
@@ -26,7 +26,7 @@ namespace MovementFunk.NewAbility
             allowNormalJump = true;
         }
 
-        public void Activation()
+        public bool Activation()
         {
             if (CDTimer > 0f)
             {
@@ -50,7 +50,7 @@ namespace MovementFunk.NewAbility
             bool isCooldownReady = CDTimer <= 0f;
             bool isNotCurrentAbility = this.p.ability != this;
             bool isGroundAngleSuitable = this.p.motor.groundAngle < 85f;
-            bool isSurfEnabled = MovementFunkPlugin.ConfigSettings.NonStable.SurfEnabled.Value;
+            bool isSurfEnabled = MovementFunkPlugin.MovementSettings.NonStable.SurfEnabled.Value;
             bool isNotHandplant = MovementFunkPlugin.player.ability != MovementFunkPlugin.player.handplantAbility;
 
             if (isOnNonStableGround &&
@@ -63,7 +63,9 @@ namespace MovementFunk.NewAbility
                 isNotHandplant)
             {
                 this.p.ActivateAbility(this);
+                return true;
             }
+            return false;
         }
 
         public override void OnStartAbility()

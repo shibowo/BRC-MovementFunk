@@ -11,7 +11,7 @@ namespace MovementFunk.Patches
         [HarmonyPostfix]
         private static void VertAbility_OnStartAbility_Postfix(VertAbility __instance)
         {
-            if (__instance.p.isAI || MovementFunkPlugin.ConfigSettings.Misc.DisablePatch.Value) { return; }
+            if (__instance.p.isAI || MovementFunkPlugin.MovementSettings.Misc.DisablePatch.Value) { return; }
             __instance.p.airDashAbility.haveAirDash = false;
         }
 
@@ -19,7 +19,7 @@ namespace MovementFunk.Patches
         [HarmonyPostfix]
         private static void VertAbility_OnStopAbility_Postfix(VertAbility __instance)
         {
-            if (__instance.p.isAI || MovementFunkPlugin.ConfigSettings.Misc.DisablePatch.Value) { return; }
+            if (__instance.p.isAI || MovementFunkPlugin.MovementSettings.Misc.DisablePatch.Value) { return; }
             __instance.p.airDashAbility.haveAirDash = true;
         }
 
@@ -27,7 +27,7 @@ namespace MovementFunk.Patches
         [HarmonyPostfix]
         private static void VertAbility_FixedUpdateAbility_Postfix(VertAbility __instance)
         {
-            if (__instance.p.isAI || MovementFunkPlugin.ConfigSettings.Misc.DisablePatch.Value) { return; }
+            if (__instance.p.isAI || MovementFunkPlugin.MovementSettings.Misc.DisablePatch.Value) { return; }
             if (__instance.p.jumpButtonNew)
             {
                 __instance.p.StopCurrentAbility();

@@ -9,7 +9,7 @@ namespace MovementFunk.NewAbility
         {
         }
 
-        private static MovementConfig ConfigSettings = MovementFunkPlugin.ConfigSettings;
+        private static MovementConfig MovementSettings = MovementFunkPlugin.MovementSettings;
 
         private float buttslapTimer;
         private bool boosted;
@@ -23,26 +23,28 @@ namespace MovementFunk.NewAbility
             buttslapTimer = 0f;
         }
 
-        public void Activation()
+        public bool Activation()
         {
-            ConfigSettings = MovementFunkPlugin.ConfigSettings;
-            if (!this.p.motor.isGrounded && this.p.jumpButtonNew && ConfigSettings.Buttslap.Enabled.Value && this.p.ability == this.p.groundTrickAbility && !this.p.isJumping)
+            MovementSettings = MovementFunkPlugin.MovementSettings;
+            if (!this.p.motor.isGrounded && this.p.jumpButtonNew && MovementSettings.Buttslap.Enabled.Value && this.p.ability == this.p.groundTrickAbility && !this.p.isJumping)
             {
                 boosted = this.p.groundTrickAbility.boostTrick;
                 this.p.ActivateAbility(this);
+                return true;
             }
+            return false;
         }
 
         public override void OnStartAbility()
         {
-            ConfigSettings = MovementFunkPlugin.ConfigSettings;
-            if (!ConfigSettings.Buttslap.MultiEnabled.Value)
+            MovementSettings = MovementFunkPlugin.MovementSettings;
+            if (!MovementSettings.Buttslap.MultiEnabled.Value)
             {
                 this.p.StopCurrentAbility();
             }
             else
             {
-                this.buttslapTimer = ConfigSettings.Buttslap.Timer.Value;
+                this.buttslapTimer = MovementSettings.Buttslap.Timer.Value;
                 this.buttslapAmount = 0;
             }
             type = MFVariables.buttslapType;
@@ -92,7 +94,7 @@ namespace MovementFunk.NewAbility
 
         private void PerformTrick(string type, bool boosted)
         {
-            ConfigSettings = MovementFunkPlugin.ConfigSettings;
+            MovementSettings = MovementFunkPlugin.MovementSettings;
             this.buttslapAmount++;
             string baseName;
             int points;
@@ -107,33 +109,33 @@ namespace MovementFunk.NewAbility
                 switch (type)
                 {
                     case "Pole":
-                        baseName = ConfigSettings.Buttslap.PoleBoostName.Value;
-                        points = ConfigSettings.Buttslap.PoleBoostPoints.Value;
-                        minPoints = ConfigSettings.Buttslap.PoleBoostPointsMin.Value;
-                        jumpAmount = ConfigSettings.Buttslap.PoleJumpAmount.Value;
-                        forwardAmount = ConfigSettings.Buttslap.PoleAmount.Value;
-                        cap = ConfigSettings.Buttslap.PoleCap.Value;
-                        comboAmount = ConfigSettings.Buttslap.PoleComboAmount.Value;
+                        baseName = MovementSettings.Buttslap.PoleBoostName.Value;
+                        points = MovementSettings.Buttslap.PoleBoostPoints.Value;
+                        minPoints = MovementSettings.Buttslap.PoleBoostPointsMin.Value;
+                        jumpAmount = MovementSettings.Buttslap.PoleJumpAmount.Value;
+                        forwardAmount = MovementSettings.Buttslap.PoleAmount.Value;
+                        cap = MovementSettings.Buttslap.PoleCap.Value;
+                        comboAmount = MovementSettings.Buttslap.PoleComboAmount.Value;
                         break;
 
                     case "Surf":
-                        baseName = ConfigSettings.Buttslap.SurfBoostName.Value;
-                        points = ConfigSettings.Buttslap.SurfBoostPoints.Value;
-                        minPoints = ConfigSettings.Buttslap.SurfBoostPointsMin.Value;
-                        jumpAmount = ConfigSettings.Buttslap.SurfJumpAmount.Value;
-                        forwardAmount = ConfigSettings.Buttslap.SurfAmount.Value;
-                        cap = ConfigSettings.Buttslap.SurfCap.Value;
-                        comboAmount = ConfigSettings.Buttslap.SurfComboAmount.Value;
+                        baseName = MovementSettings.Buttslap.SurfBoostName.Value;
+                        points = MovementSettings.Buttslap.SurfBoostPoints.Value;
+                        minPoints = MovementSettings.Buttslap.SurfBoostPointsMin.Value;
+                        jumpAmount = MovementSettings.Buttslap.SurfJumpAmount.Value;
+                        forwardAmount = MovementSettings.Buttslap.SurfAmount.Value;
+                        cap = MovementSettings.Buttslap.SurfCap.Value;
+                        comboAmount = MovementSettings.Buttslap.SurfComboAmount.Value;
                         break;
 
                     default:
-                        baseName = ConfigSettings.Buttslap.BoostName.Value;
-                        points = ConfigSettings.Buttslap.BoostPoints.Value;
-                        minPoints = ConfigSettings.Buttslap.PointsMin.Value;
-                        jumpAmount = ConfigSettings.Buttslap.JumpAmount.Value;
-                        forwardAmount = ConfigSettings.Buttslap.Amount.Value;
-                        cap = ConfigSettings.Buttslap.Cap.Value;
-                        comboAmount = ConfigSettings.Buttslap.ComboAmount.Value;
+                        baseName = MovementSettings.Buttslap.BoostName.Value;
+                        points = MovementSettings.Buttslap.BoostPoints.Value;
+                        minPoints = MovementSettings.Buttslap.PointsMin.Value;
+                        jumpAmount = MovementSettings.Buttslap.JumpAmount.Value;
+                        forwardAmount = MovementSettings.Buttslap.Amount.Value;
+                        cap = MovementSettings.Buttslap.Cap.Value;
+                        comboAmount = MovementSettings.Buttslap.ComboAmount.Value;
                         break;
                 }
             }
@@ -142,39 +144,39 @@ namespace MovementFunk.NewAbility
                 switch (type)
                 {
                     case "Pole":
-                        baseName = ConfigSettings.Buttslap.PoleName.Value;
-                        points = ConfigSettings.Buttslap.PolePoints.Value;
-                        minPoints = ConfigSettings.Buttslap.PoleBoostPointsMin.Value;
-                        jumpAmount = ConfigSettings.Buttslap.PoleJumpAmount.Value;
-                        forwardAmount = ConfigSettings.Buttslap.PoleAmount.Value;
-                        cap = ConfigSettings.Buttslap.PoleCap.Value;
-                        comboAmount = ConfigSettings.Buttslap.PoleComboAmount.Value;
+                        baseName = MovementSettings.Buttslap.PoleName.Value;
+                        points = MovementSettings.Buttslap.PolePoints.Value;
+                        minPoints = MovementSettings.Buttslap.PoleBoostPointsMin.Value;
+                        jumpAmount = MovementSettings.Buttslap.PoleJumpAmount.Value;
+                        forwardAmount = MovementSettings.Buttslap.PoleAmount.Value;
+                        cap = MovementSettings.Buttslap.PoleCap.Value;
+                        comboAmount = MovementSettings.Buttslap.PoleComboAmount.Value;
                         break;
 
                     case "Surf":
-                        baseName = ConfigSettings.Buttslap.SurfName.Value;
-                        points = ConfigSettings.Buttslap.SurfPoints.Value;
-                        minPoints = ConfigSettings.Buttslap.SurfBoostPointsMin.Value;
-                        jumpAmount = ConfigSettings.Buttslap.SurfJumpAmount.Value;
-                        forwardAmount = ConfigSettings.Buttslap.SurfAmount.Value;
-                        cap = ConfigSettings.Buttslap.SurfCap.Value;
-                        comboAmount = ConfigSettings.Buttslap.SurfComboAmount.Value;
+                        baseName = MovementSettings.Buttslap.SurfName.Value;
+                        points = MovementSettings.Buttslap.SurfPoints.Value;
+                        minPoints = MovementSettings.Buttslap.SurfBoostPointsMin.Value;
+                        jumpAmount = MovementSettings.Buttslap.SurfJumpAmount.Value;
+                        forwardAmount = MovementSettings.Buttslap.SurfAmount.Value;
+                        cap = MovementSettings.Buttslap.SurfCap.Value;
+                        comboAmount = MovementSettings.Buttslap.SurfComboAmount.Value;
                         break;
 
                     default:
-                        baseName = ConfigSettings.Buttslap.Name.Value;
-                        points = ConfigSettings.Buttslap.Points.Value;
-                        minPoints = ConfigSettings.Buttslap.BoostPointsMin.Value;
-                        jumpAmount = ConfigSettings.Buttslap.JumpAmount.Value;
-                        forwardAmount = ConfigSettings.Buttslap.Amount.Value;
-                        cap = ConfigSettings.Buttslap.Cap.Value;
-                        comboAmount = ConfigSettings.Buttslap.ComboAmount.Value;
+                        baseName = MovementSettings.Buttslap.Name.Value;
+                        points = MovementSettings.Buttslap.Points.Value;
+                        minPoints = MovementSettings.Buttslap.BoostPointsMin.Value;
+                        jumpAmount = MovementSettings.Buttslap.JumpAmount.Value;
+                        forwardAmount = MovementSettings.Buttslap.Amount.Value;
+                        cap = MovementSettings.Buttslap.Cap.Value;
+                        comboAmount = MovementSettings.Buttslap.ComboAmount.Value;
                         break;
                 }
             }
 
             MFTrickManager.AddTrick(baseName);
-            points = MFTrickManager.CalculateTrickValue(baseName, points, minPoints, ConfigSettings.Misc.listLength.Value, ConfigSettings.Misc.repsToMin.Value);
+            points = MFTrickManager.CalculateTrickValue(baseName, points, minPoints, MovementSettings.Misc.listLength.Value, MovementSettings.Misc.repsToMin.Value);
 
             string name = $"{baseName} x {this.buttslapAmount}";
             this.p.currentTrickName = name;
