@@ -156,6 +156,10 @@ namespace MovementFunk.SpeedDisplay
     }
 
     public static void UpdateSpeedRep(){
+      if(!Config.Representation.SpeedUnitsEnabled.Value){
+        speedRep = string.Empty;
+        return;
+      }
       rep = Config.Representation.SpeedRep.Value;
 
       switch(rep){

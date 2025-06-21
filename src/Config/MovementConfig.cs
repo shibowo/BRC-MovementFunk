@@ -1457,5 +1457,11 @@ public class MovementConfig(ConfigFile config)
           "boost, dance, jump, phone, slide, switchStyle, trick1, trick2, trick3,  walk" +
           "anyTrick, anyTwoTricks"
           );
+      public ConfigEntry<bool> NoDirInput = config.Bind(
+          category,
+          "Require No Directional Input",
+          true,
+          "This setting makes it so that you have to not be using any directional inputs before doing a mortar stike. Basically you have to \"Let go of your stick\" or not press WASD before a mortar strike."
+          );
     }
 }

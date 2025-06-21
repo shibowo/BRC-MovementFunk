@@ -11,25 +11,32 @@ namespace MovementFunk.NewAbility
     private bool canMortarStrike;
     private float fallSpeedCap;
     private float speed;
-    private bool keybinds;
-    private MFAbilityManager abilityManager;
+    private MFAbilityManager manager;
+
+    private bool keybindsPressed;
+    private List<string> keybinds;
+    private bool mortarStrikeEnabled;
+    private bool noDirInput;
 
     public override void Init(){
       canMortarStrike = true;
       fallSpeedCap = 0f;
-      keybinds = false;
-      abilityManager = MovementFunkPlugin.abilityManager;
+      keybindsPressed = false;
+      manager = MovementFunkPlugin.abilityManager;
     }
 
     public bool Activation(){
-      List<string> keys = MFMisc.StringToList(MovementFunkPlugin.MovementSettings.MortarStrike.Keybinds.Value);
-      keybinds = MFInputBuffer.WasPressedRecentlyOrIsHeld(keys, 0.1f);
+      UpdateConfig();
+      keybindsPressed = MFInputBuffer.WasPressedRecentlyOrIsHeld(keybinds, 0.1f);
 
       if(!p.TreatPlayerAsSortaGrounded()
           && canMortarStrike
-          && keybinds 
-          && MovementFunkPlugin.MovementSettings.MortarStrike.Enabled.Value
-          && p.preAbility != MovementFunkPlugin.abilityManager.surfAbility){
+          && keybindsPressed
+          && mortarStrikeEnabled
+          && p.preAbility != manager.surfAbility
+          && p.preAbility != manager.mortarStrikeAbility
+          && (noDirInput ? (p.moveInput.sqrMagnitude == 0f) : true))
+      {
         p.ActivateAbility(this);
         return true;
       }
@@ -63,7 +70,16 @@ namespace MovementFunk.NewAbility
       if(p.boostAbility.CheckActivation()){
         return;
       }
+      if(p.airDashAbility.CheckActivation()){
+        canMortarStrike = false;
+      }
     }
+
+    public void UpdateConfig(){
+      keybinds = MFMisc.StringToList(MovementFunkPlugin.MovementSettings.MortarStrike.Keybinds.Value);
+      mortarStrikeEnabled = MovementFunkPlugin.MovementSettings.MortarStrike.Enabled.Value;
+      noDirInput = MovementFunkPlugin.MovementSettings.MortarStrike.NoDirInput.Value;
+   }
 
     private void DoTrick(){
       string name = MovementFunkPlugin.MovementSettings.MortarStrike.Name.Value;

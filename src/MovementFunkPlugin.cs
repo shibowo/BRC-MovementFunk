@@ -15,7 +15,7 @@ namespace MovementFunk
     {
         public const string MyGUID = "shibowo.MovementFunk";
         private const string PluginName = "MovementFunk";
-        private const string VersionString = "0.3.0";
+        private const string VersionString = "0.3.1";
 
         public static MovementFunkPlugin Instance { get; private set; }
         public string Dir => Path.GetDirectoryName(Info.Location);
@@ -41,7 +41,7 @@ namespace MovementFunk
             MFAnimation.Init();
             MFPresetManager.LaunchPreset();
 
-            Logger.LogInfo($"{PluginName} has been loaded!");
+            Logger.LogInfo($"{PluginName} v{VersionString} has been loaded!");
         }
 
         private void FixedUpdate()
