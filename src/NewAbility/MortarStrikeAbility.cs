@@ -59,7 +59,6 @@ namespace MovementFunk.NewAbility
 
     public override void OnStopAbility(){
       p.motor.maxFallSpeed = fallSpeedCap;
-      canMortarStrike = false;
     }
 
     public override void FixedUpdateAbility(){

@@ -41,7 +41,7 @@ git clone https://github.com/shibowo/BRC-MovementFunk.git
 cd MovementFunk
 ```
 - Make sure you have a publicized version of the game's Assembly-CSharp.dll
-You can use [CabbageCrow's AssemblyPublicizer](https://github.com/CabbageCrow/AssemblyPublicizer) (windows only) or my port of it, [AssemblyRePublicizer](https://github.com/shibowo/AssemblyRePublicizer) (works on all platforms that support .net) for the publicizing. The Assembly-CSharp.dll itself can be found inside {gameroot}\Bomb Rush Cyberfunk_Data\Managed ({gameroot} is wherever the BombRushCyberfunk folder is, including that folder). After publicizing, put the publicized .dll in ``lib\`` as ``Assembly-CSharp_publicized.dll``
+You can use [CabbageCrow's AssemblyPublicizer](https://github.com/CabbageCrow/AssemblyPublicizer) or my fork of it(shameless plug lol), [AssemblyRePublicizer](https://github.com/shibowo/AssemblyRePublicizer)  for the publicizing. The Assembly-CSharp.dll itself can be found inside {gameroot}\Bomb Rush Cyberfunk_Data\Managed ({gameroot} is wherever the BombRushCyberfunk folder is, including that folder). After publicizing, put the publicized .dll in ``lib\`` as ``Assembly-CSharp_publicized.dll``
 - Make sure you have these DLL's too (no need to publicize these):
 (if you are on linux, you can just run ``./source_dlls.sh``.)
 ```
@@ -73,14 +73,13 @@ dotnet build
 The built DLL should be in ``bin\Debug\netstandard2.0\MovementFunk.dll``.
 
 ## Configuration
-There are multiple ways to edit the config, make sure you've run the game with the mod at least once<br><br>
+There are multiple ways to edit the configuration files, make sure you've run the game with the mod at least once<br><br>
 
-- The simplest is to just use the built in config editor in r2modman to edit the config<br>
+- The simplest is to just use the built in config editor in r2modman to edit the configs<br>
 
-- You can edit it manually, you can find the config file in the \BepInEx\config folder, it should be named com.yuril. MovementPlus.cfg<br>
+- You can edit them manually, the configs are in BepInEx\config\MovementFunk. movement.cfg is the config for movement related settings and speedometer.cfg is for the speedometer.
 
-- You can use [this tool](https://github.com/BepInEx/BepInEx.ConfigurationManager) to edit the values in-game in real time, some changes may only take effect on entering a new area
-
+Note: As of right now, none of the MovementFunk configs appear in BepInEx.ConfigurationManager.
 
 ## Credits
 Huge thanks to these individuals, this mod would not be the same without them.
