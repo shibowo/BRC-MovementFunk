@@ -31,6 +31,23 @@ namespace MovementFunk.Patches
                 case MovementConfig.BoostReturnType.Disabled:
                     break;
             }
+            switch (MovementSettings.BoostGeneral.BoostMortarStrikeReturnType.Value)
+            {
+              case MovementConfig.BoostReturnType.Once:
+                if (MFVariables.canResetMortarStrike && !MovementFunkPlugin.abilityManager.mortarStrikeAbility.canMortarStrike)
+                {
+                  MovementFunkPlugin.abilityManager.mortarStrikeAbility.canMortarStrike = true;
+                  MFVariables.canResetMortarStrike = false;
+                }
+                break;
+
+              case MovementConfig.BoostReturnType.Always:
+                MovementFunkPlugin.abilityManager.mortarStrikeAbility.canMortarStrike = true;
+                break;
+
+              case MovementConfig.BoostReturnType.Disabled:
+                break;
+            }
 
             if (__instance.p.preAbility == __instance.p.boostAbility && MFVariables.boostAbilityTimer <= 0.25f && MovementSettings.BoostGeneral.NoBoostLossTrick.Value)
             {

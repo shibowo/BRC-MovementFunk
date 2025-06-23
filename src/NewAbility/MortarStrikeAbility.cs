@@ -8,7 +8,7 @@ namespace MovementFunk.NewAbility
 
     public MortarStrikeAbility(Player player) : base(player){}
 
-    private bool canMortarStrike;
+    public bool canMortarStrike;
     private float fallSpeedCap;
     private float speed;
     private MFAbilityManager manager;
@@ -59,7 +59,7 @@ namespace MovementFunk.NewAbility
 
     public override void OnStopAbility(){
       p.motor.maxFallSpeed = fallSpeedCap;
-      canMortarStrike = true;
+      canMortarStrike = false;
     }
 
     public override void FixedUpdateAbility(){
@@ -67,19 +67,15 @@ namespace MovementFunk.NewAbility
         p.StopCurrentAbility();
         return;
       }
-      if(p.boostAbility.CheckActivation()){
-        return;
-      }
-      if(p.airDashAbility.CheckActivation()){
-        canMortarStrike = false;
-      }
+      p.boostAbility.CheckActivation();
+      p.airDashAbility.CheckActivation();
     }
 
     public void UpdateConfig(){
       keybinds = MFMisc.StringToList(MovementFunkPlugin.MovementSettings.MortarStrike.Keybinds.Value);
       mortarStrikeEnabled = MovementFunkPlugin.MovementSettings.MortarStrike.Enabled.Value;
       noDirInput = MovementFunkPlugin.MovementSettings.MortarStrike.NoDirInput.Value;
-   }
+    }
 
     private void DoTrick(){
       string name = MovementFunkPlugin.MovementSettings.MortarStrike.Name.Value;

@@ -550,6 +550,13 @@ public class MovementConfig(ConfigFile config)
            "Restores air dash after using an air boost trick. Options: Once per jump, every boost trick, or disabled."
        );
 
+        public ConfigEntry<BoostReturnType> BoostMortarStrikeReturnType = config.Bind(
+           category,
+           "Boost Trick Returns Mortar Strike",
+           MovementConfig.BoostReturnType.Once,
+           "Restores mortar strike after using an air boost trick. Options: Once per jump, every boost trick, or disabled."
+           );
+
         public ConfigEntry<bool> InfiniteBoost = config.Bind(
          category,
          "Infinite Boost",

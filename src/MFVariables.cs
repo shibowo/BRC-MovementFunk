@@ -7,6 +7,7 @@ namespace MovementFunk
     {
         public static bool canResetAirBoost = true;
         public static bool canResetAirDash = true;
+        public static bool canResetMortarStrike = true;
 
         public static bool jumpedFromRail = false;
         public static float jumpedFromRailTimer = 0f;

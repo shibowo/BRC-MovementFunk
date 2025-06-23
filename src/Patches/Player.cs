@@ -239,8 +239,10 @@ namespace MovementFunk.Patches
         {
             if (__instance.isAI || MovementFunkPlugin.MovementSettings.Misc.DisablePatch.Value) { return; }
             Fastfall.canFastFall = true;
+            MovementFunkPlugin.abilityManager.mortarStrikeAbility.canMortarStrike = true;
             MFVariables.canResetAirBoost = true;
             MFVariables.canResetAirDash = true;
+            MFVariables.canResetMortarStrike = true;
         }
 
         [HarmonyPatch(typeof(Player), nameof(Player.FixedUpdateAbilities))]
