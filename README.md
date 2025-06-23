@@ -73,7 +73,7 @@ dotnet build
 The built DLL should be in ``bin\Debug\netstandard2.0\MovementFunk.dll``.
 
 ## Configuration
-There are multiple ways to edit the configuration files, make sure you've run the game with the mod at least once<br><br>
+There are multiple ways to edit the configuration files, make sure you've run the game with the mod at least once
 
 - The simplest is to just use the built in config editor in r2modman to edit the configs<br>
 
