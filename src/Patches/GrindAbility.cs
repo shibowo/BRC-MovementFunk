@@ -387,7 +387,7 @@ namespace MovementFunk.Patches
         {
             instance.p.PlayAnim(instance.jumpHash, false, false, -1f);
             Vector3 vector = instance.p.FlattenRotationHard();
-            float num3 = 1f + Mathf.Clamp01(0f) * 0.5f;
+            float num3 = 1f + Mathf.Clamp01(0f) * 0.5f; //is this intentional?
             if (!instance.lastPath.upwardsGrindJumpAllowed || !instance.grindLine.upwardsGrindJump)
             {
                 num3 = 1f;
