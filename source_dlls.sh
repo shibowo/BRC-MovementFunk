@@ -20,12 +20,11 @@ determine_mod_dir_r2mm_steam(){
   gamedir=$2
   #Assumes you're modding the game with r2mm.
   r2mmprofiles="$1/.config/r2modmanPlus-local/BombRushCyberfunk/profiles/"
-  r2mmprofileslist=[]
+  r2mmprofileslist=($(ls "$r2mmprofiles"))
 
   echo "Profile List:" >&2
-  for profile in "$(ls "$r2mmprofiles")";
+  for profile in "${r2mmprofileslist[@]}";
   do
-    r2mmprofileslist+=("${profile}")
     echo "${profile}" >&2
   done
 
