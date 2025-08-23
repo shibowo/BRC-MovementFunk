@@ -89,6 +89,7 @@ People that worked on MovementFunk:
 - Queen2222 for the MovementFunk banner and icon
 - Thunder_Kick (Project Lead, Emotional Support Pony)
 - Yoshi (Lead Playtester)
+- Bell (Contributor, Tester, (WIP)Newtrix Support)
 
 People that worked on MovementPlus:
 - YuriLewd ("And Yuri said, "Let there be MovementPlus" and there was MovementPlus." -Genesis 1:3)
