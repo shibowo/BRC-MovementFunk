@@ -71,7 +71,6 @@ namespace MovementFunk.SpeedDisplay
         someLabel.maxVisibleLines = 0; //I am not sure if it's a good idea to Destroy() this...
         goonStorageLabel.enableWordWrapping = false;
         goonStorageLabel.enableAutoSizing = false;
-        goonStorageLabel.fontSize = 32.0f;
         labelGap *= 2;
          
         if(!Config.Representation.AltTrickComboCount.Value){
@@ -152,6 +151,9 @@ namespace MovementFunk.SpeedDisplay
       speedometerLabel.SetText(spmStrBuilder);
       if(Config.Representation.GoonStorageEnabled.Value){
         goonStorageLabel.SetText(gstStrBuilder);
+        if(goonStorageLabel.fontSize != speedometerLabel.fontSize){
+          goonStorageLabel.fontSize = speedometerLabel.fontSize;
+        }
       }
     }
 
@@ -170,7 +172,7 @@ namespace MovementFunk.SpeedDisplay
           speedRep = "KM/H";
           break;
         case Representation.MilesPerHour:
-          speedRep = "MFH";
+          speedRep = "MPH";
           break;
         case Representation.MetersPerSecond:
           speedRep = "M/S";
@@ -178,7 +180,10 @@ namespace MovementFunk.SpeedDisplay
         default:
           speedRep = string.Empty;
           break;
-      }  
+      }
+      if(Config.Representation.GoonStorageEnabled.Value){
+        goonStorageLabel.fontSize = speedometerLabel.fontSize;
+      }
     }
     public static void InitAltTrickLabel(TextMeshProUGUI someLabel){
       if(!Config.Representation.AltTrickComboCount.Value) return;

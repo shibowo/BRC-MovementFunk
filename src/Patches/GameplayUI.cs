@@ -1,7 +1,6 @@
 using HarmonyLib;
 using Reptile;
 using MovementFunk.SpeedDisplay;
-using static MovementFunk.MovementConfig;
 
 namespace MovementFunk.Patches
 {

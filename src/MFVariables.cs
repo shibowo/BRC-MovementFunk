@@ -13,7 +13,7 @@ namespace MovementFunk
         public static float jumpedFromRailTimer = 0f;
 
         public static float defaultJumpSpeed;
-        public static float savedLastSpeed; //this is wallrun specific, actually
+        public static float savedLastSpeed; //the goon storage, at least on billboards
         public static float savedSpeedBeforeHitBounce;
         public static float boostAbilityTimer;
         public static string buttslapType;
