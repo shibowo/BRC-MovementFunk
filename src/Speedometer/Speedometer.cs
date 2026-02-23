@@ -18,6 +18,7 @@ namespace MovementFunk.SpeedDisplay
 
   public class Speedometer : MonoBehaviour{
     private static float speed = 0.0f;
+    private static float goonSpeed = 0.0f;
     private static TextMeshProUGUI speedometerLabel;
     private static TextMeshProUGUI goonStorageLabel;
     private static TextMeshProUGUI trickComboLabel;
@@ -34,7 +35,7 @@ namespace MovementFunk.SpeedDisplay
 
     //these ratios are taken off SoftGoat's spedometer, not sure how these were calculated
     //followup: it appears that player speed is meters per second, at least I can assume so
-    private const float MPH_ratio = 2.236936f;
+    private const float MPH_ratio = 2.236936f; //do we need this to be *this* accurate?
     private const float KPH_ratio = 3.6f;
 
     private const string CloseMonoTag = "</mspace>";
@@ -112,23 +113,27 @@ namespace MovementFunk.SpeedDisplay
       switch(rep){
         case Representation.SpeedUnits:
           speed *= 10;
+          goonSpeed = MFVariables.savedGoon * 10;
           break;
         case Representation.KilometersPerHour:
           speed *= KPH_ratio;
+          goonSpeed = MFVariables.savedGoon * KPH_ratio;
           break;
         case Representation.MilesPerHour:
           speed *= MPH_ratio;
+          goonSpeed = MFVariables.savedGoon * MPH_ratio;
           break;
         default:
+          goonSpeed = MFVariables.savedGoon;
           break;
       }
       if(rep == Representation.SpeedUnits){
         spmStrBuilder.AppendFormat(labelCulture, "{0:0} {1}", speed, speedRep);
-        gstStrBuilder.AppendFormat(labelCulture, "{0} {1:0} {2}", goonStorageText, MFVariables.savedGoon * 10, speedRep);
+        gstStrBuilder.AppendFormat(labelCulture, "{0} {1:0} {2}", goonStorageText, goonSpeed, speedRep);
       }
       else{
         spmStrBuilder.AppendFormat(labelCulture, "{0:0.0} {1}", speed, speedRep);
-        gstStrBuilder.AppendFormat(labelCulture, "{0} {1:0.0} {2}", goonStorageText, MFVariables.savedGoon, speedRep);
+        gstStrBuilder.AppendFormat(labelCulture, "{0} {1:0.0} {2}", goonStorageText, goonSpeed, speedRep);
       }
       if(Config.Formatting.UseMonospace.Value){
         if(!Config.Formatting.MonospacedDot.Value && rep != Representation.SpeedUnits){
