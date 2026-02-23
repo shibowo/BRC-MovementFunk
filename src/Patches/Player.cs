@@ -108,13 +108,14 @@ namespace MovementFunk.Patches
                 string name;
                 int points;
 
-                if (__instance.boostButtonHeld && __instance.HasBoostCharge())
+                if (__instance.boostButtonHeld && __instance.HasBoostCharge(__instance.boostTrickCost))
                 {
                     speed = MFMovementMetrics.AverageForwardSpeed() + MovementFunkPlugin.MovementSettings.WaveDash.BoostSpeed.Value;
                     name = MovementFunkPlugin.MovementSettings.WaveDash.BoostName.Value;
                     MFTrickManager.AddTrick(name);
                     points = MFTrickManager.CalculateTrickValue(name, MovementSettings.WaveDash.BoostPoints.Value, MovementSettings.WaveDash.BoostPointsMin.Value, MovementSettings.Misc.listLength.Value, MovementSettings.Misc.repsToMin.Value);
-                    MFTrickManager.DoTrick(name, points);
+                    __instance.AddBoostCharge(0f - __instance.boostTrickCost); //funny, take this off before release tho
+                    MFTrickManager.DoTrick(Player.TrickType.GROUND_BOOST, name, points);
                     __instance.StopCurrentAbility();
                 }
                 else

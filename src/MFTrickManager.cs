@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using Reptile;
 
 namespace MovementFunk
 {
@@ -52,6 +53,34 @@ namespace MovementFunk
             }
             MovementFunkPlugin.player.tricksInCombo++;
             if (MovementFunkPlugin.player.tricksInCombo >= 5)
+            {
+                float num = MovementFunkPlugin.player.gainBoostChargeCurve.Evaluate(Mathf.Min((float)MovementFunkPlugin.player.tricksInCombo, 50f) / 50f);
+                MovementFunkPlugin.player.showAddCharge = num;
+                MovementFunkPlugin.player.AddBoostCharge(num);
+            }
+            if (MovementFunkPlugin.player.scoreMultiplier == 0f)
+            {
+                MovementFunkPlugin.player.scoreMultiplier = 1f;
+            }
+            MovementFunkPlugin.player.currentTrickOnFoot = !MovementFunkPlugin.player.usingEquippedMovestyle;
+            MovementFunkPlugin.player.baseScore += (float)((int)((float)MovementFunkPlugin.player.currentTrickPoints * MovementFunkPlugin.player.scoreFactor));
+            MovementFunkPlugin.player.didAbilityTrick = true;
+        }
+
+        public static void DoTrick(Player.TrickType type, string name, int points)
+        {
+            bool isboostTrick = (type == Player.TrickType.GROUND_BOOST) ||
+                                (type == Player.TrickType.GRIND_BOOST) ||
+                                (type == Player.TrickType.AIR_BOOST);
+            MovementFunkPlugin.player.currentTrickName = name;
+            MovementFunkPlugin.player.currentTrickPoints = points;
+
+            if (MovementFunkPlugin.player.tricksInCombo == 0 && MovementFunkPlugin.player.ui != null)
+            {
+                MovementFunkPlugin.player.ui.SetTrickingChargeBarActive(true);
+            }
+            MovementFunkPlugin.player.tricksInCombo++;
+            if (MovementFunkPlugin.player.tricksInCombo >= 5 && !isboostTrick)
             {
                 float num = MovementFunkPlugin.player.gainBoostChargeCurve.Evaluate(Mathf.Min((float)MovementFunkPlugin.player.tricksInCombo, 50f) / 50f);
                 MovementFunkPlugin.player.showAddCharge = num;
