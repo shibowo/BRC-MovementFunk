@@ -15,7 +15,7 @@ namespace MovementFunk
     {
         public const string MyGUID = "shibowo.MovementFunk";
         private const string PluginName = "MovementFunk";
-        private const string VersionString = "0.3.2";
+        private const string VersionString = "0.3.3";
 
         public static MovementFunkPlugin Instance { get; private set; }
         public string Dir => Path.GetDirectoryName(Info.Location);

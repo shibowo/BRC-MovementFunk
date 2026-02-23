@@ -1,6 +1,6 @@
 {
     "name": "MovementFunk",
-    "version_number": "0.3.2",
+    "version_number": "0.3.3",
     "website_url": "https://github.com/shibowo/BRC-MovementFunk",
     "description": "A fork of MovementPlus. Movement + funk. get it?",
     "dependencies": [
