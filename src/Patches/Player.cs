@@ -108,7 +108,7 @@ namespace MovementFunk.Patches
                 string name;
                 int points;
 
-                if (__instance.boostButtonHeld)
+                if (__instance.boostButtonHeld && __instance.HasBoostCharge())
                 {
                     speed = MFMovementMetrics.AverageForwardSpeed() + MovementFunkPlugin.MovementSettings.WaveDash.BoostSpeed.Value;
                     name = MovementFunkPlugin.MovementSettings.WaveDash.BoostName.Value;
