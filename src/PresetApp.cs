@@ -46,6 +46,7 @@ namespace MovementFunk
             {
                 foreach (string preset in presets)
                 {
+                    if(preset == "None") continue;
                     Console.WriteLine(preset);
                     var button = CreatePresetButton(preset);
                     ScrollView.AddButton(button);
