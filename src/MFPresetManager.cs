@@ -73,75 +73,47 @@ namespace MovementFunk
         ApplySpeedometerPreset(MovementFunkPlugin.SpeedometerSettings.Misc.SPPreset.Value);
       }
     }
+    
     public static void ApplyMovementPreset(string presetName){
-      NoMovementPreset();
       MovementFunkPlugin.MovementSettings.Misc.MVPreset.Value = presetName;
 
       var Instance = MovementFunkPlugin.Instance;
       var MyGUID = MovementFunkPlugin.MyGUID;
-      var MovementSettings = MovementFunkPlugin.MovementSettings;
+
       string movementFunkDir = Instance.Config.ConfigFilePath.Replace(MyGUID + ".cfg", string.Empty) + @"MovementFunk\";
       string movementDir = movementFunkDir + @"MovementPresets\";
-      if(!Directory.Exists(movementFunkDir)){
-        MovementFunkPlugin.PubLogger.LogWarning("MovementFunk directory not found.");
-        MovementFunkPlugin.PubLogger.LogWarning($"Creating new MovementFunk directory at \"{movementFunkDir}\"");
-        CreateConfigDirectory(movementFunkDir);
-        NoMovementPreset();
-      }
-      if(Directory.Exists(movementDir)){
-        string configPath = movementDir + presetName + ".cfg";
-        MovementConfig configFile = new MovementConfig(new ConfigFile(configPath, false));
-        MovementFunkPlugin.MovementSettings = configFile;
-        if (MovementFunkPlugin.player != null)
-        {
-          //UpdateInitVars();
-        } 
-      }
-      else {
-        MovementFunkPlugin.PubLogger.LogWarning("MovementPresets directory not found.");
-        MovementFunkPlugin.PubLogger.LogWarning($"Creating new MovementPresets directory at \"{movementDir}\"");
-        CreateConfigDirectory(movementDir);
-        NoMovementPreset();
-      }
+      string configPath = movementDir + presetName + ".cfg";
+      MovementConfig configFile = new MovementConfig(new ConfigFile(configPath, false));
+      MovementFunkPlugin.MovementSettings = configFile;
     }
+    
     public static void ApplySpeedometerPreset(string presetName)
     {
-      NoMovementPreset();
-      MovementFunkPlugin.MovementSettings.Misc.MVPreset.Value = presetName;
+      MovementFunkPlugin.SpeedometerSettings.Misc.SPPreset.Value = presetName;
 
       var Instance = MovementFunkPlugin.Instance;
       var MyGUID = MovementFunkPlugin.MyGUID;
-      var MovementSettings = MovementFunkPlugin.MovementSettings;
+
       string movementFunkDir = Instance.Config.ConfigFilePath.Replace(MyGUID + ".cfg", string.Empty) + @"MovementFunk\";
       string speedometerDir = movementFunkDir + @"SpeedometerPresets\";
-      if(!Directory.Exists(movementFunkDir)){
-        MovementFunkPlugin.PubLogger.LogWarning("MovementFunk directory not found.");
-        MovementFunkPlugin.PubLogger.LogWarning($"Creating new MovementFunk directory at \"{movementFunkDir}\"");
-        CreateConfigDirectory(movementFunkDir);
-      }
-      if(Directory.Exists(speedometerDir)){
-        string configPath = speedometerDir + presetName + ".cfg";
-        MovementConfig configFile = new MovementConfig(new ConfigFile(configPath, false));
-        MovementFunkPlugin.MovementSettings = configFile;
-        if (MovementFunkPlugin.player != null)
-        {
-          //UpdateInitVars();
-        } 
-      }
-      else{
-        MovementFunkPlugin.PubLogger.LogWarning("SpeedometerPresets directory not found.");
-        MovementFunkPlugin.PubLogger.LogWarning($"Creating new SpeedometerPresets directory at \"{speedometerDir}\"");
-        CreateConfigDirectory(speedometerDir);
-      }
+      string configPath = speedometerDir + presetName + ".cfg";
+      SpeedometerConfig configFile = new SpeedometerConfig(new ConfigFile(configPath, false));
+      MovementFunkPlugin.SpeedometerSettings = configFile;
     }
+    
+    //Do NOT call NoPreset methods in ApplyPreset methods unless you want
+    //an infinite loop.
     public static void NoMovementPreset()
     {
       MovementFunkPlugin.MovementSettings.Misc.MVPreset.Value = "None";
+      ApplyMovementPreset("None");
     }
     public static void NoSpeedometerPreset()
     {
       MovementFunkPlugin.SpeedometerSettings.Misc.SPPreset.Value = "None";
+      ApplySpeedometerPreset("None");
     }
+    
     public static List<string> GetAvailablePresets()
     {
       var Instance = MovementFunkPlugin.Instance;
