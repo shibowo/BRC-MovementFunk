@@ -487,11 +487,12 @@ namespace MovementFunk.Patches
             bool isHardCorner = Mathf.Abs(turnAngle) > MovementSettings.RailGeneral.HCThresh.Value;
             bool correctInput = (playerTiltSide == turnSide);
 
-            bool boostHeld = __instance.p.boostButtonHeld && MovementFunkPlugin.MovementSettings.RailGeneral.BoostCornerEnabled.Value;
+            bool boostCorner = __instance.p.boosting && 
+                               MovementFunkPlugin.MovementSettings.RailGeneral.BoostCornerEnabled.Value;
 
-            correctInput = correctInput || (boostHeld && isHardCorner);
+            bool cornerConditions = correctInput || (boostCorner && isHardCorner);
 
-            if (correctInput && turnSide != Side.NONE)
+            if (cornerConditions && turnSide != Side.NONE)
             {
                 if (isHardCorner && __instance.lastPath.hardCornerBoostsAllowed)
                 {
