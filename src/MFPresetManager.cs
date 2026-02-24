@@ -114,10 +114,10 @@ namespace MovementFunk
       ApplySpeedometerPreset("None");
     }
     
-    public static List<string> GetAvailablePresets()
+    public static List<string> GetAvailablePresets(string dir)
     {
       var Instance = MovementFunkPlugin.Instance;
-      string movementPlusPath = Path.Combine(Path.GetDirectoryName(Instance.Config.ConfigFilePath), "MovementFunk/MovementPresets");
+      string movementPlusPath = Path.Combine(Path.GetDirectoryName(Instance.Config.ConfigFilePath), @"MovementFunk\" + dir);
       List<string> presetNames = new List<string>();
 
       if (Directory.Exists(movementPlusPath))
@@ -135,7 +135,12 @@ namespace MovementFunk
 
       return presetNames;
     }
-
+    public static List<string> GetAvailableMovementPresets(){
+      return MFPresetManager.GetAvailablePresets(@"MovementPresets\");
+    }
+    public static List<string> GetAvailableSpeedometerPresets(){
+      return MFPresetManager.GetAvailablePresets(@"SpeedometerPresets\");
+    }
     private static void UpdateInitVars()
     {
       if (MovementFunkPlugin.player != null)

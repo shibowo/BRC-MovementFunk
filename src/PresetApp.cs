@@ -8,71 +8,164 @@ using MovementFunk.SpeedDisplay;
 
 namespace MovementFunk
 {
-    internal class PresetApp : CustomApp
-    {
-        private static Sprite IconSprite = null;
-        private static List<string> presets;
+  public class MFCustomApp : CustomApp
+  {
+    protected static Sprite IconSprite = null;
+    protected static List<string> presets;
 
-        public static void Init()
-        {
-            string iconPath = Path.Combine(MovementFunkPlugin.Instance.Dir, "MF_icon.png");
-
-            try
-            {
-                IconSprite = TextureUtility.LoadSprite(iconPath);
-                PhoneAPI.RegisterApp<PresetApp>("MF Preset", IconSprite);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error loading icon sprite: {ex.Message}");
-                PhoneAPI.RegisterApp<PresetApp>("MF Preset", null);
-            }
-        }
-
-        public override void OnAppInit()
-        {
-            base.OnAppInit();
-            CreateIconlessTitleBar("Available Presets");
-
-            ScrollView = PhoneScrollView.Create(this);
-            PopulateList();
-        }
-
-        private void PopulateList()
-        {
-            ScrollView.AddButton(NoneButton());
-            presets = MFPresetManager.GetAvailablePresets();
-            if (presets.Count > 0)
-            {
-                foreach (string preset in presets)
-                {
-                    if(preset == "None") continue;
-                    Console.WriteLine(preset);
-                    var button = CreatePresetButton(preset);
-                    ScrollView.AddButton(button);
-                }
-            }
-        }
-
-        private static SimplePhoneButton CreatePresetButton(string preset)
-        {
-            var button = PhoneUIUtility.CreateSimpleButton(preset);
-            button.OnConfirm += () =>
-            {
-                MFPresetManager.ApplyMovementPreset(preset);
-                Speedometer.UpdateSpeedRep();
-            };
-            return button;
-        }
-
-        private static SimplePhoneButton NoneButton()
-        {
-            var button = PhoneUIUtility.CreateSimpleButton("None");
-            button.OnConfirm += () =>
-            {
-                MFPresetManager.NoMovementPreset();
-            };
-            return button;
-        }
+    virtual protected List<string>GetAvailablePresets() {
+      return new List<string>();
     }
+
+    public override void OnAppInit()
+    {
+      base.OnAppInit();
+      CreateIconlessTitleBar("Available Presets");
+
+      ScrollView = PhoneScrollView.Create(this);
+    }
+
+  }
+  internal class PresetApp : MFCustomApp {
+    protected void PopulateList()
+    {
+      ScrollView.AddButton(NoneButton());
+      presets = GetAvailablePresets();
+      if (presets.Count > 0)
+      {
+        foreach (string preset in presets)
+        {
+          if(preset == "None") continue;
+          Console.WriteLine(preset);
+          var button = CreatePresetButton(preset);
+          ScrollView.AddButton(button);
+        }
+      }
+    }
+    public override void OnAppInit()
+    {
+      base.OnAppInit();
+      CreateIconlessTitleBar("Available Presets");
+
+      ScrollView = PhoneScrollView.Create(this);
+      PopulateList();
+    }
+    virtual protected SimplePhoneButton CreatePresetButton(string preset)
+    {
+      var button = PhoneUIUtility.CreateSimpleButton(preset);
+      button.OnConfirm += () => {};
+      return button;
+    }
+
+    virtual protected SimplePhoneButton NoneButton()
+    {
+      var button = PhoneUIUtility.CreateSimpleButton("None");
+      button.OnConfirm += () => {};
+      return button;
+    }
+  }
+  internal class MovementPresetApp : PresetApp {
+    public override bool Available => false;
+
+    public static void Init(string title)
+    {
+      PhoneAPI.RegisterApp<MovementPresetApp>(title);
+    }
+
+    protected override SimplePhoneButton CreatePresetButton(string preset)
+    {
+      var button = PhoneUIUtility.CreateSimpleButton(preset);
+      button.OnConfirm += () =>
+      {
+        MFPresetManager.ApplyMovementPreset(preset);
+      };
+      return button;
+    }
+
+    protected override SimplePhoneButton NoneButton()
+    {
+      var button = PhoneUIUtility.CreateSimpleButton("None");
+      button.OnConfirm += () =>
+      {
+        MFPresetManager.NoMovementPreset();
+      };
+      return button;
+    }
+    protected override List<string> GetAvailablePresets(){
+      return MFPresetManager.GetAvailableMovementPresets();
+    }
+  }
+  internal class SpeedometerPresetApp : PresetApp {
+    
+    public override bool Available => false;
+
+    public static void Init(string title)
+    {
+      PhoneAPI.RegisterApp<SpeedometerPresetApp>(title);
+    }
+
+    protected override SimplePhoneButton CreatePresetButton(string preset)
+    {
+      var button = PhoneUIUtility.CreateSimpleButton(preset);
+      button.OnConfirm += () =>
+      {
+        MFPresetManager.ApplyMovementPreset(preset);
+        Speedometer.UpdateSpeedRep();
+      };
+      return button;
+    }
+
+    protected override SimplePhoneButton NoneButton()
+    {
+      var button = PhoneUIUtility.CreateSimpleButton("None");
+      button.OnConfirm += () =>
+      {
+        MFPresetManager.NoSpeedometerPreset();
+        Speedometer.UpdateSpeedRep();
+      };
+      return button;
+    }
+    protected override List<string> GetAvailablePresets(){
+      return MFPresetManager.GetAvailableSpeedometerPresets();
+    }
+  }
+  public class MFMainApp : MFCustomApp {
+    public static void Init(string title, string icon_filename)
+    {
+      string iconPath = Path.Combine(MovementFunkPlugin.Instance.Dir, icon_filename);
+      try
+      {
+        IconSprite = TextureUtility.LoadSprite(iconPath);
+        PhoneAPI.RegisterApp<MFMainApp>(title, IconSprite);
+      }
+      catch (Exception ex)
+      {
+        Console.WriteLine($"Error loading icon sprite: {ex.Message}");
+        PhoneAPI.RegisterApp<MFMainApp>(title, null);
+      }
+    }
+
+    public override void OnAppInit()
+    {
+      base.OnAppInit();
+      CreateIconlessTitleBar("Available Presets");
+
+      ScrollView = PhoneScrollView.Create(this);
+      SimplePhoneButton movementAppButton = PhoneUIUtility.CreateSimpleButton("Movement Presets");
+
+      movementAppButton.OnConfirm += () => {
+        MyPhone.OpenApp(typeof(MovementPresetApp));
+      };
+
+      ScrollView.AddButton(movementAppButton);
+
+      SimplePhoneButton speedometerAppButton = PhoneUIUtility.CreateSimpleButton("Speedometer Presets");
+
+      speedometerAppButton.OnConfirm += () => {
+        MyPhone.OpenApp(typeof(SpeedometerPresetApp));
+      };
+
+      ScrollView.AddButton(speedometerAppButton);
+    }
+  }
 }
