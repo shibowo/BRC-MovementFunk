@@ -109,7 +109,7 @@ namespace MovementFunk
       var button = PhoneUIUtility.CreateSimpleButton(preset);
       button.OnConfirm += () =>
       {
-        MFPresetManager.ApplyMovementPreset(preset);
+        MFPresetManager.ApplySpeedometerPreset(preset);
         Speedometer.UpdateSpeedRep();
       };
       return button;

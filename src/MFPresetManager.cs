@@ -117,12 +117,12 @@ namespace MovementFunk
     public static List<string> GetAvailablePresets(string dir)
     {
       var Instance = MovementFunkPlugin.Instance;
-      string movementPlusPath = Path.Combine(Path.GetDirectoryName(Instance.Config.ConfigFilePath), @"MovementFunk\" + dir);
+      string presetPath = Path.Combine(Path.GetDirectoryName(Instance.Config.ConfigFilePath), @"MovementFunk\" + dir);
       List<string> presetNames = new List<string>();
 
-      if (Directory.Exists(movementPlusPath))
+      if (Directory.Exists(presetPath))
       {
-        string[] presetFiles = Directory.GetFiles(movementPlusPath, "*.cfg");
+        string[] presetFiles = Directory.GetFiles(presetPath, "*.cfg");
         foreach (string file in presetFiles)
         {
           presetNames.Add(Path.GetFileNameWithoutExtension(file));
@@ -130,7 +130,7 @@ namespace MovementFunk
       }
       else
       {
-        MovementFunkPlugin.PubLogger.LogError("MovementFunk directory not found.");
+        MovementFunkPlugin.PubLogger.LogError($"Directory \"{presetPath}\" not found!");
       }
 
       return presetNames;
