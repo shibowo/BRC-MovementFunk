@@ -627,7 +627,7 @@ public class MovementConfig(ConfigFile config)
          category,
          "Boost Hard Corner",
          true,
-         "Hold boost to hit hard corners, no tilting required."
+         "Boost to hit hard corners, no tilting required."
      );
 
         public ConfigEntry<bool> Detection = config.Bind(

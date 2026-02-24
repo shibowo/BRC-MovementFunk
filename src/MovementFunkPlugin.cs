@@ -64,7 +64,7 @@ namespace MovementFunk
                 MFTrickManager.Update();
                 RailCollision.Update();
                 GoonStorageMinMax.Update();
-                BoostHardCorner.Update();
+                //BoostHardCorner.Update();
                 PopJump.Update();
             }
         }
