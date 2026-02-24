@@ -27,6 +27,7 @@ namespace MovementFunk
 
   }
   internal class PresetApp : MFCustomApp {
+    virtual public string TitleBarText => "Available Presets";
     protected void PopulateList()
     {
       ScrollView.AddButton(NoneButton());
@@ -45,7 +46,7 @@ namespace MovementFunk
     public override void OnAppInit()
     {
       base.OnAppInit();
-      CreateIconlessTitleBar("Available Presets");
+      CreateIconlessTitleBar(TitleBarText);
 
       ScrollView = PhoneScrollView.Create(this);
       PopulateList();
@@ -66,7 +67,8 @@ namespace MovementFunk
   }
   internal class MovementPresetApp : PresetApp {
     public override bool Available => false;
-
+    public override string TitleBarText => "Movement";
+        
     public static void Init(string title)
     {
       PhoneAPI.RegisterApp<MovementPresetApp>(title);
@@ -96,8 +98,8 @@ namespace MovementFunk
     }
   }
   internal class SpeedometerPresetApp : PresetApp {
-    
     public override bool Available => false;
+    public override string TitleBarText => "Speedometer";
 
     public static void Init(string title)
     {
@@ -151,7 +153,7 @@ namespace MovementFunk
       CreateIconlessTitleBar("Available Presets");
 
       ScrollView = PhoneScrollView.Create(this);
-      SimplePhoneButton movementAppButton = PhoneUIUtility.CreateSimpleButton("Movement Presets");
+      SimplePhoneButton movementAppButton = PhoneUIUtility.CreateSimpleButton("Movement");
 
       movementAppButton.OnConfirm += () => {
         MyPhone.OpenApp(typeof(MovementPresetApp));
@@ -159,7 +161,7 @@ namespace MovementFunk
 
       ScrollView.AddButton(movementAppButton);
 
-      SimplePhoneButton speedometerAppButton = PhoneUIUtility.CreateSimpleButton("Speedometer Presets");
+      SimplePhoneButton speedometerAppButton = PhoneUIUtility.CreateSimpleButton("Speedometer");
 
       speedometerAppButton.OnConfirm += () => {
         MyPhone.OpenApp(typeof(SpeedometerPresetApp));

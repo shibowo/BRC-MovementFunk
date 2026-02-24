@@ -43,7 +43,7 @@ namespace MovementFunk.SpeedDisplay
 
     public static void Init(TextMeshProUGUI someLabel){
       if(!Config.Representation.Enabled.Value) return;
-      
+
       if(Config.Color.Enabled.Value){
         colorShiftRate = Config.Color.ColorShiftRate.Value;
       }
@@ -73,7 +73,7 @@ namespace MovementFunk.SpeedDisplay
         goonStorageLabel.enableWordWrapping = false;
         goonStorageLabel.enableAutoSizing = false;
         labelGap *= 2;
-         
+
         if(!Config.Representation.AltTrickComboCount.Value){
           someLabel.transform.position += Vector3.up * labelGap;
         }
@@ -104,7 +104,7 @@ namespace MovementFunk.SpeedDisplay
           speedometerLabel.color = ShiftHueWithSpeed(speedometerLabel.color, speed);
         }
       }
-      
+
       if(Config.Representation.GoonStorageEnabled.Value){
         gstStrBuilder.Clear();
       }
@@ -163,6 +163,7 @@ namespace MovementFunk.SpeedDisplay
     }
 
     public static void UpdateSpeedRep(){
+      Config = MovementFunkPlugin.SpeedometerSettings;
       if(!Config.Representation.SpeedUnitsEnabled.Value){
         speedRep = string.Empty;
         return;
