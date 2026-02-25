@@ -189,6 +189,7 @@ namespace MovementFunk.SpeedDisplay
       }
       if(Config.Representation.GoonStorageEnabled.Value){
         goonStorageLabel.fontSize = speedometerLabel.fontSize;
+        goonStorageText = Config.Representation.GoonStorageText.Value;
       }
     }
     public static void InitAltTrickLabel(TextMeshProUGUI someLabel){

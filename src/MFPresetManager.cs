@@ -105,13 +105,13 @@ namespace MovementFunk
     //an infinite loop.
     public static void NoMovementPreset()
     {
+      MovementFunkPlugin.MovementSettings = new MovementConfig(movementCfgFile); 
       MovementFunkPlugin.MovementSettings.Misc.MVPreset.Value = "None";
-      ApplyMovementPreset("None");
     }
     public static void NoSpeedometerPreset()
     {
+      MovementFunkPlugin.SpeedometerSettings = new SpeedometerConfig(speedometerCfgFile);
       MovementFunkPlugin.SpeedometerSettings.Misc.SPPreset.Value = "None";
-      ApplySpeedometerPreset("None");
     }
     
     public static List<string> GetAvailablePresets(string dir)
