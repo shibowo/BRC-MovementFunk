@@ -73,6 +73,7 @@ namespace MovementFunk.Patches
             if (__instance.p.isAI || MovementFunkPlugin.MovementSettings.Misc.DisablePatch.Value) { return; }
             __instance.trickTimer = 0f;
             __instance.inRetour = false;
+            MFVariables.frameboostTimer = 0f;
         }
 
         [HarmonyPatch(typeof(GrindAbility), nameof(GrindAbility.UpdateSpeed))]
@@ -408,7 +409,8 @@ namespace MovementFunk.Patches
 
             ApplyBoostingOrSliding(instance, ref num);
 
-            if (instance.p.abilityTimer <= MovementSettings.RailFrameboost.Grace.Value && MovementSettings.RailFrameboost.Enabled.Value)
+            if (MFVariables.frameboostTimer <= MovementSettings.RailFrameboost.Grace.Value 
+                && MovementSettings.RailFrameboost.Enabled.Value)
             {
                 ApplyFrameboost(instance, ref num2);
             }

@@ -246,6 +246,13 @@ namespace MovementFunk.Patches
         }
 
         [HarmonyPatch(typeof(Player), nameof(Player.FixedUpdateAbilities))]
+        [HarmonyPostfix]
+        private static void Player_FixedUpdateAbilities_Postfix()
+        {
+          MFVariables.frameboostTimer += Core.dt;
+        }
+
+        [HarmonyPatch(typeof(Player), nameof(Player.FixedUpdateAbilities))]
         public static class Player_FixedUpdateAbilities_Transpiler
         {
             private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)

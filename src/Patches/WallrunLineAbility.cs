@@ -28,6 +28,7 @@ namespace MovementFunk.Patches
         {
             if (__instance.p.isAI || MovementFunkPlugin.MovementSettings.Misc.DisablePatch.Value) { return; }
             MovementSettings = MovementFunkPlugin.MovementSettings;
+            MFVariables.frameboostTimer = 0f;
         }
 
         [HarmonyPatch(typeof(WallrunLineAbility), nameof(WallrunLineAbility.RunOff))]
@@ -37,13 +38,14 @@ namespace MovementFunk.Patches
             if (__instance.p.isAI || MovementFunkPlugin.MovementSettings.Misc.DisablePatch.Value) { return true; }
             MovementSettings = MovementFunkPlugin.MovementSettings;
             Vector3 vector;
-            if (__instance.p.abilityTimer <= MovementSettings.WallFrameboost.Grace.Value)
+            if (MFVariables.frameboostTimer <= MovementSettings.WallFrameboost.Grace.Value)
             {
                 if (MovementSettings.WallFrameboost.Enabled.Value && MovementSettings.WallFrameboost.RunoffEnabled.Value)
                 {
                     float newSpeed = MFMath.LosslessClamp(Mathf.Max(__instance.lastSpeed, __instance.customVelocity.magnitude), MovementSettings.WallFrameboost.Amount.Value, MovementSettings.WallFrameboost.Cap.Value);
                     vector = direction * (newSpeed) + __instance.wallrunFaceNormal * 1f;
                     __instance.p.DoTrick(Player.TrickType.WALLRUN, "Frameboost", 0);
+                    MFVariables.frameboostTimer = 0f;
                 }
                 else
                 {
@@ -142,7 +144,8 @@ namespace MovementFunk.Patches
             }
             __instance.p.SetVisualRotLocal0();
             MFVariables.savedLastSpeed = __instance.lastSpeed;
-            if (__instance.p.abilityTimer > MovementFunkPlugin.MovementSettings.WallFrameboost.Grace.Value && MovementFunkPlugin.MovementSettings.WallFrameboost.Enabled.Value)
+            if (MFVariables.frameboostTimer > MovementFunkPlugin.MovementSettings.WallFrameboost.Grace.Value 
+                && MovementFunkPlugin.MovementSettings.WallFrameboost.Enabled.Value)
             {
                 MFVariables.savedGoon = __instance.lastSpeed;
             }
@@ -155,7 +158,8 @@ namespace MovementFunk.Patches
         {
             if (__instance.p.isAI || MovementFunkPlugin.MovementSettings.Misc.DisablePatch.Value) { return; }
             MovementSettings = MovementFunkPlugin.MovementSettings;
-            if (__instance.p.abilityTimer <= MovementSettings.WallBoostplant.Grace.Value && MovementSettings.WallBoostplant.Enabled.Value)
+            if (__instance.p.abilityTimer <= MovementSettings.WallBoostplant.Grace.Value 
+                && MovementSettings.WallBoostplant.Enabled.Value)
             {
                 List<string> buttons = MFMisc.StringToList(MovementSettings.WallBoostplant.Buttons.Value);
                 bool buttonsActive = MFInputBuffer.WasPressedRecentlyOrIsHeld(buttons, MovementSettings.WallBoostplant.Buffer.Value);
@@ -179,7 +183,8 @@ namespace MovementFunk.Patches
                     return;
                 }
 
-                if (__instance.p.abilityTimer <= MovementSettings.WallFrameboost.Grace.Value && MovementSettings.WallFrameboost.Enabled.Value)
+                if (MFVariables.frameboostTimer <= MovementSettings.WallFrameboost.Grace.Value 
+                    && MovementSettings.WallFrameboost.Enabled.Value)
                 {
                     float newSpeed = MFMath.LosslessClamp(Mathf.Max(MFMovementMetrics.AverageForwardSpeed(), __instance.p.GetForwardSpeed()), MovementSettings.WallFrameboost.Amount.Value, MovementSettings.WallFrameboost.Cap.Value);
                     __instance.lastSpeed += MovementSettings.WallFrameboost.Amount.Value;
@@ -187,6 +192,7 @@ namespace MovementFunk.Patches
                     __instance.p.DoTrick(Player.TrickType.WALLRUN, "Frameboost", 0);
                     __instance.lastSpeed = Mathf.Max(MFVariables.savedGoon, __instance.lastSpeed);
                     MFVariables.savedGoon = __instance.lastSpeed;
+                    MFVariables.frameboostTimer = 0f;
                 }
             }
         }
