@@ -1103,10 +1103,15 @@ public class MovementConfig(ConfigFile config)
         public ConfigEntry<float> BoostSpeed = config.Bind(
           category,
           "Boost Wave Dash Amount",
-          10f,
+          17f,
           "Amount of forward speed given when performing a Boost Wave Dash."
       );
-
+        public ConfigEntry<float> BoostCost = config.Bind(
+          category,
+          "Boost Wave Dash Cost",
+          13f,
+          "Amount of boost performing a single Boost Wave Dash costs."
+      );
         public ConfigEntry<int> NormalPoints = config.Bind(
           category,
           "Normal Wave Dash Point Amount",

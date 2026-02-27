@@ -102,19 +102,23 @@ namespace MovementFunk.Patches
         {
             if (__instance.isAI || MovementFunkPlugin.MovementSettings.Misc.DisablePatch.Value) { return; }
             MovementSettings = MovementFunkPlugin.MovementSettings;
-            if (Fastfall.timeSinceLastFastFall < MovementFunkPlugin.MovementSettings.WaveDash.grace.Value && !__instance.slideButtonHeld)
+            if (Fastfall.timeSinceLastFastFall < MovementSettings.WaveDash.grace.Value && !__instance.slideButtonHeld)
             {
                 float speed;
                 string name;
                 int points;
 
-                if (__instance.boostButtonHeld && __instance.HasBoostCharge(__instance.boostTrickCost))
+                if (__instance.boostButtonHeld && __instance.HasBoostCharge(MovementSettings.WaveDash.BoostCost.Value))
                 {
-                    speed = MFMovementMetrics.AverageForwardSpeed() + MovementFunkPlugin.MovementSettings.WaveDash.BoostSpeed.Value;
+                    speed = MFMovementMetrics.AverageForwardSpeed() + MovementSettings.WaveDash.BoostSpeed.Value;
                     name = MovementFunkPlugin.MovementSettings.WaveDash.BoostName.Value;
                     MFTrickManager.AddTrick(name);
-                    points = MFTrickManager.CalculateTrickValue(name, MovementSettings.WaveDash.BoostPoints.Value, MovementSettings.WaveDash.BoostPointsMin.Value, MovementSettings.Misc.listLength.Value, MovementSettings.Misc.repsToMin.Value);
-                    __instance.AddBoostCharge(0f - __instance.boostTrickCost); //funny, take this off before release tho
+                    points = MFTrickManager.CalculateTrickValue(name,
+                        MovementSettings.WaveDash.BoostPoints.Value,
+                        MovementSettings.WaveDash.BoostPointsMin.Value,
+                        MovementSettings.Misc.listLength.Value,
+                        MovementSettings.Misc.repsToMin.Value);
+                    __instance.AddBoostCharge(0f - MovementSettings.WaveDash.BoostCost.Value);
                     MFTrickManager.DoTrick(Player.TrickType.GROUND_BOOST, name, points);
                     __instance.StopCurrentAbility();
                 }
