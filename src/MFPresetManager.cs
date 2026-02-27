@@ -105,24 +105,24 @@ namespace MovementFunk
     //an infinite loop.
     public static void NoMovementPreset()
     {
+      MovementFunkPlugin.MovementSettings = new MovementConfig(movementCfgFile); 
       MovementFunkPlugin.MovementSettings.Misc.MVPreset.Value = "None";
-      ApplyMovementPreset("None");
     }
     public static void NoSpeedometerPreset()
     {
+      MovementFunkPlugin.SpeedometerSettings = new SpeedometerConfig(speedometerCfgFile);
       MovementFunkPlugin.SpeedometerSettings.Misc.SPPreset.Value = "None";
-      ApplySpeedometerPreset("None");
     }
     
-    public static List<string> GetAvailablePresets()
+    public static List<string> GetAvailablePresets(string dir)
     {
       var Instance = MovementFunkPlugin.Instance;
-      string movementPlusPath = Path.Combine(Path.GetDirectoryName(Instance.Config.ConfigFilePath), "MovementFunk/MovementPresets");
+      string presetPath = Path.Combine(Path.GetDirectoryName(Instance.Config.ConfigFilePath), @"MovementFunk\" + dir);
       List<string> presetNames = new List<string>();
 
-      if (Directory.Exists(movementPlusPath))
+      if (Directory.Exists(presetPath))
       {
-        string[] presetFiles = Directory.GetFiles(movementPlusPath, "*.cfg");
+        string[] presetFiles = Directory.GetFiles(presetPath, "*.cfg");
         foreach (string file in presetFiles)
         {
           presetNames.Add(Path.GetFileNameWithoutExtension(file));
@@ -130,12 +130,17 @@ namespace MovementFunk
       }
       else
       {
-        MovementFunkPlugin.PubLogger.LogError("MovementFunk directory not found.");
+        MovementFunkPlugin.PubLogger.LogError($"Directory \"{presetPath}\" not found!");
       }
 
       return presetNames;
     }
-
+    public static List<string> GetAvailableMovementPresets(){
+      return MFPresetManager.GetAvailablePresets(@"MovementPresets\");
+    }
+    public static List<string> GetAvailableSpeedometerPresets(){
+      return MFPresetManager.GetAvailablePresets(@"SpeedometerPresets\");
+    }
     private static void UpdateInitVars()
     {
       if (MovementFunkPlugin.player != null)

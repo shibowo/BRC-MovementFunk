@@ -26,21 +26,24 @@ namespace MovementFunk
         public static MovementConfig MovementSettings;
         public static SpeedometerConfig SpeedometerSettings;
         public static MFAbilityManager abilityManager;
+        public static MFMainApp mainApp;
 
         private void Awake()
         {
             harmony = new Harmony(MyGUID);
             Instance = this;
             PubLogger = BepInEx.Logging.Logger.CreateLogSource(PluginName);
-
+            
             PatchAllInNamespace(harmony, "MovementFunk.Patches");
 
             MFMovementMetrics.Init();
             SpeedReturn.Init();
-            PresetApp.Init();
             MFAnimation.Init();
             MFPresetManager.LaunchPreset();
-
+            
+            MFMainApp.Init("MF Presets", "MF_icon.png");
+            MovementPresetApp.Init("Movement Presets");
+            SpeedometerPresetApp.Init("Speedometer Presets");
             Logger.LogInfo($"{PluginName} v{VersionString} has been loaded!");
         }
 
