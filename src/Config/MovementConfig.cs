@@ -698,29 +698,7 @@ public class MovementConfig(ConfigFile config)
          "Modify Grind Jump flipout",
          true,
          ""
-     );
-
-        public ConfigEntry<bool> ModifyUpdateSpeed = config.Bind(
-         category,
-         "Modify Update Speed Adjustment",
-         true,
-         ""
-     );
-
-        public ConfigEntry<bool> ModifyUpdateSpeedBoost = config.Bind(
-         category,
-         "Modify Update Speed Boost Adjustment",
-         true,
-         ""
-     );
-
-        public ConfigEntry<bool> ModifyUpdateSpeedBrake = config.Bind(
-         category,
-         "Modify Update Speed Brake Adjustment",
-         true,
-         ""
-     );
-
+     ); 
         public ConfigEntry<bool> KeepVelOnExit = config.Bind(
          category,
          "Keep Grind Velocity On End",
