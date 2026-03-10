@@ -629,7 +629,12 @@ public class MovementConfig(ConfigFile config)
          true,
          "Boost to hit hard corners, no tilting required."
      );
-
+        public ConfigEntry<bool> BoostDoesNotGiveBoost = config.Bind(
+          category,
+          "No Boost on Boosted Hard Corners",
+          true,
+          "Stops hard corners from giving you boost when you're boosting"
+     );
         public ConfigEntry<bool> Detection = config.Bind(
          category,
          "Extra Rail Detection",
@@ -698,7 +703,7 @@ public class MovementConfig(ConfigFile config)
          "Modify Grind Jump flipout",
          true,
          ""
-     ); 
+     );
         public ConfigEntry<bool> KeepVelOnExit = config.Bind(
          category,
          "Keep Grind Velocity On End",

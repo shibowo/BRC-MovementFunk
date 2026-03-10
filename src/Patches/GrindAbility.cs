@@ -470,7 +470,10 @@ namespace MovementFunk.Patches
         [HarmonyPrefix]
         private static bool GrindAbility_RewardTilting_Prefix(Vector3 rightDir, Vector3 nextLineDir, GrindAbility __instance)
         {
-            if (__instance.p.isAI || !__instance.grindLine.cornerBoost || !MovementFunkPlugin.MovementSettings.RailGeneral.ChangeEnabled.Value || MovementFunkPlugin.MovementSettings.Misc.DisablePatch.Value) return true;
+            if (__instance.p.isAI ||
+                !__instance.grindLine.cornerBoost ||
+                !MovementFunkPlugin.MovementSettings.RailGeneral.ChangeEnabled.Value ||
+                MovementFunkPlugin.MovementSettings.Misc.DisablePatch.Value) return true;
 
             Vector3 currentSegmentDir = (__instance.nextNode.position - __instance.p.tf.position).normalized;
             currentSegmentDir = Vector3.ProjectOnPlane(currentSegmentDir, Vector3.up).normalized;
@@ -502,7 +505,13 @@ namespace MovementFunk.Patches
                     __instance.p.AudioManager.PlaySfxGameplay(SfxCollectionID.GenericMovementSfx, AudioClipID.singleBoost, __instance.p.playerOneShotAudioSource, 0f);
                     __instance.p.ringParticles.Emit(1);
                     __instance.speed = MFMath.LosslessClamp(__instance.speed, MovementSettings.RailGeneral.HardAmount.Value, MovementSettings.RailGeneral.HardCap.Value);
-                    __instance.p.HardCornerGrindLine(__instance.nextNode);
+                    if (boostCorner &&
+                        MovementFunkPlugin.MovementSettings.RailGeneral.BoostDoesNotGiveBoost.Value){
+                        MFTrickManager.BoostedHardCorner(__instance.p, __instance.nextNode);
+                    }
+                    else if (correctInput || boostCorner) {
+                      __instance.p.HardCornerGrindLine(__instance.nextNode);
+                    }
                     return false;
                 }
                 else if (__instance.lastPath.softCornerBoostsAllowed)

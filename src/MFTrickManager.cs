@@ -94,5 +94,14 @@ namespace MovementFunk
             MovementFunkPlugin.player.baseScore += (float)((int)((float)MovementFunkPlugin.player.currentTrickPoints * MovementFunkPlugin.player.scoreFactor));
             MovementFunkPlugin.player.didAbilityTrick = true;
         }
+       public static void BoostedHardCorner(Player p, GrindNode node){
+          if(p.corneredNodes.Contains(node)){
+            MFTrickManager.DoTrick(Player.TrickType.GRIND_BOOST, "Hard Corner", 40);
+            return;
+          }
+          MFTrickManager.DoTrick(Player.TrickType.GRIND_BOOST, "Hard Corner (New!)", 150);
+          p.AddScoreMultiplier();
+          p.corneredNodes.Add(node);
+       }
     }
 }
